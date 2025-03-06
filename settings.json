@@ -1,13 +1,18 @@
 {
   "siteTitle": "English Study Resources",
   "siteDescription": "A collection of study materials for English language learners",
-  "footerText": "© 2025. All rights reserved.",
+  "footerText": "© 2023 John Doe. All rights reserved.",
   "maintenanceMode": "partial", 
   "maintenanceMessage": "We're currently updating our Grammar & Reading resources. Please check back soon!",
   "maintenanceEndTime": "2023-12-31T23:59:59",
   "showTermsOnLoad": true,
   "showCustomerMessage": true,
-  "customerMessage": "This website is operating under degraded performance.",
+  "customerMessage": "New video lessons have been added! Check them out in the 'Learn > Video' section.",
+  "themeColors": {
+    "primary": "#5D5CDE",
+    "learn": "#22c55e",
+    "try": "#f97316"
+  },
   "notifications": [
     {
       "type": "info",
@@ -34,88 +39,118 @@
     "Discover resources tailored for your learning needs!",
     "Your path to English fluency starts here!"
   ],
-  "privacyPolicy": "<p>This Privacy Policy outlines how we collect, use, and protect your personal information when you use our website.</p><p>We do not collect any personal information through this website. The resources provided are for educational purposes only.</p>",
-  "termsOfService": "<p>By accessing and using this website, you agree to comply with these Terms of Service.</p><p>All resources provided on this website are for educational purposes only. You may not redistribute or sell these materials without permission.</p>",
+  "privacyPolicy": "<p>This Privacy Policy outlines how we collect, use, and protect your personal information when you use our website.</p><p>We do not collect any personal information through this website. The resources provided are for educational purposes only.</p><p>By accessing or using our website, you agree to the collection and use of information in accordance with this policy.</p><p>If you choose to use our Service, then you agree to the collection and use of information in relation to this policy. The Personal Information that we collect is used for providing and improving the Service. We will not use or share your information with anyone except as described in this Privacy Policy.</p><p>The security of your Personal Information is important to us, but remember that no method of transmission over the Internet, or method of electronic storage is 100% secure. While we strive to use commercially acceptable means to protect your Personal Information, we cannot guarantee its absolute security.</p>",
+  "termsOfService": "<p>By accessing and using this website, you agree to comply with these Terms of Service.</p><p>All resources provided on this website are for educational purposes only. You may not redistribute or sell these materials without permission.</p><p>Our website provides access to educational resources that are intended for personal use. By accessing these resources, you agree to use them solely for your personal education and not for commercial purposes.</p><p>We reserve the right to modify or replace these Terms at any time. If a revision is material we will try to provide at least 30 days' notice prior to any new terms taking effect.</p><p>Our Service may contain links to third-party web sites or services that are not owned or controlled by us. We have no control over, and assume no responsibility for, the content, privacy policies, or practices of any third party web sites or services.</p><p>We may terminate or suspend access to our Service immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms.</p>",
+  "allowAnalytics": true,
+  "allowProgressTracking": true,
   "resources": [
     {
+      "id": "grammar-basics",
       "title": "English Grammar Basics",
-      "description": "A comprehensive guide to English grammar fundamentals",
+      "description": "A comprehensive guide to English grammar fundamentals including parts of speech, sentence structure, and common grammar rules.",
       "category": "try",
       "subcategory": "grammar-reading",
       "date": "2023-10-15",
       "url": "https://example.com/resources/grammar-basics.pdf"
     },
     {
+      "id": "vocab-builder",
       "title": "Vocabulary Builder",
-      "description": "Expand your English vocabulary with this extensive word list",
+      "description": "Expand your English vocabulary with this extensive word list organized by topic and difficulty level.",
       "category": "learn",
       "subcategory": "notes",
       "date": "2023-09-28",
       "url": "https://example.com/resources/vocabulary-builder.pdf"
     },
     {
+      "id": "conversation-practice",
       "title": "Conversation Practice",
-      "description": "Common phrases and dialogues for everyday English conversations",
+      "description": "Common phrases and dialogues for everyday English conversations in various situations.",
       "category": "try",
       "subcategory": "speaking",
       "date": "2023-11-05",
       "url": "https://example.com/resources/conversation-practice.pdf"
     },
     {
+      "id": "reading-comp",
       "title": "Reading Comprehension",
-      "description": "Practice exercises to improve your reading skills",
+      "description": "Practice exercises to improve your reading skills with texts of varying difficulty levels and comprehension questions.",
       "category": "try",
       "subcategory": "grammar-reading",
       "date": "2023-07-12",
       "url": "https://example.com/resources/reading-comprehension.pdf"
     },
     {
+      "id": "pronunciation-guide",
       "title": "Pronunciation Guide",
-      "description": "Learn correct pronunciation of difficult English sounds",
+      "description": "Learn correct pronunciation of difficult English sounds with detailed explanations and practice exercises.",
       "category": "try",
       "subcategory": "speaking",
       "date": "2023-08-20",
       "url": "https://example.com/resources/pronunciation-guide.pdf"
     },
     {
+      "id": "essay-writing",
       "title": "Essay Writing",
-      "description": "Templates and examples for academic essay writing",
+      "description": "Templates and examples for academic essay writing, including structure, argumentation, and style guides.",
       "category": "learn",
       "subcategory": "notes",
       "date": "2023-10-03",
       "url": "https://example.com/resources/essay-writing.pdf"
     },
     {
+      "id": "business-english",
       "title": "Business English Course",
-      "description": "Video lectures teaching professional English for the workplace",
+      "description": "Video lectures teaching professional English for the workplace, including email writing, presentations, and negotiations.",
       "category": "learn",
       "subcategory": "video",
       "date": "2023-11-15",
       "url": "https://example.com/resources/business-english-course.pdf"
     },
     {
+      "id": "listening-news",
       "title": "Listening Comprehension: News",
-      "description": "Practice understanding English news broadcasts with exercises",
+      "description": "Practice understanding English news broadcasts with exercises and transcripts for various accents and speeds.",
       "category": "try",
       "subcategory": "listening",
       "date": "2023-10-25",
       "url": "https://example.com/resources/listening-news.pdf"
     },
     {
+      "id": "phonetics-videos",
       "title": "Phonetics Tutorial Videos",
-      "description": "Learn English phonetics through detailed video explanations",
+      "description": "Learn English phonetics through detailed video explanations with animated mouth positions and sound comparisons.",
       "category": "learn",
       "subcategory": "video",
       "date": "2023-09-10",
       "url": "https://example.com/resources/phonetics-videos.pdf"
     },
     {
+      "id": "podcast-practice",
       "title": "Advanced Listening: Podcasts",
-      "description": "Practice materials based on popular English podcasts",
+      "description": "Practice materials based on popular English podcasts with exercises focusing on colloquial expressions and natural speech.",
       "category": "try",
       "subcategory": "listening",
       "date": "2023-11-18",
       "url": "https://example.com/resources/podcast-practice.pdf"
+    },
+    {
+      "id": "idioms-collection",
+      "title": "English Idioms Collection",
+      "description": "Comprehensive collection of English idioms and expressions with usage examples and cultural context.",
+      "category": "learn",
+      "subcategory": "notes",
+      "date": "2023-09-05",
+      "url": "https://example.com/resources/idioms-collection.pdf"
+    },
+    {
+      "id": "presentation-skills",
+      "title": "Presentation Skills",
+      "description": "Video tutorials on delivering effective presentations in English, including body language and visual aids.",
+      "category": "learn",
+      "subcategory": "video",
+      "date": "2023-11-02",
+      "url": "https://example.com/resources/presentation-skills.pdf"
     }
   ]
 }
