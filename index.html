@@ -114,6 +114,21 @@
             </div>
         </div>
 
+        <!-- Customer Message Banner -->
+        <div id="customer-message-banner" class="hidden bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-100 px-4 py-3 rounded-lg mb-6 animate-fade-in">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span id="customer-message-text">Important information for our users.</span>
+            </div>
+            <button id="close-customer-message" class="ml-auto -mr-1 -mt-1 p-1 hover:bg-blue-200 dark:hover:bg-blue-700 rounded">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
         <!-- Header -->
         <header class="mb-12 text-center">
             <div class="dark-mode-toggle absolute top-4 right-4 cursor-pointer" title="Toggle Dark Mode">
@@ -231,6 +246,9 @@
         const loadingElement = document.getElementById('loading');
         const maintenanceBanner = document.getElementById('maintenance-banner');
         const maintenanceMessage = document.getElementById('maintenance-message');
+        const customerMessageBanner = document.getElementById('customer-message-banner');
+        const customerMessageText = document.getElementById('customer-message-text');
+        const closeCustomerMessageButton = document.getElementById('close-customer-message');
         const siteTitleElement = document.getElementById('site-title');
         const siteDescriptionElement = document.getElementById('site-description');
         const greetingElement = document.getElementById('greeting');
@@ -333,6 +351,9 @@
             // Check maintenance mode
             checkMaintenanceMode();
             
+            // Check for customer message
+            checkCustomerMessage();
+            
             // Initialize resources
             initializeResources();
             
@@ -372,6 +393,19 @@
             if (siteSettings.maintenanceMode) {
                 maintenanceMessage.textContent = siteSettings.maintenanceMessage || 'This site is currently undergoing maintenance. Some features may be unavailable.';
                 maintenanceBanner.classList.remove('hidden');
+            }
+        }
+
+        // Check if customer message should be displayed
+        function checkCustomerMessage() {
+            if (siteSettings.showCustomerMessage && siteSettings.customerMessage) {
+                customerMessageText.textContent = siteSettings.customerMessage;
+                customerMessageBanner.classList.remove('hidden');
+                
+                // Add event listener to close button
+                closeCustomerMessageButton.addEventListener('click', () => {
+                    customerMessageBanner.classList.add('hidden');
+                });
             }
         }
 
@@ -528,7 +562,7 @@
             // Resource access button
             resourceAccessButton.addEventListener('click', () => {
                 closeResourceDialog();
-                openResource(selectedResource);
+                showTermsAndPrivacy(); // Show Terms and Privacy before accessing the resource
             });
             
             // View terms and privacy from resource dialog
@@ -543,8 +577,9 @@
             
             // Global event delegation for resource buttons
             resourcesGrid.addEventListener('click', (e) => {
-                if (e.target.classList.contains('resource-access-btn')) {
-                    const index = parseInt(e.target.dataset.index);
+                const accessBtn = e.target.closest('.resource-access-btn');
+                if (accessBtn) {
+                    const index = parseInt(accessBtn.dataset.index);
                     selectedResource = resources[index];
                     
                     if (termsAccepted) {
@@ -571,6 +606,7 @@
             content += '</div>';
             
             dialogContent.innerHTML = content;
+            dialogAcceptButton.textContent = 'I Accept';
             dialogOverlay.classList.remove('hidden');
         }
 
@@ -578,6 +614,7 @@
         function showPrivacyPolicy() {
             dialogTitle.textContent = 'Privacy Policy';
             dialogContent.innerHTML = siteSettings.privacyPolicy || 'Privacy Policy content not available.';
+            dialogAcceptButton.textContent = 'Close';
             dialogOverlay.classList.remove('hidden');
         }
 
@@ -585,6 +622,7 @@
         function showTermsOfService() {
             dialogTitle.textContent = 'Terms of Service';
             dialogContent.innerHTML = siteSettings.termsOfService || 'Terms of Service content not available.';
+            dialogAcceptButton.textContent = 'Close';
             dialogOverlay.classList.remove('hidden');
         }
 
