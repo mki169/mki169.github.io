@@ -5,6 +5,8 @@
   "maintenanceMode": false,
   "maintenanceMessage": "We're currently updating our resource library. Please check back soon!",
   "showTermsOnLoad": true,
+  "showCustomerMessage": true,
+  "customerMessage": "We're currently testing the website performance. This website is operating under degraded performance.",
   "greetings": [
     "Welcome to your language learning journey!",
     "Ready to improve your English skills?",
