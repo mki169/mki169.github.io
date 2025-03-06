@@ -6,23 +6,50 @@
     <title>Study Resources</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" rel="stylesheet">
+    <!-- Chart.js for analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Font Awesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        primary: '#5D5CDE',
-                        'primary-dark': '#4A49B8',
-                        'primary-light': '#7F7EE7',
+                        primary: {
+                            DEFAULT: '#5D5CDE',
+                            50: '#EEEEFF',
+                            100: '#DEDEFF',
+                            200: '#BDBDFF',
+                            300: '#9D9CFF',
+                            400: '#7D7CFF',
+                            500: '#5D5CDE',
+                            600: '#4A49B8',
+                            700: '#38379C',
+                            800: '#252480',
+                            900: '#131364'
+                        },
                         learn: {
-                            light: '#22c55e',
+                            DEFAULT: '#22c55e',
+                            light: '#86efac',
                             dark: '#166534'
                         },
                         try: {
-                            light: '#f97316',
+                            DEFAULT: '#f97316',
+                            light: '#fdba74',
                             dark: '#9a3412'
+                        },
+                        dark: {
+                            DEFAULT: '#0f0f0f',
+                            lighter: '#181818',
+                            light: '#222222',
+                            card: '#1a1a1a',
+                            border: '#2a2a2a'
                         }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
                     },
                     animation: {
                         'fade-in': 'fadeIn 0.5s ease-in-out',
@@ -30,6 +57,7 @@
                         'bounce-in': 'bounceIn 0.8s ease-in-out',
                         'slide-in-right': 'slideInRight 0.5s ease-in-out',
                         'pulse-light': 'pulseLight 2s infinite',
+                        'scale': 'scale 0.5s ease-out',
                     },
                     keyframes: {
                         fadeIn: {
@@ -52,21 +80,39 @@
                         pulseLight: {
                             '0%, 100%': { opacity: '1' },
                             '50%': { opacity: '0.7' },
+                        },
+                        scale: {
+                            '0%': { transform: 'scale(0.95)', opacity: '0.8' },
+                            '100%': { transform: 'scale(1)', opacity: '1' },
                         }
                     },
                     boxShadow: {
                         'card': '0 10px 20px rgba(0, 0, 0, 0.05), 0 6px 6px rgba(0, 0, 0, 0.05)',
                         'card-hover': '0 15px 30px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04)',
+                        'card-dark': '0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.2)',
+                        'button': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        'dropdown': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
                     }
                 }
             }
         };
     </script>
     <style type="text/css">
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap');
+
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
         .hidden {
             display: none !important;
         }
         
+        /* Animation classes */
         .fade-in {
             animation: fadeIn 0.5s ease-in-out;
         }
@@ -81,6 +127,10 @@
         
         .slide-in-right {
             animation: slideInRight 0.5s ease-in-out;
+        }
+        
+        .scale-in {
+            animation: scale 0.5s ease-out;
         }
         
         @keyframes fadeIn {
@@ -108,57 +158,133 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.7; }
         }
+        
+        @keyframes scale {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
 
+        /* Premium card styling */
         .resource-card {
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 12px;
         }
         
         .resource-card:hover {
             transform: translateY(-6px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
+        }
+        
+        .dark .resource-card {
+            background-color: #1a1a1a;
+            border-color: #2a2a2a;
         }
 
         /* Light/Dark mode transitions */
-        .dark .dark\:bg-gray-900,
-        .dark .dark\:bg-gray-800,
+        .transition-colors,
+        .dark .dark\:bg-dark,
+        .dark .dark\:bg-dark-lighter,
+        .dark .dark\:bg-dark-light,
         .dark .dark\:text-white,
         .dark .dark\:text-gray-200,
-        .dark .dark\:border-gray-700,
+        .dark .dark\:border-dark-border,
         html {
             transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
 
-        /* Scrollbar styling */
+        /* Premium scrollbar styling */
         ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+            width: 10px;
+            height: 10px;
         }
         
         ::-webkit-scrollbar-track {
-            background: transparent;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 5px;
         }
         
         ::-webkit-scrollbar-thumb {
-            background: #d1d5db;
-            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .dark ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
         }
         
         .dark ::-webkit-scrollbar-thumb {
-            background: #4b5563;
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+        
+        /* Premium button styling */
+        .btn {
+            @apply rounded-lg font-medium transition-all duration-200 transform shadow-button focus:outline-none focus:ring-2 focus:ring-opacity-50;
+        }
+        
+        .btn:active {
+            @apply transform scale-95;
+        }
+        
+        .btn-primary {
+            @apply bg-primary-500 hover:bg-primary-600 focus:ring-primary-400 text-white;
+        }
+        
+        .btn-secondary {
+            @apply bg-gray-200 hover:bg-gray-300 focus:ring-gray-200 text-gray-800 dark:bg-dark-light dark:hover:bg-dark-lighter dark:text-gray-200;
+        }
+        
+        .btn-learn {
+            @apply bg-learn hover:bg-learn-dark focus:ring-learn text-white;
+        }
+        
+        .btn-try {
+            @apply bg-try hover:bg-try-dark focus:ring-try text-white;
         }
         
         /* Category tab styling */
         .category-tab {
             transition: all 0.3s ease;
-            border-bottom: 2px solid transparent;
+            position: relative;
+            font-weight: 500;
         }
         
-        .category-tab.active {
-            border-bottom: 2px solid currentColor;
+        .category-tab::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: transparent;
+            transition: all 0.3s ease;
         }
         
-        .category-tab:not(.active):hover {
-            border-bottom: 2px solid rgba(93, 92, 222, 0.3);
+        .category-tab.active::after {
+            background-color: currentColor;
+        }
+        
+        .category-tab:not(.active):hover::after {
+            background-color: rgba(93, 92, 222, 0.3);
+        }
+        
+        /* Premium search bar */
+        .search-container {
+            position: relative;
+        }
+        
+        .search-input {
+            @apply w-full pl-12 pr-4 py-3 rounded-xl border transition-all duration-200 shadow-sm focus:shadow-md;
+        }
+        
+        .search-icon {
+            @apply absolute text-gray-400 left-4 top-1/2 transform -translate-y-1/2;
         }
         
         /* Notification animation */
@@ -197,105 +323,223 @@
             font-variant-numeric: tabular-nums;
         }
         
+        .countdown-box {
+            @apply w-20 h-20 rounded-xl flex items-center justify-center bg-white dark:bg-dark-lighter shadow-md;
+        }
+        
         /* Card categories */
+        .category-badge {
+            @apply px-3 py-1 rounded-full text-xs font-medium inline-flex items-center;
+        }
+        
+        .category-badge i {
+            @apply mr-1;
+        }
+        
         .category-learn .category-badge {
-            background-color: rgba(34, 197, 94, 0.15);
-            color: rgb(22, 163, 74);
+            @apply bg-learn/15 text-learn;
         }
         
         .dark .category-learn .category-badge {
-            background-color: rgba(34, 197, 94, 0.25);
-            color: rgb(134, 239, 172);
+            @apply bg-learn/25 text-learn-light;
         }
         
         .category-try .category-badge {
-            background-color: rgba(249, 115, 22, 0.15);
-            color: rgb(234, 88, 12);
+            @apply bg-try/15 text-try;
         }
         
         .dark .category-try .category-badge {
-            background-color: rgba(249, 115, 22, 0.25);
-            color: rgb(253, 186, 116);
+            @apply bg-try/25 text-try-light;
         }
         
-        /* Category indicators */
-        .category-indicator {
+        /* Premium Switch */
+        .toggle-switch {
+            position: relative;
             display: inline-block;
-            width: 12px;
-            height: 12px;
+            width: 48px;
+            height: 24px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
             border-radius: 50%;
-            margin-right: 6px;
         }
         
-        .category-indicator.learn {
-            background-color: rgb(22, 163, 74);
+        input:checked + .toggle-slider {
+            background-color: #5D5CDE;
         }
         
-        .category-indicator.try {
-            background-color: rgb(234, 88, 12);
+        input:checked + .toggle-slider:before {
+            transform: translateX(24px);
         }
         
-        /* Card styling */
-        .card-header {
-            border-radius: 8px 8px 0 0;
-            transition: 0.3s ease;
+        /* Premium analytics section */
+        .analytics-card {
+            @apply bg-white dark:bg-dark-card rounded-xl shadow-lg p-4;
+            transition: all 0.3s ease;
         }
         
-        .category-learn .card-header {
-            background: linear-gradient(to right, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.05));
+        .analytics-card:hover {
+            @apply shadow-xl;
+            transform: translateY(-5px);
         }
         
-        .dark .category-learn .card-header {
-            background: linear-gradient(to right, rgba(34, 197, 94, 0.25), rgba(34, 197, 94, 0.1));
+        /* Custom tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
         }
         
-        .category-try .card-header {
-            background: linear-gradient(to right, rgba(249, 115, 22, 0.15), rgba(249, 115, 22, 0.05));
+        .tooltip .tooltip-content {
+            visibility: hidden;
+            width: auto;
+            min-width: 120px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 14px;
+            white-space: nowrap;
         }
         
-        .dark .category-try .card-header {
-            background: linear-gradient(to right, rgba(249, 115, 22, 0.25), rgba(249, 115, 22, 0.1));
+        .tooltip .tooltip-content::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #333 transparent transparent transparent;
+        }
+        
+        .tooltip:hover .tooltip-content {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* Premium stats widgets */
+        .stats-widget {
+            @apply rounded-xl p-4 transition-all duration-200 flex items-center;
+        }
+        
+        .stats-widget-icon {
+            @apply p-3 rounded-lg mr-4 flex items-center justify-center;
+            width: 48px;
+            height: 48px;
+        }
+        
+        /* Resource access button animation */
+        .btn-access {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-access::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s ease, height 0.3s ease;
+        }
+        
+        .btn-access:hover::after {
+            width: 300%;
+            height: 300%;
+        }
+        
+        /* Progress bar */
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            transition: width 0.5s ease;
         }
     </style>
 </head>
-<body class="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-white transition-colors duration-300">
+<body class="min-h-screen bg-gray-50 dark:bg-dark text-gray-800 dark:text-white transition-colors duration-300">
     <!-- Main Content Container -->
     <div id="app" class="container mx-auto px-4 py-8 max-w-6xl">
         <!-- Loading Overlay -->
-        <div id="loading" class="fixed inset-0 flex items-center justify-center bg-white dark:bg-gray-900 z-50">
+        <div id="loading" class="fixed inset-0 flex items-center justify-center bg-white dark:bg-dark z-50">
             <div class="text-center">
-                <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+                <div class="w-20 h-20 border-t-4 border-b-4 border-primary-500 rounded-full animate-spin mb-4"></div>
                 <p class="mt-4 text-lg">Loading resources...</p>
             </div>
         </div>
 
         <!-- Maintenance Mode Overlay -->
-        <div id="maintenance-overlay" class="fixed inset-0 bg-white dark:bg-gray-900 z-50 hidden">
+        <div id="maintenance-overlay" class="fixed inset-0 bg-white dark:bg-dark z-50 hidden">
             <div class="container mx-auto px-4 h-full flex flex-col items-center justify-center">
-                <div class="mb-8 text-center animate-bounce-in">
-                    <svg class="w-24 h-24 mx-auto text-yellow-500 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                    </svg>
+                <div class="mb-8 text-center animate-bounce-in max-w-xl">
+                    <div class="mb-8">
+                        <i class="fas fa-tools text-yellow-500 text-6xl mb-6"></i>
+                    </div>
                     <h2 class="text-3xl font-bold mb-4">We'll be back soon!</h2>
                     <p id="maintenance-message" class="text-xl text-gray-600 dark:text-gray-300 mb-6">Our website is currently undergoing scheduled maintenance.</p>
                     
                     <!-- Countdown timer -->
                     <div id="countdown-container" class="mb-8 hidden">
-                        <p class="text-lg mb-4">Estimated time remaining:</p>
+                        <p class="text-lg mb-6">Estimated time remaining:</p>
                         <div class="flex justify-center space-x-4 countdown-timer">
-                            <div class="text-center">
+                            <div class="countdown-box flex-col">
                                 <div id="countdown-days" class="text-4xl font-bold">0</div>
                                 <div class="text-sm text-gray-600 dark:text-gray-400">Days</div>
                             </div>
-                            <div class="text-center">
+                            <div class="countdown-box flex-col">
                                 <div id="countdown-hours" class="text-4xl font-bold">0</div>
                                 <div class="text-sm text-gray-600 dark:text-gray-400">Hours</div>
                             </div>
-                            <div class="text-center">
+                            <div class="countdown-box flex-col">
                                 <div id="countdown-minutes" class="text-4xl font-bold">0</div>
                                 <div class="text-sm text-gray-600 dark:text-gray-400">Minutes</div>
                             </div>
-                            <div class="text-center">
+                            <div class="countdown-box flex-col">
                                 <div id="countdown-seconds" class="text-4xl font-bold">0</div>
                                 <div class="text-sm text-gray-600 dark:text-gray-400">Seconds</div>
                             </div>
@@ -309,60 +553,121 @@
         <div id="notification-container" class="fixed right-4 top-20 z-40 w-80 space-y-4"></div>
 
         <!-- Maintenance Mode Banner -->
-        <div id="maintenance-banner" class="hidden bg-yellow-100 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-100 px-4 py-3 rounded-lg mb-6 animate-fade-in">
+        <div id="maintenance-banner" class="hidden bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-100 px-6 py-4 rounded-xl mb-6 animate-fade-in shadow-md">
             <div class="flex items-center">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                </svg>
+                <i class="fas fa-exclamation-triangle mr-3 text-yellow-600 dark:text-yellow-400"></i>
                 <span id="maintenance-message-banner">This site is currently undergoing maintenance. Some features may be unavailable.</span>
             </div>
         </div>
 
         <!-- Customer Message Banner -->
-        <div id="customer-message-banner" class="hidden bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-100 px-4 py-3 rounded-lg mb-6 animate-fade-in">
+        <div id="customer-message-banner" class="hidden bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-100 px-6 py-4 rounded-xl mb-6 animate-fade-in shadow-md">
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
+                    <i class="fas fa-info-circle mr-3 text-blue-600 dark:text-blue-400"></i>
                     <span id="customer-message-text">Important information for our users.</span>
                 </div>
-                <button id="close-customer-message" class="hover:bg-blue-200 dark:hover:bg-blue-700 p-1 rounded">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
+                <button id="close-customer-message" class="hover:bg-blue-200 dark:hover:bg-blue-800 p-2 rounded-full transition-colors">
+                    <i class="fas fa-times"></i>
                 </button>
             </div>
         </div>
 
         <!-- Header -->
-        <header class="mb-8 text-center">
-            <div class="dark-mode-toggle absolute top-4 right-4 cursor-pointer p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-full transition-colors" title="Toggle Dark Mode">
+        <header class="mb-12 text-center relative">
+            <div class="dark-mode-toggle absolute top-0 right-0 flex items-center cursor-pointer p-2 hover:bg-gray-200 dark:hover:bg-dark-lighter rounded-full transition-colors" title="Toggle Dark Mode">
                 <!-- Sun icon for dark mode -->
-                <svg id="light-icon" class="hidden w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                </svg>
+                <i id="light-icon" class="hidden fas fa-sun text-xl text-yellow-500"></i>
                 <!-- Moon icon for light mode -->
-                <svg id="dark-icon" class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-                </svg>
+                <i id="dark-icon" class="fas fa-moon text-xl text-gray-700"></i>
             </div>
-            <h1 id="site-title" class="text-4xl font-bold mb-2 animate-fade-in">Study Resources</h1>
-            <p id="site-description" class="text-xl text-gray-600 dark:text-gray-300 mb-6 animate-fade-in">Your collection of English language study materials</p>
-            <div id="greeting" class="py-4 px-6 bg-primary/10 dark:bg-primary/20 rounded-lg text-primary dark:text-primary-light inline-block animate-slide-up"></div>
+            
+            <div class="animate-fade-in">
+                <h1 id="site-title" class="text-4xl font-bold mb-2">Study Resources</h1>
+                <p id="site-description" class="text-xl text-gray-600 dark:text-gray-300 mb-6">Your collection of English language study materials</p>
+                <div id="greeting" class="py-4 px-8 bg-primary-500/10 dark:bg-primary-700/20 rounded-xl text-primary-700 dark:text-primary-300 inline-block animate-slide-up font-medium"></div>
+            </div>
         </header>
 
+        <!-- Analytics Dashboard -->
+        <section id="analytics-section" class="mb-12 animate-fade-in">
+            <h2 class="text-2xl font-bold mb-6 flex items-center">
+                <i class="fas fa-chart-line mr-2 text-primary-500"></i> Resource Analytics
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <!-- Stats Widgets -->
+                <div class="stats-widget bg-blue-50 dark:bg-blue-900/20 shadow-md">
+                    <div class="stats-widget-icon bg-blue-500/20 text-blue-600 dark:text-blue-400">
+                        <i class="fas fa-book fa-lg"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm">Total Resources</p>
+                        <h3 id="total-resources-count" class="text-2xl font-bold">0</h3>
+                    </div>
+                </div>
+                
+                <div class="stats-widget bg-green-50 dark:bg-green-900/20 shadow-md">
+                    <div class="stats-widget-icon bg-green-500/20 text-green-600 dark:text-green-400">
+                        <i class="fas fa-graduation-cap fa-lg"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm">Learn Materials</p>
+                        <h3 id="learn-resources-count" class="text-2xl font-bold">0</h3>
+                    </div>
+                </div>
+                
+                <div class="stats-widget bg-orange-50 dark:bg-orange-900/20 shadow-md">
+                    <div class="stats-widget-icon bg-orange-500/20 text-orange-600 dark:text-orange-400">
+                        <i class="fas fa-hands fa-lg"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm">Try Exercises</p>
+                        <h3 id="try-resources-count" class="text-2xl font-bold">0</h3>
+                    </div>
+                </div>
+                
+                <div class="stats-widget bg-purple-50 dark:bg-purple-900/20 shadow-md">
+                    <div class="stats-widget-icon bg-purple-500/20 text-purple-600 dark:text-purple-400">
+                        <i class="fas fa-clock fa-lg"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm">Recently Added</p>
+                        <h3 id="recent-count" class="text-2xl font-bold">0</h3>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Category Distribution Chart -->
+                <div class="analytics-card">
+                    <h3 class="text-lg font-semibold mb-4">Resource Distribution</h3>
+                    <div class="h-64">
+                        <canvas id="category-chart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Timeline Chart -->
+                <div class="analytics-card">
+                    <h3 class="text-lg font-semibold mb-4">Resources Timeline</h3>
+                    <div class="h-64">
+                        <canvas id="timeline-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Main Category Tabs -->
-        <div class="mb-8">
-            <div class="flex flex-wrap border-b border-gray-200 dark:border-gray-700">
-                <button id="all-tab" class="category-tab active px-6 py-3 text-lg font-medium focus:outline-none text-primary" data-category="all">
-                    All Resources
+        <div class="mb-8 animate-slide-up">
+            <div class="flex flex-wrap border-b border-gray-200 dark:border-dark-border overflow-x-auto hide-scrollbar pb-1">
+                <button id="all-tab" class="category-tab active px-6 py-3 text-lg focus:outline-none text-primary-500" data-category="all">
+                    <i class="fas fa-th-large mr-2"></i>All Resources
                 </button>
-                <button id="learn-tab" class="category-tab px-6 py-3 text-lg font-medium focus:outline-none text-learn-light dark:text-learn-light" data-category="learn">
-                    <span class="category-indicator learn"></span>Learn
+                <button id="learn-tab" class="category-tab px-6 py-3 text-lg focus:outline-none text-learn" data-category="learn">
+                    <i class="fas fa-book-open mr-2"></i>Learn
                 </button>
-                <button id="try-tab" class="category-tab px-6 py-3 text-lg font-medium focus:outline-none text-try-light dark:text-try-light" data-category="try">
-                    <span class="category-indicator try"></span>Try 
+                <button id="try-tab" class="category-tab px-6 py-3 text-lg focus:outline-none text-try" data-category="try">
+                    <i class="fas fa-pencil-alt mr-2"></i>Try 
                 </button>
             </div>
         </div>
@@ -371,18 +676,32 @@
         <div id="subcategory-filters" class="mb-8">
             <div id="learn-subcategories" class="hidden animate-fade-in">
                 <div class="flex flex-wrap gap-2 mb-4">
-                    <button class="subcategory-btn px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-green-100 dark:hover:bg-green-900 focus:outline-none active" data-parent="learn" data-subcategory="all">All</button>
-                    <button class="subcategory-btn px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-green-100 dark:hover:bg-green-900 focus:outline-none" data-parent="learn" data-subcategory="video">Video</button>
-                    <button class="subcategory-btn px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-green-100 dark:hover:bg-green-900 focus:outline-none" data-parent="learn" data-subcategory="notes">Notes</button>
+                    <button class="subcategory-btn btn btn-secondary px-4 py-2 active" data-parent="learn" data-subcategory="all">
+                        <i class="fas fa-layer-group mr-1"></i>All
+                    </button>
+                    <button class="subcategory-btn btn btn-secondary px-4 py-2" data-parent="learn" data-subcategory="video">
+                        <i class="fas fa-video mr-1"></i>Video
+                    </button>
+                    <button class="subcategory-btn btn btn-secondary px-4 py-2" data-parent="learn" data-subcategory="notes">
+                        <i class="fas fa-sticky-note mr-1"></i>Notes
+                    </button>
                 </div>
             </div>
 
             <div id="try-subcategories" class="hidden animate-fade-in">
                 <div class="flex flex-wrap gap-2 mb-4">
-                    <button class="subcategory-btn px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-orange-100 dark:hover:bg-orange-900 focus:outline-none active" data-parent="try" data-subcategory="all">All</button>
-                    <button class="subcategory-btn px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-orange-100 dark:hover:bg-orange-900 focus:outline-none" data-parent="try" data-subcategory="speaking">Speaking</button>
-                    <button class="subcategory-btn px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-orange-100 dark:hover:bg-orange-900 focus:outline-none" data-parent="try" data-subcategory="listening">Listening</button>
-                    <button class="subcategory-btn px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-orange-100 dark:hover:bg-orange-900 focus:outline-none" data-parent="try" data-subcategory="grammar-reading">Grammar & Reading</button>
+                    <button class="subcategory-btn btn btn-secondary px-4 py-2 active" data-parent="try" data-subcategory="all">
+                        <i class="fas fa-layer-group mr-1"></i>All
+                    </button>
+                    <button class="subcategory-btn btn btn-secondary px-4 py-2" data-parent="try" data-subcategory="speaking">
+                        <i class="fas fa-microphone mr-1"></i>Speaking
+                    </button>
+                    <button class="subcategory-btn btn btn-secondary px-4 py-2" data-parent="try" data-subcategory="listening">
+                        <i class="fas fa-headphones mr-1"></i>Listening
+                    </button>
+                    <button class="subcategory-btn btn btn-secondary px-4 py-2" data-parent="try" data-subcategory="grammar-reading">
+                        <i class="fas fa-book mr-1"></i>Grammar & Reading
+                    </button>
                 </div>
             </div>
         </div>
@@ -390,33 +709,71 @@
         <!-- Resources Section -->
         <section class="mb-12">
             <!-- Search and Filters -->
-            <div class="mb-8 bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 animate-fade-in">
-                <div class="flex flex-col lg:flex-row gap-4">
-                    <div class="flex-1">
-                        <label for="search-input" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Search</label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                            <input type="text" id="search-input" placeholder="Search resources..." class="pl-10 block w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary text-base">
+            <div class="mb-8 bg-white dark:bg-dark-card rounded-xl shadow-lg p-6 animate-fade-in">
+                <div class="flex flex-col lg:flex-row gap-6">
+                    <div class="flex-1 search-container">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="search-input" placeholder="Search resources..." class="search-input border-gray-300 dark:border-dark-border dark:bg-dark-lighter dark:text-white text-base">
+                    </div>
+                    
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <div>
+                            <label for="sort-by" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Sort By</label>
+                            <select id="sort-by" class="block w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-lighter focus:outline-none focus:ring-2 focus:ring-primary-400 text-base">
+                                <option value="title-asc">Title (A-Z)</option>
+                                <option value="title-desc">Title (Z-A)</option>
+                                <option value="newest">Newest First</option>
+                                <option value="oldest">Oldest First</option>
+                            </select>
+                        </div>
+                        
+                        <div class="flex items-end">
+                            <button id="reset-filters" class="btn btn-primary px-5 py-2 text-base">
+                                <i class="fas fa-sync-alt mr-2"></i>Reset Filters
+                            </button>
                         </div>
                     </div>
+                </div>
+            </div>
+            
+            <!-- Progress Tracking -->
+            <div class="mb-8 bg-white dark:bg-dark-card rounded-xl shadow-lg p-6 animate-fade-in" id="progress-section">
+                <h3 class="text-lg font-semibold mb-4 flex items-center">
+                    <i class="fas fa-tasks mr-2 text-primary-500"></i>Your Progress
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Overall Progress -->
                     <div>
-                        <label for="sort-by" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Sort By</label>
-                        <select id="sort-by" class="block w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary text-base">
-                            <option value="title-asc">Title (A-Z)</option>
-                            <option value="title-desc">Title (Z-A)</option>
-                            <option value="newest">Newest First</option>
-                            <option value="oldest">Oldest First</option>
-                        </select>
+                        <div class="flex justify-between mb-2">
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Overall</span>
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300" id="overall-progress-text">0%</span>
+                        </div>
+                        <div class="progress-container mb-4">
+                            <div class="progress-bar bg-primary-500" id="overall-progress-bar" style="width: 0%"></div>
+                        </div>
                     </div>
+                    
+                    <!-- Learn Progress -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 invisible">Reset</label>
-                        <button id="reset-filters" class="w-full px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition text-base">
-                            Reset Filters
-                        </button>
+                        <div class="flex justify-between mb-2">
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Learn Materials</span>
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300" id="learn-progress-text">0%</span>
+                        </div>
+                        <div class="progress-container mb-4">
+                            <div class="progress-bar bg-learn" id="learn-progress-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Try Progress -->
+                    <div>
+                        <div class="flex justify-between mb-2">
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Try Exercises</span>
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300" id="try-progress-text">0%</span>
+                        </div>
+                        <div class="progress-container mb-4">
+                            <div class="progress-bar bg-try" id="try-progress-bar" style="width: 0%"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -428,63 +785,146 @@
             
             <!-- No Results Message -->
             <div id="no-results" class="hidden text-center py-12 animate-fade-in">
-                <svg class="w-16 h-16 mx-auto text-gray-400 dark:text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                <p class="text-xl text-gray-600 dark:text-gray-400">No resources match your search criteria</p>
-                <button id="clear-search" class="mt-4 px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition">Clear Search</button>
+                <div class="max-w-md mx-auto bg-white dark:bg-dark-card p-8 rounded-xl shadow-lg">
+                    <i class="fas fa-search text-5xl text-gray-400 dark:text-gray-600 mb-4"></i>
+                    <p class="text-xl text-gray-600 dark:text-gray-400 mb-6">No resources match your search criteria</p>
+                    <button id="clear-search" class="btn btn-primary px-5 py-2">Clear Search</button>
+                </div>
             </div>
         </section>
 
         <!-- Footer -->
-        <footer class="text-center text-gray-600 dark:text-gray-400 py-6 border-t border-gray-200 dark:border-gray-800">
-            <div class="flex justify-center space-x-4 mb-4">
-                <button id="privacy-btn" class="text-primary hover:underline">Privacy Policy</button>
-                <span>|</span>
-                <button id="terms-btn" class="text-primary hover:underline">Terms of Service</button>
+        <footer class="text-center text-gray-600 dark:text-gray-400 py-8 border-t border-gray-200 dark:border-dark-border">
+            <div class="max-w-2xl mx-auto">
+                <div class="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 mb-6">
+                    <button id="privacy-btn" class="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400 flex items-center hover:underline transition-colors">
+                        <i class="fas fa-shield-alt mr-2"></i>Privacy Policy
+                    </button>
+                    <button id="terms-btn" class="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400 flex items-center hover:underline transition-colors">
+                        <i class="fas fa-file-contract mr-2"></i>Terms of Service
+                    </button>
+                    <button id="settings-btn" class="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400 flex items-center hover:underline transition-colors">
+                        <i class="fas fa-cog mr-2"></i>Preferences
+                    </button>
+                </div>
+                <p id="footer-copyright" class="text-sm">&copy; 2023 Study Resources. All rights reserved.</p>
             </div>
-            <p id="footer-copyright" class="text-sm">&copy; 2023 Study Resources. All rights reserved.</p>
         </footer>
     </div>
 
     <!-- Dialog Overlay -->
-    <div id="dialog-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-800 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-xl animate-bounce-in">
+    <div id="dialog-overlay" class="fixed inset-0 bg-black bg-opacity-70 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-dark-lighter rounded-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-2xl animate-scale-in">
             <div class="p-6">
-                <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-3 mb-4">
-                    <h3 id="dialog-title" class="text-xl font-semibold"></h3>
-                    <button id="dialog-close" class="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
+                <div class="flex justify-between items-center border-b border-gray-200 dark:border-dark-border pb-4 mb-4">
+                    <h3 id="dialog-title" class="text-xl font-semibold flex items-center"></h3>
+                    <button id="dialog-close" class="p-2 hover:bg-gray-100 dark:hover:bg-dark rounded-full transition-colors">
+                        <i class="fas fa-times"></i>
                     </button>
                 </div>
                 <div id="dialog-content" class="prose dark:prose-invert max-w-none">
                     <!-- Dialog content will be inserted here -->
                 </div>
                 <div class="mt-6 flex justify-end">
-                    <button id="dialog-accept" class="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition">I Accept</button>
+                    <button id="dialog-accept" class="btn btn-primary px-6 py-2 text-base">I Accept</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Resource Access Dialog -->
-    <div id="resource-access-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-800 rounded-lg max-w-md w-full shadow-xl animate-bounce-in">
+    <div id="resource-access-overlay" class="fixed inset-0 bg-black bg-opacity-70 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-dark-lighter rounded-xl max-w-md w-full shadow-2xl animate-scale-in">
             <div class="p-6">
-                <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-3 mb-4">
-                    <h3 class="text-xl font-semibold">Access Resource</h3>
-                    <button id="resource-dialog-close" class="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
+                <div class="flex justify-between items-center border-b border-gray-200 dark:border-dark-border pb-4 mb-4">
+                    <h3 class="text-xl font-semibold flex items-center">
+                        <i class="fas fa-lock mr-2 text-primary-500"></i>Access Resource
+                    </h3>
+                    <button id="resource-dialog-close" class="p-2 hover:bg-gray-100 dark:hover:bg-dark rounded-full transition-colors">
+                        <i class="fas fa-times"></i>
                     </button>
                 </div>
-                <p>By accessing this resource, you agree to our Terms of Service and Privacy Policy. Please read these documents before proceeding.</p>
-                <div class="mt-6 flex justify-between">
-                    <button id="view-terms-privacy" class="text-primary hover:underline">View Terms & Privacy</button>
-                    <button id="resource-access-btn" class="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition">I Agree & Access</button>
+                <p class="mb-4">By accessing this resource, you agree to our Terms of Service and Privacy Policy. Please read these documents before proceeding.</p>
+                <div class="mt-6 flex justify-between items-center">
+                    <button id="view-terms-privacy" class="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400 hover:underline">
+                        <i class="fas fa-external-link-alt mr-1"></i>View Terms & Privacy
+                    </button>
+                    <button id="resource-access-btn" class="btn btn-primary px-5 py-2">
+                        <i class="fas fa-check mr-2"></i>I Agree & Access
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Dialog -->
+    <div id="settings-overlay" class="fixed inset-0 bg-black bg-opacity-70 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-dark-lighter rounded-xl max-w-md w-full shadow-2xl animate-scale-in">
+            <div class="p-6">
+                <div class="flex justify-between items-center border-b border-gray-200 dark:border-dark-border pb-4 mb-4">
+                    <h3 class="text-xl font-semibold flex items-center">
+                        <i class="fas fa-cog mr-2 text-primary-500"></i>Preferences
+                    </h3>
+                    <button id="settings-dialog-close" class="p-2 hover:bg-gray-100 dark:hover:bg-dark rounded-full transition-colors">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-6">
+                    <!-- Dark Mode Toggle -->
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center">
+                            <i class="fas fa-moon mr-2 text-gray-600 dark:text-gray-300"></i>
+                            <span>Dark Mode</span>
+                        </label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="dark-mode-toggle-switch">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    
+                    <!-- Show Analytics Toggle -->
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center">
+                            <i class="fas fa-chart-bar mr-2 text-gray-600 dark:text-gray-300"></i>
+                            <span>Show Analytics</span>
+                        </label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="analytics-toggle-switch" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    
+                    <!-- Show Progress Toggle -->
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center">
+                            <i class="fas fa-tasks mr-2 text-gray-600 dark:text-gray-300"></i>
+                            <span>Show Progress</span>
+                        </label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="progress-toggle-switch" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    
+                    <!-- Font Size -->
+                    <div>
+                        <label class="flex items-center mb-2">
+                            <i class="fas fa-text-height mr-2 text-gray-600 dark:text-gray-300"></i>
+                            <span>Font Size</span>
+                        </label>
+                        <div class="flex items-center space-x-2">
+                            <button id="font-size-small" class="btn btn-secondary px-3 py-1 text-sm">Small</button>
+                            <button id="font-size-medium" class="btn btn-primary px-3 py-1 text-sm">Medium</button>
+                            <button id="font-size-large" class="btn btn-secondary px-3 py-1 text-sm">Large</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6 flex justify-end">
+                    <button id="settings-save" class="btn btn-primary px-5 py-2">
+                        <i class="fas fa-save mr-2"></i>Save Preferences
+                    </button>
                 </div>
             </div>
         </div>
@@ -504,6 +944,33 @@
         let countdownInterval = null;
         let maintenanceEndTime = null;
         let notificationQueue = [];
+        let charts = {};
+        
+        // User preferences
+        let userPreferences = {
+            darkMode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
+            showAnalytics: true,
+            showProgress: true,
+            fontSize: 'medium'
+        };
+
+        // Parse preferences from localStorage if available
+        try {
+            const savedPrefs = localStorage.getItem('userPreferences');
+            if (savedPrefs) {
+                userPreferences = {...userPreferences, ...JSON.parse(savedPrefs)};
+            }
+        } catch (e) {
+            console.error('Error loading preferences:', e);
+        }
+
+        // Simulated progress data for demonstration
+        let progressData = {
+            overall: 0,
+            learn: 0,
+            try: 0,
+            completed: []
+        };
 
         // DOM Elements
         const loadingElement = document.getElementById('loading');
@@ -529,6 +996,22 @@
         const learnSubcategories = document.getElementById('learn-subcategories');
         const trySubcategories = document.getElementById('try-subcategories');
         const notificationContainer = document.getElementById('notification-container');
+        const analyticsSection = document.getElementById('analytics-section');
+        const progressSection = document.getElementById('progress-section');
+        
+        // Stats Elements
+        const totalResourcesCount = document.getElementById('total-resources-count');
+        const learnResourcesCount = document.getElementById('learn-resources-count');
+        const tryResourcesCount = document.getElementById('try-resources-count');
+        const recentCount = document.getElementById('recent-count');
+        
+        // Progress Elements
+        const overallProgressBar = document.getElementById('overall-progress-bar');
+        const learnProgressBar = document.getElementById('learn-progress-bar');
+        const tryProgressBar = document.getElementById('try-progress-bar');
+        const overallProgressText = document.getElementById('overall-progress-text');
+        const learnProgressText = document.getElementById('learn-progress-text');
+        const tryProgressText = document.getElementById('try-progress-text');
         
         // Countdown Elements
         const countdownContainer = document.getElementById('countdown-container');
@@ -550,9 +1033,21 @@
         const resourceAccessButton = document.getElementById('resource-access-btn');
         const viewTermsPrivacyButton = document.getElementById('view-terms-privacy');
         
+        // Settings Dialog Elements
+        const settingsOverlay = document.getElementById('settings-overlay');
+        const settingsDialogCloseButton = document.getElementById('settings-dialog-close');
+        const settingsSaveButton = document.getElementById('settings-save');
+        const darkModeToggleSwitch = document.getElementById('dark-mode-toggle-switch');
+        const analyticsToggleSwitch = document.getElementById('analytics-toggle-switch');
+        const progressToggleSwitch = document.getElementById('progress-toggle-switch');
+        const fontSizeSmallButton = document.getElementById('font-size-small');
+        const fontSizeMediumButton = document.getElementById('font-size-medium');
+        const fontSizeLargeButton = document.getElementById('font-size-large');
+        
         // Button Elements
         const privacyButton = document.getElementById('privacy-btn');
         const termsButton = document.getElementById('terms-btn');
+        const settingsButton = document.getElementById('settings-btn');
         
         // Dark Mode Elements
         const darkModeToggle = document.querySelector('.dark-mode-toggle');
@@ -561,18 +1056,20 @@
 
         // Initialize dark mode based on user preference
         function initDarkMode() {
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            if (userPreferences.darkMode) {
                 document.documentElement.classList.add('dark');
                 updateDarkModeIcons(true);
             }
 
             window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-                if (event.matches) {
+                if (event.matches && !localStorage.getItem('userPreferences')) {
                     document.documentElement.classList.add('dark');
                     updateDarkModeIcons(true);
-                } else {
+                    userPreferences.darkMode = true;
+                } else if (!localStorage.getItem('userPreferences')) {
                     document.documentElement.classList.remove('dark');
                     updateDarkModeIcons(false);
+                    userPreferences.darkMode = false;
                 }
             });
         }
@@ -581,18 +1078,66 @@
             if (isDark) {
                 darkIcon.classList.add('hidden');
                 lightIcon.classList.remove('hidden');
+                if (darkModeToggleSwitch) darkModeToggleSwitch.checked = true;
             } else {
                 darkIcon.classList.remove('hidden');
                 lightIcon.classList.add('hidden');
+                if (darkModeToggleSwitch) darkModeToggleSwitch.checked = false;
             }
         }
 
         // Toggle dark mode
-        darkModeToggle.addEventListener('click', () => {
-            document.documentElement.classList.toggle('dark');
-            const isDark = document.documentElement.classList.contains('dark');
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
             updateDarkModeIcons(isDark);
-        });
+            userPreferences.darkMode = isDark;
+            saveUserPreferences();
+            
+            // Update charts with new theme
+            updateChartsTheme();
+        }
+
+        // Initialize user preferences
+        function initUserPreferences() {
+            // Set font size
+            document.documentElement.dataset.fontSize = userPreferences.fontSize;
+            updateFontSizeButtons();
+            
+            // Set visibility preferences
+            if (!userPreferences.showAnalytics) {
+                analyticsSection.classList.add('hidden');
+                analyticsToggleSwitch.checked = false;
+            }
+            
+            if (!userPreferences.showProgress) {
+                progressSection.classList.add('hidden');
+                progressToggleSwitch.checked = false;
+            }
+        }
+
+        // Update font size buttons
+        function updateFontSizeButtons() {
+            [fontSizeSmallButton, fontSizeMediumButton, fontSizeLargeButton].forEach(btn => {
+                btn.classList.remove('btn-primary', 'btn-secondary');
+                btn.classList.add('btn-secondary');
+            });
+            
+            if (userPreferences.fontSize === 'small') {
+                fontSizeSmallButton.classList.remove('btn-secondary');
+                fontSizeSmallButton.classList.add('btn-primary');
+            } else if (userPreferences.fontSize === 'medium') {
+                fontSizeMediumButton.classList.remove('btn-secondary');
+                fontSizeMediumButton.classList.add('btn-primary');
+            } else if (userPreferences.fontSize === 'large') {
+                fontSizeLargeButton.classList.remove('btn-secondary');
+                fontSizeLargeButton.classList.add('btn-primary');
+            }
+        }
+
+        // Save user preferences
+        function saveUserPreferences() {
+            localStorage.setItem('userPreferences', JSON.stringify(userPreferences));
+        }
 
         // Fetch settings from JSON file
         async function fetchSettings() {
@@ -611,6 +1156,7 @@
         // Initialize the application
         async function initApp() {
             initDarkMode();
+            initUserPreferences();
             
             // Fetch settings
             const settings = await fetchSettings();
@@ -625,6 +1171,9 @@
             // Update site metadata
             updateSiteMetadata();
             
+            // Initialize progress data (normally would be loaded from server)
+            initializeProgressData();
+            
             // Check maintenance mode
             checkMaintenanceMode();
             
@@ -636,6 +1185,9 @@
             
             // Initialize resources
             initializeResources();
+            
+            // Initialize analytics
+            initializeAnalytics();
             
             // Initialize category tabs
             initializeCategoryTabs();
@@ -649,19 +1201,22 @@
             // Initialize dialogs
             initDialogs();
             
+            // Initialize settings
+            initializeSettings();
+            
             // Hide loading screen with a slight delay for smoother transition
             setTimeout(() => {
                 loadingElement.style.opacity = '0';
                 loadingElement.style.transition = 'opacity 0.3s ease';
                 setTimeout(() => {
                     loadingElement.classList.add('hidden');
+                    
+                    // Show terms dialog immediately if not accepted
+                    if (!termsAccepted) {
+                        showTermsAndPrivacy();
+                    }
                 }, 300);
             }, 500);
-            
-            // Check if terms need to be shown
-            if (!termsAccepted && siteSettings.showTermsOnLoad) {
-                showTermsAndPrivacy();
-            }
         }
 
         // Update site metadata from settings
@@ -670,6 +1225,92 @@
             siteTitleElement.textContent = siteSettings.siteTitle || 'Study Resources';
             siteDescriptionElement.textContent = siteSettings.siteDescription || 'Your collection of English language study materials';
             footerCopyrightElement.textContent = siteSettings.footerText || '© 2023 Study Resources. All rights reserved.';
+        }
+
+        // Initialize progress data
+        function initializeProgressData() {
+            // Load completed resources from local storage
+            try {
+                const savedProgress = localStorage.getItem('resourceProgress');
+                if (savedProgress) {
+                    progressData.completed = JSON.parse(savedProgress);
+                }
+            } catch (e) {
+                console.error('Error loading progress data:', e);
+                progressData.completed = [];
+            }
+            
+            // Calculate progress percentages
+            updateProgressBars();
+        }
+
+        // Update progress bars
+        function updateProgressBars() {
+            if (!resources.length) return;
+            
+            const totalResources = resources.length;
+            const completedCount = progressData.completed.length;
+            
+            // Calculate learn category progress
+            const learnResources = resources.filter(r => r.category === 'learn');
+            const completedLearn = progressData.completed.filter(id => {
+                const resource = resources.find(r => r.id === id);
+                return resource && resource.category === 'learn';
+            });
+            
+            // Calculate try category progress
+            const tryResources = resources.filter(r => r.category === 'try');
+            const completedTry = progressData.completed.filter(id => {
+                const resource = resources.find(r => r.id === id);
+                return resource && resource.category === 'try';
+            });
+            
+            // Calculate percentages
+            progressData.overall = Math.round((completedCount / totalResources) * 100);
+            progressData.learn = learnResources.length ? Math.round((completedLearn.length / learnResources.length) * 100) : 0;
+            progressData.try = tryResources.length ? Math.round((completedTry.length / tryResources.length) * 100) : 0;
+            
+            // Update UI
+            overallProgressBar.style.width = `${progressData.overall}%`;
+            learnProgressBar.style.width = `${progressData.learn}%`;
+            tryProgressBar.style.width = `${progressData.try}%`;
+            
+            overallProgressText.textContent = `${progressData.overall}%`;
+            learnProgressText.textContent = `${progressData.learn}%`;
+            tryProgressText.textContent = `${progressData.try}%`;
+        }
+
+        // Mark resource as completed
+        function markResourceCompleted(resourceId) {
+            if (!progressData.completed.includes(resourceId)) {
+                progressData.completed.push(resourceId);
+                localStorage.setItem('resourceProgress', JSON.stringify(progressData.completed));
+                updateProgressBars();
+                
+                // Update UI to show completed state
+                updateResourceCompletedState();
+            }
+        }
+
+        // Update UI to reflect completed resources
+        function updateResourceCompletedState() {
+            const resourceCards = document.querySelectorAll('.resource-card');
+            resourceCards.forEach(card => {
+                const resourceId = card.dataset.id;
+                const completedBadge = card.querySelector('.completed-badge');
+                
+                if (progressData.completed.includes(resourceId)) {
+                    card.classList.add('completed');
+                    if (completedBadge) {
+                        completedBadge.classList.remove('hidden');
+                    }
+                } else {
+                    card.classList.remove('completed');
+                    if (completedBadge) {
+                        completedBadge.classList.add('hidden');
+                    }
+                }
+            });
         }
 
         // Check if site is in maintenance mode
@@ -788,7 +1429,7 @@
             
             // Create notification element
             const notificationEl = document.createElement('div');
-            notificationEl.className = 'notification bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden notification-enter';
+            notificationEl.className = 'notification bg-white dark:bg-dark-card rounded-lg shadow-lg overflow-hidden notification-enter';
             
             // Determine notification color based on type
             let typeClass = '';
@@ -797,23 +1438,23 @@
             switch (notification.type) {
                 case 'info':
                     typeClass = 'border-l-4 border-blue-500';
-                    iconSvg = '<svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+                    iconSvg = '<i class="fas fa-info-circle text-blue-500"></i>';
                     break;
                 case 'success':
                     typeClass = 'border-l-4 border-green-500';
-                    iconSvg = '<svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+                    iconSvg = '<i class="fas fa-check-circle text-green-500"></i>';
                     break;
                 case 'warning':
                     typeClass = 'border-l-4 border-yellow-500';
-                    iconSvg = '<svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>';
+                    iconSvg = '<i class="fas fa-exclamation-triangle text-yellow-500"></i>';
                     break;
                 case 'error':
                     typeClass = 'border-l-4 border-red-500';
-                    iconSvg = '<svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+                    iconSvg = '<i class="fas fa-times-circle text-red-500"></i>';
                     break;
                 default:
                     typeClass = 'border-l-4 border-gray-500';
-                    iconSvg = '<svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+                    iconSvg = '<i class="fas fa-bell text-gray-500"></i>';
             }
             
             notificationEl.classList.add(typeClass);
@@ -822,7 +1463,7 @@
             notificationEl.innerHTML = `
                 <div class="p-4">
                     <div class="flex items-start">
-                        <div class="flex-shrink-0">
+                        <div class="flex-shrink-0 w-6">
                             ${iconSvg}
                         </div>
                         <div class="ml-3 w-0 flex-1">
@@ -831,9 +1472,7 @@
                         </div>
                         <div class="ml-4 flex-shrink-0 flex">
                             <button class="notification-close inline-flex text-gray-400 dark:text-gray-600 hover:text-gray-500 dark:hover:text-gray-400 focus:outline-none">
-                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                </svg>
+                                <i class="fas fa-times"></i>
                             </button>
                         </div>
                     </div>
@@ -883,14 +1522,253 @@
                 return;
             }
             
+            // Add IDs to resources if none present
+            resources.forEach((resource, index) => {
+                if (!resource.id) {
+                    resource.id = `resource-${index}`;
+                }
+            });
+            
             // Create resource cards
             resources.forEach((resource, index) => {
                 const card = createResourceCard(resource, index);
                 resourcesGrid.appendChild(card);
             });
             
+            // Update stats
+            updateResourceStats();
+            
+            // Update completed states
+            updateResourceCompletedState();
+            
             // Initial filtering
             filterResources();
+        }
+
+        // Update resource statistics
+        function updateResourceStats() {
+            if (!resources.length) return;
+            
+            // Count resources by category
+            const learnCount = resources.filter(r => r.category === 'learn').length;
+            const tryCount = resources.filter(r => r.category === 'try').length;
+            
+            // Count recent resources (last 30 days)
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            
+            const recentResources = resources.filter(r => {
+                if (!r.date) return false;
+                const resourceDate = new Date(r.date);
+                return !isNaN(resourceDate) && resourceDate >= thirtyDaysAgo;
+            });
+            
+            // Update stats UI
+            totalResourcesCount.textContent = resources.length;
+            learnResourcesCount.textContent = learnCount;
+            tryResourcesCount.textContent = tryCount;
+            recentCount.textContent = recentResources.length;
+        }
+
+        // Initialize analytics
+        function initializeAnalytics() {
+            // Category distribution chart
+            const categoryCtx = document.getElementById('category-chart').getContext('2d');
+            
+            // Count resources by subcategory
+            const subcategoryCounts = {};
+            
+            resources.forEach(resource => {
+                const key = resource.category + '-' + resource.subcategory;
+                subcategoryCounts[key] = (subcategoryCounts[key] || 0) + 1;
+            });
+            
+            // Prepare data for chart
+            const categoryLabels = [];
+            const categoryData = [];
+            const categoryColors = [];
+            const categoryBorders = [];
+            
+            // Learn subcategories
+            ['video', 'notes'].forEach(sub => {
+                const key = 'learn-' + sub;
+                if (subcategoryCounts[key]) {
+                    categoryLabels.push('Learn: ' + sub.charAt(0).toUpperCase() + sub.slice(1));
+                    categoryData.push(subcategoryCounts[key]);
+                    categoryColors.push('rgba(34, 197, 94, 0.7)');
+                    categoryBorders.push('rgba(34, 197, 94, 1)');
+                }
+            });
+            
+            // Try subcategories
+            ['speaking', 'listening', 'grammar-reading'].forEach(sub => {
+                const key = 'try-' + sub;
+                if (subcategoryCounts[key]) {
+                    let label = 'Try: ';
+                    
+                    if (sub === 'grammar-reading') {
+                        label += 'Grammar & Reading';
+                    } else {
+                        label += sub.charAt(0).toUpperCase() + sub.slice(1);
+                    }
+                    
+                    categoryLabels.push(label);
+                    categoryData.push(subcategoryCounts[key]);
+                    categoryColors.push('rgba(249, 115, 22, 0.7)');
+                    categoryBorders.push('rgba(249, 115, 22, 1)');
+                }
+            });
+            
+            // Create chart
+            charts.categoryChart = new Chart(categoryCtx, {
+                type: 'pie',
+                data: {
+                    labels: categoryLabels,
+                    datasets: [{
+                        data: categoryData,
+                        backgroundColor: categoryColors,
+                        borderColor: categoryBorders,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                color: document.documentElement.classList.contains('dark') ? '#fff' : '#333',
+                                font: {
+                                    family: "'Inter', sans-serif",
+                                    size: 12
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Timeline chart
+            const timelineCtx = document.getElementById('timeline-chart').getContext('2d');
+            
+            // Group resources by month
+            const monthlyData = {};
+            const now = new Date();
+            
+            // Create months for the last 6 months
+            for (let i = 5; i >= 0; i--) {
+                const d = new Date(now);
+                d.setMonth(d.getMonth() - i);
+                const monthKey = `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}`;
+                monthlyData[monthKey] = { learn: 0, try: 0 };
+            }
+            
+            // Count resources by month and category
+            resources.forEach(resource => {
+                if (!resource.date) return;
+                
+                const date = new Date(resource.date);
+                if (isNaN(date)) return;
+                
+                const monthKey = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+                
+                if (monthlyData[monthKey]) {
+                    if (resource.category === 'learn') {
+                        monthlyData[monthKey].learn++;
+                    } else if (resource.category === 'try') {
+                        monthlyData[monthKey].try++;
+                    }
+                }
+            });
+            
+            // Format month labels
+            const monthLabels = Object.keys(monthlyData).map(key => {
+                const [year, month] = key.split('-');
+                return new Date(year, month - 1).toLocaleDateString(undefined, { month: 'short', year: 'numeric' });
+            });
+            
+            const learnData = Object.values(monthlyData).map(data => data.learn);
+            const tryData = Object.values(monthlyData).map(data => data.try);
+            
+            // Create chart
+            charts.timelineChart = new Chart(timelineCtx, {
+                type: 'bar',
+                data: {
+                    labels: monthLabels,
+                    datasets: [
+                        {
+                            label: 'Learn',
+                            data: learnData,
+                            backgroundColor: 'rgba(34, 197, 94, 0.7)',
+                            borderColor: 'rgba(34, 197, 94, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Try',
+                            data: tryData,
+                            backgroundColor: 'rgba(249, 115, 22, 0.7)',
+                            borderColor: 'rgba(249, 115, 22, 1)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: document.documentElement.classList.contains('dark') ? '#ddd' : '#333'
+                            },
+                            grid: {
+                                color: document.documentElement.classList.contains('dark') ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0,
+                                color: document.documentElement.classList.contains('dark') ? '#ddd' : '#333'
+                            },
+                            grid: {
+                                color: document.documentElement.classList.contains('dark') ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: document.documentElement.classList.contains('dark') ? '#fff' : '#333',
+                                font: {
+                                    family: "'Inter', sans-serif"
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update charts theme
+        function updateChartsTheme() {
+            if (!charts.categoryChart || !charts.timelineChart) return;
+            
+            const isDark = document.documentElement.classList.contains('dark');
+            const textColor = isDark ? '#fff' : '#333';
+            const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+            
+            // Update category chart
+            charts.categoryChart.options.plugins.legend.labels.color = textColor;
+            charts.categoryChart.update();
+            
+            // Update timeline chart
+            charts.timelineChart.options.scales.x.ticks.color = isDark ? '#ddd' : '#333';
+            charts.timelineChart.options.scales.y.ticks.color = isDark ? '#ddd' : '#333';
+            charts.timelineChart.options.scales.x.grid.color = gridColor;
+            charts.timelineChart.options.scales.y.grid.color = gridColor;
+            charts.timelineChart.options.plugins.legend.labels.color = textColor;
+            charts.timelineChart.update();
         }
 
         // Initialize category tabs
@@ -955,13 +1833,35 @@
             
             // Determine card category styling
             let categoryClass = '';
+            let categoryIcon = '';
             if (resource.category === 'learn') {
                 categoryClass = 'category-learn';
+                categoryIcon = 'fas fa-graduation-cap';
             } else if (resource.category === 'try') {
                 categoryClass = 'category-try';
+                categoryIcon = 'fas fa-tasks';
             }
             
-            card.className = `resource-card bg-white dark:bg-gray-800 rounded-lg shadow-card hover:shadow-card-hover overflow-hidden border border-gray-200 dark:border-gray-700 animate-fade-in ${categoryClass}`;
+            // Determine subcategory icon
+            let subcategoryIcon = 'fas fa-file';
+            if (resource.category === 'learn') {
+                if (resource.subcategory === 'video') {
+                    subcategoryIcon = 'fas fa-video';
+                } else if (resource.subcategory === 'notes') {
+                    subcategoryIcon = 'fas fa-sticky-note';
+                }
+            } else if (resource.category === 'try') {
+                if (resource.subcategory === 'speaking') {
+                    subcategoryIcon = 'fas fa-microphone';
+                } else if (resource.subcategory === 'listening') {
+                    subcategoryIcon = 'fas fa-headphones';
+                } else if (resource.subcategory === 'grammar-reading') {
+                    subcategoryIcon = 'fas fa-book';
+                }
+            }
+            
+            card.className = `resource-card bg-white dark:bg-dark-card shadow-lg dark:shadow-card-dark hover:shadow-card-hover overflow-hidden border border-gray-200 dark:border-dark-border animate-fade-in ${categoryClass}`;
+            card.dataset.id = resource.id;
             card.style.animationDelay = `${index * 0.05}s`;
             
             // Format date if available
@@ -969,31 +1869,74 @@
             if (resource.date) {
                 const date = new Date(resource.date);
                 if (!isNaN(date)) {
-                    dateDisplay = `<div class="text-xs text-gray-500 dark:text-gray-400">${date.toLocaleDateString()}</div>`;
+                    const formattedDate = date.toLocaleDateString(undefined, {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    });
+                    dateDisplay = `<div class="text-xs text-gray-500 dark:text-gray-400 flex items-center"><i class="fas fa-calendar-alt mr-1"></i>${formattedDate}</div>`;
                 }
             }
             
             // Create subcategory badge
             let subcategoryBadge = '';
             if (resource.subcategory) {
-                subcategoryBadge = `<span class="category-badge px-2 py-1 text-xs font-medium rounded">${resource.subcategory}</span>`;
+                let subcategoryText = resource.subcategory;
+                
+                // Format grammar-reading as "Grammar & Reading"
+                if (subcategoryText === 'grammar-reading') {
+                    subcategoryText = 'Grammar & Reading';
+                } else {
+                    // Capitalize first letter
+                    subcategoryText = subcategoryText.charAt(0).toUpperCase() + subcategoryText.slice(1);
+                }
+                
+                subcategoryBadge = `<span class="category-badge"><i class="${subcategoryIcon}"></i>${subcategoryText}</span>`;
             }
             
+            // Completed badge (hidden by default, shown by updateResourceCompletedState if completed)
+            const completedBadge = `<span class="completed-badge hidden absolute top-2 right-2 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 text-xs px-2 py-1 rounded-full"><i class="fas fa-check mr-1"></i>Completed</span>`;
+            
             const cardContent = `
-                <div class="card-header p-3 flex items-center justify-between">
-                    ${subcategoryBadge}
-                    ${dateDisplay}
-                </div>
-                <div class="p-5">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">${resource.title}</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2 h-12">${resource.description || 'No description provided'}</p>
-                    <button class="resource-access-btn w-full px-4 py-2 bg-primary hover:bg-primary-dark dark:bg-primary-light dark:hover:bg-primary text-white rounded transition-colors" data-index="${index}">
-                        Access Resource
-                    </button>
+                <div class="relative">
+                    ${completedBadge}
+                    <div class="p-5">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 rounded-full bg-${resource.category === 'learn' ? 'green' : 'orange'}-100 dark:bg-${resource.category === 'learn' ? 'green' : 'orange'}-900/30 flex items-center justify-center text-${resource.category === 'learn' ? 'green' : 'orange'}-600 dark:text-${resource.category === 'learn' ? 'green' : 'orange'}-400 mr-3">
+                                    <i class="${categoryIcon}"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">${resource.title}</h3>
+                                    ${dateDisplay}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            ${subcategoryBadge}
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-300 mb-6 line-clamp-2 min-h-[3rem]">${resource.description || 'No description provided'}</p>
+                        <div class="flex justify-between items-center">
+                            <button class="resource-access-btn btn btn-primary btn-access px-4 py-2 text-base" data-index="${index}">
+                                <i class="fas fa-external-link-alt mr-2"></i>Access Resource
+                            </button>
+                            <button class="complete-resource-btn tooltip p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200" data-id="${resource.id}">
+                                <i class="fas fa-check-circle"></i>
+                                <span class="tooltip-content">Mark as Complete</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             `;
             
             card.innerHTML = cardContent;
+            
+            // Add event listener for marking as complete
+            card.querySelector('.complete-resource-btn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                markResourceCompleted(resource.id);
+            });
+            
             return card;
         }
 
@@ -1040,7 +1983,8 @@
                 // Check search term
                 const matchesSearch = !searchTerm ||
                     resource.title.toLowerCase().includes(searchTerm) ||
-                    (resource.description && resource.description.toLowerCase().includes(searchTerm));
+                    (resource.description && resource.description.toLowerCase().includes(searchTerm)) ||
+                    (resource.subcategory && resource.subcategory.toLowerCase().includes(searchTerm));
                 
                 // Check main category
                 const matchesMainCategory = 
@@ -1162,9 +2106,92 @@
             });
         }
 
+        // Initialize settings dialog
+        function initializeSettings() {
+            // Settings button
+            settingsButton.addEventListener('click', showSettingsDialog);
+            
+            // Settings close button
+            settingsDialogCloseButton.addEventListener('click', closeSettingsDialog);
+            
+            // Settings save button
+            settingsSaveButton.addEventListener('click', saveSettings);
+            
+            // Dark mode toggle
+            darkModeToggleSwitch.addEventListener('change', () => {
+                toggleDarkMode();
+            });
+            
+            // Analytics toggle
+            analyticsToggleSwitch.addEventListener('change', (e) => {
+                userPreferences.showAnalytics = e.target.checked;
+                analyticsSection.classList.toggle('hidden', !e.target.checked);
+            });
+            
+            // Progress toggle
+            progressToggleSwitch.addEventListener('change', (e) => {
+                userPreferences.showProgress = e.target.checked;
+                progressSection.classList.toggle('hidden', !e.target.checked);
+            });
+            
+            // Font size buttons
+            fontSizeSmallButton.addEventListener('click', () => setFontSize('small'));
+            fontSizeMediumButton.addEventListener('click', () => setFontSize('medium'));
+            fontSizeLargeButton.addEventListener('click', () => setFontSize('large'));
+            
+            // Dark mode toggle (header button)
+            darkModeToggle.addEventListener('click', toggleDarkMode);
+        }
+
+        // Set font size
+        function setFontSize(size) {
+            userPreferences.fontSize = size;
+            document.documentElement.dataset.fontSize = size;
+            updateFontSizeButtons();
+        }
+
+        // Show settings dialog
+        function showSettingsDialog() {
+            // Update toggle states based on current preferences
+            darkModeToggleSwitch.checked = document.documentElement.classList.contains('dark');
+            analyticsToggleSwitch.checked = userPreferences.showAnalytics;
+            progressToggleSwitch.checked = userPreferences.showProgress;
+            
+            // Update font size buttons
+            updateFontSizeButtons();
+            
+            // Show dialog
+            settingsOverlay.classList.remove('hidden');
+        }
+
+        // Close settings dialog
+        function closeSettingsDialog() {
+            settingsOverlay.classList.add('hidden');
+        }
+
+        // Save settings
+        function saveSettings() {
+            // Save preferences
+            saveUserPreferences();
+            
+            // Close dialog
+            closeSettingsDialog();
+            
+            // Show confirmation
+            const notification = {
+                type: 'success',
+                title: 'Settings Saved',
+                message: 'Your preferences have been updated.',
+                duration: 3000
+            };
+            
+            notificationQueue.push(notification);
+            showNextNotification();
+        }
+
         // Show terms and privacy policy dialog
         function showTermsAndPrivacy() {
-            dialogTitle.textContent = 'Terms of Service & Privacy Policy';
+            dialogTitle.innerHTML = '<i class="fas fa-file-contract mr-2 text-primary-500"></i>Terms of Service & Privacy Policy';
             
             let content = '<div class="mb-6">';
             content += '<h4 class="text-lg font-semibold mb-2">Terms of Service</h4>';
@@ -1183,7 +2210,7 @@
 
         // Show privacy policy dialog
         function showPrivacyPolicy() {
-            dialogTitle.textContent = 'Privacy Policy';
+            dialogTitle.innerHTML = '<i class="fas fa-shield-alt mr-2 text-primary-500"></i>Privacy Policy';
             dialogContent.innerHTML = siteSettings.privacyPolicy || 'Privacy Policy content not available.';
             dialogAcceptButton.textContent = 'Close';
             dialogOverlay.classList.remove('hidden');
@@ -1191,7 +2218,7 @@
 
         // Show terms of service dialog
         function showTermsOfService() {
-            dialogTitle.textContent = 'Terms of Service';
+            dialogTitle.innerHTML = '<i class="fas fa-file-contract mr-2 text-primary-500"></i>Terms of Service';
             dialogContent.innerHTML = siteSettings.termsOfService || 'Terms of Service content not available.';
             dialogAcceptButton.textContent = 'Close';
             dialogOverlay.classList.remove('hidden');
@@ -1216,6 +2243,11 @@
         function openResource(resource) {
             if (resource && resource.url) {
                 window.open(resource.url, '_blank');
+                
+                // Add to completed resources if not already completed
+                if (!progressData.completed.includes(resource.id)) {
+                    markResourceCompleted(resource.id);
+                }
             } else {
                 showError('Resource URL is not available.');
             }
@@ -1223,7 +2255,7 @@
 
         // Show error message
         function showError(message) {
-            dialogTitle.textContent = 'Error';
+            dialogTitle.innerHTML = '<i class="fas fa-exclamation-circle mr-2 text-red-500"></i>Error';
             dialogContent.innerHTML = `<p class="text-red-500">${message}</p>`;
             dialogAcceptButton.textContent = 'OK';
             dialogOverlay.classList.remove('hidden');
