@@ -1,11 +1,11 @@
 {
   "siteTitle": "Study Resources",
   "siteDescription": "Your collection of English language study materials",
-  "footerText": "© 2023 Study Resources. All rights reserved.",
+  "footerText": "© 2025 Comensal"s Study Resources. All rights reserved.",
   
-  "maintenanceMode": "none",
-  "maintenanceMessage": "Our website is currently undergoing scheduled maintenance.",
-  "maintenanceEndTime": "2023-12-31T18:00:00Z",
+  "maintenanceMode": "full",
+  "maintenanceMessage": "Our website is currently undergoing scheduled maintenance. It's scheduled to serve again at Fri 7 Mar 9:00 AM",
+  "maintenanceEndTime": "2025-03-07T09:00:00Z",
   
   "showCustomerMessage": false,
   "customerMessage": "Welcome to our updated platform! Check out the new study resources.",
