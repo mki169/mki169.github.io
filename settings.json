@@ -1,18 +1,13 @@
 {
   "siteTitle": "English Study Resources",
   "siteDescription": "A collection of study materials for English language learners",
-  "footerText": "© 2023 John Doe. All rights reserved.",
+  "footerText": "© 2023 Study Resources. All rights reserved.",
   "maintenanceMode": "partial", 
   "maintenanceMessage": "We're currently updating our Grammar & Reading resources. Please check back soon!",
-  "maintenanceEndTime": "2023-12-31T23:59:59",
+  "maintenanceEndTime": "2023-12-31T23:59:59Z",
   "showTermsOnLoad": true,
   "showCustomerMessage": true,
   "customerMessage": "New video lessons have been added! Check them out in the 'Learn > Video' section.",
-  "themeColors": {
-    "primary": "#5D5CDE",
-    "learn": "#22c55e",
-    "try": "#f97316"
-  },
   "notifications": [
     {
       "type": "info",
@@ -39,10 +34,8 @@
     "Discover resources tailored for your learning needs!",
     "Your path to English fluency starts here!"
   ],
-  "privacyPolicy": "<p>This Privacy Policy outlines how we collect, use, and protect your personal information when you use our website.</p><p>We do not collect any personal information through this website. The resources provided are for educational purposes only.</p><p>By accessing or using our website, you agree to the collection and use of information in accordance with this policy.</p><p>If you choose to use our Service, then you agree to the collection and use of information in relation to this policy. The Personal Information that we collect is used for providing and improving the Service. We will not use or share your information with anyone except as described in this Privacy Policy.</p><p>The security of your Personal Information is important to us, but remember that no method of transmission over the Internet, or method of electronic storage is 100% secure. While we strive to use commercially acceptable means to protect your Personal Information, we cannot guarantee its absolute security.</p>",
-  "termsOfService": "<p>By accessing and using this website, you agree to comply with these Terms of Service.</p><p>All resources provided on this website are for educational purposes only. You may not redistribute or sell these materials without permission.</p><p>Our website provides access to educational resources that are intended for personal use. By accessing these resources, you agree to use them solely for your personal education and not for commercial purposes.</p><p>We reserve the right to modify or replace these Terms at any time. If a revision is material we will try to provide at least 30 days' notice prior to any new terms taking effect.</p><p>Our Service may contain links to third-party web sites or services that are not owned or controlled by us. We have no control over, and assume no responsibility for, the content, privacy policies, or practices of any third party web sites or services.</p><p>We may terminate or suspend access to our Service immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms.</p>",
-  "allowAnalytics": true,
-  "allowProgressTracking": true,
+  "privacyPolicy": "<p>This Privacy Policy outlines how we collect, use, and protect your personal information when you use our website.</p><p>We do not collect any personal information through this website. The resources provided are for educational purposes only.</p><p>By accessing or using our website, you agree to the collection and use of information in accordance with this policy.</p><p>The security of your Personal Information is important to us, but remember that no method of transmission over the Internet, or method of electronic storage is 100% secure. While we strive to use commercially acceptable means to protect your Personal Information, we cannot guarantee its absolute security.</p>",
+  "termsOfService": "<p>By accessing and using this website, you agree to comply with these Terms of Service.</p><p>All resources provided on this website are for educational purposes only. You may not redistribute or sell these materials without permission.</p><p>Our website provides access to educational resources that are intended for personal use. By accessing these resources, you agree to use them solely for your personal education and not for commercial purposes.</p><p>We reserve the right to modify or replace these Terms at any time. If a revision is material we will try to provide at least 30 days' notice prior to any new terms taking effect.</p>",
   "resources": [
     {
       "id": "grammar-basics",
