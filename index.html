@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>English Study Resources</title>
+    <title>Study Resources</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -12,20 +12,10 @@
                 extend: {
                     colors: {
                         primary: '#5D5CDE',
-                        apple: {
-                            light: '#ffffff',
-                            dark: '#181818',
-                            gray: '#f5f5f7',
-                            darkgray: '#313131'
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif']
                     },
                     animation: {
                         'fade-in': 'fadeIn 0.5s ease-in-out',
-                        'slide-up': 'slideUp 0.5s ease-out',
-                        'pulse-slow': 'pulse 3s infinite',
+                        'slide-up': 'slideUp 0.5s ease-in-out',
                     },
                     keyframes: {
                         fadeIn: {
@@ -39,609 +29,599 @@
                     }
                 }
             }
-        }
+        };
     </script>
     <style type="text/css">
-        /* Custom scrollbar for Webkit browsers */
+        .hidden {
+            display: none !important;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        .slide-up {
+            animation: slideUp 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            0% { transform: translateY(20px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        .resource-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .resource-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Light/Dark mode transitions */
+        .dark .dark\:bg-gray-900,
+        .dark .dark\:bg-gray-800,
+        .dark .dark\:text-white,
+        .dark .dark\:text-gray-200,
+        .dark .dark\:border-gray-700,
+        html {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        /* Scrollbar styling */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
         }
+        
         ::-webkit-scrollbar-track {
             background: transparent;
         }
+        
         ::-webkit-scrollbar-thumb {
-            background: #888;
+            background: #d1d5db;
             border-radius: 4px;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
+        
         .dark ::-webkit-scrollbar-thumb {
-            background: #555;
-        }
-        .dark ::-webkit-scrollbar-thumb:hover {
-            background: #777;
-        }
-        
-        /* Card hover effect */
-        .resource-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .resource-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        /* Category pills */
-        .category-pill {
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-        .category-pill:hover:not(.active) {
-            background-color: #f0f0f0;
-        }
-        .dark .category-pill:hover:not(.active) {
-            background-color: #2a2a2a;
-        }
-        
-        /* Type badge animation */
-        @keyframes pulseLight {
-            0%, 100% { background-color: rgba(93, 92, 222, 0.1); }
-            50% { background-color: rgba(93, 92, 222, 0.2); }
-        }
-        @keyframes pulseDark {
-            0%, 100% { background-color: rgba(93, 92, 222, 0.2); }
-            50% { background-color: rgba(93, 92, 222, 0.3); }
-        }
-        .type-badge {
-            animation: pulseLight 3s infinite;
-        }
-        .dark .type-badge {
-            animation: pulseDark 3s infinite;
-        }
-        
-        /* Loader */
-        .loader {
-            border-top-color: #5D5CDE;
-            animation: spinner 0.6s linear infinite;
-        }
-        @keyframes spinner {
-            to { transform: rotate(360deg); }
-        }
-        
-        /* Page transitions */
-        .page-transition {
-            transition: opacity 0.3s ease;
-        }
-        .page-transition.loading {
-            opacity: 0.7;
+            background: #4b5563;
         }
     </style>
 </head>
-<body class="font-sans bg-apple-light dark:bg-apple-dark text-gray-900 dark:text-gray-100 transition-colors duration-200">
-    <header class="sticky top-0 bg-apple-light/80 dark:bg-apple-dark/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 z-10">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center py-4">
-                <div class="flex items-center space-x-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                    </svg>
-                    <h1 class="text-xl font-semibold">English Study Resources</h1>
-                </div>
-                <div class="flex items-center space-x-3">
-                    <button id="searchToggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors duration-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                    </button>
-                    <button id="darkModeToggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors duration-200">
-                        <!-- Sun icon for dark mode -->
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
-                        <!-- Moon icon for light mode -->
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                        </svg>
-                    </button>
-                </div>
+<body class="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-white transition-colors duration-300">
+    <!-- Main Content Container -->
+    <div id="app" class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- Loading Overlay -->
+        <div id="loading" class="fixed inset-0 flex items-center justify-center bg-white dark:bg-gray-900 z-50">
+            <div class="text-center">
+                <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+                <p class="mt-4 text-lg">Loading resources...</p>
             </div>
         </div>
-    </header>
 
-    <!-- Search Panel -->
-    <div id="searchPanel" class="hidden bg-apple-light dark:bg-apple-dark border-b border-gray-200 dark:border-gray-800 py-4 animate-fade-in">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="relative">
-                <input type="text" id="searchInput" placeholder="Search resources..." class="w-full bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg py-3 px-4 pl-12 text-base focus:outline-none focus:ring-2 focus:ring-primary">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500 absolute left-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        <!-- Maintenance Mode Banner -->
+        <div id="maintenance-banner" class="hidden bg-yellow-100 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-100 px-4 py-3 rounded-lg mb-6 animate-fade-in">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                 </svg>
-                <button id="closeSearch" class="absolute right-3 top-3 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
+                <span id="maintenance-message">This site is currently undergoing maintenance. Some features may be unavailable.</span>
             </div>
         </div>
+
+        <!-- Header -->
+        <header class="mb-12 text-center">
+            <div class="dark-mode-toggle absolute top-4 right-4 cursor-pointer" title="Toggle Dark Mode">
+                <!-- Sun icon for dark mode -->
+                <svg id="light-icon" class="hidden w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                </svg>
+                <!-- Moon icon for light mode -->
+                <svg id="dark-icon" class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                </svg>
+            </div>
+            <h1 id="site-title" class="text-4xl font-bold mb-2 animate-fade-in">Study Resources</h1>
+            <p id="site-description" class="text-xl text-gray-600 dark:text-gray-300 mb-6 animate-fade-in">Your collection of English language study materials</p>
+            <div id="greeting" class="py-4 px-6 bg-primary/10 dark:bg-primary/20 rounded-lg text-primary dark:text-primary-light inline-block animate-slide-up"></div>
+        </header>
+
+        <!-- Resources Section -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-semibold mb-6 border-b pb-2 border-gray-200 dark:border-gray-700">Available Resources</h2>
+            
+            <!-- Filter and Search -->
+            <div class="mb-8 flex flex-col md:flex-row gap-4">
+                <div class="flex-1">
+                    <input type="text" id="search-input" placeholder="Search resources..." class="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary">
+                </div>
+                <div class="flex gap-2">
+                    <select id="category-filter" class="px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary">
+                        <option value="all">All Categories</option>
+                    </select>
+                    <button id="reset-filters" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition">
+                        Reset
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Resources Grid -->
+            <div id="resources-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Resource cards will be dynamically inserted here -->
+            </div>
+            
+            <!-- No Results Message -->
+            <div id="no-results" class="hidden text-center py-12">
+                <svg class="w-16 h-16 mx-auto text-gray-400 dark:text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <p class="text-xl text-gray-600 dark:text-gray-400">No resources match your search criteria</p>
+                <button id="clear-search" class="mt-4 px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition">Clear Search</button>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center text-gray-600 dark:text-gray-400 py-6 border-t border-gray-200 dark:border-gray-800">
+            <div class="flex justify-center space-x-4 mb-4">
+                <button id="privacy-btn" class="text-primary hover:underline">Privacy Policy</button>
+                <span>|</span>
+                <button id="terms-btn" class="text-primary hover:underline">Terms of Service</button>
+            </div>
+            <p id="footer-copyright" class="text-sm">&copy; 2023 Study Resources. All rights reserved.</p>
+        </footer>
     </div>
 
-    <!-- Loading Indicator -->
-    <div id="loadingIndicator" class="fixed inset-0 bg-black bg-opacity-20 dark:bg-opacity-40 z-50 flex items-center justify-center hidden">
-        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-xl flex items-center space-x-3">
-            <div class="loader h-5 w-5 rounded-full border-2 border-gray-300"></div>
-            <p>Loading resources...</p>
-        </div>
-    </div>
-
-    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 page-transition" id="mainContent">
-        <!-- Info Alert -->
-        <div class="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-500 p-4 mb-8 rounded-r-lg animate-fade-in">
-            <div class="flex">
-                <div class="flex-shrink-0">
-                    <svg class="h-5 w-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
-                    </svg>
-                </div>
-                <div class="ml-3">
-                    <p class="text-sm text-blue-800 dark:text-blue-200">
-                        Resources are loaded dynamically from <code class="font-mono bg-blue-100 dark:bg-blue-800/50 px-1 rounded">settings.json</code>. You can add more papers and types without changing HTML code.
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Resource Type Filter -->
-        <div class="mb-8 overflow-x-auto pb-2">
-            <div id="resourceTypeFilter" class="flex space-x-2 min-w-max">
-                <button class="category-pill active bg-primary text-white px-4 py-2 rounded-full text-sm font-medium transition-all duration-200" data-type="all">
-                    All Resources
-                </button>
-                <!-- Additional filter buttons will be added dynamically -->
-            </div>
-        </div>
-        
-        <!-- Resources sections will be added here dynamically -->
-        <div id="resourcesContainer">
-            <div class="flex justify-center items-center py-12">
-                <div class="loader h-8 w-8 rounded-full border-4 border-gray-300"></div>
-            </div>
-        </div>
-    </main>
-
-    <footer class="bg-apple-gray dark:bg-apple-darkgray py-8">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="flex flex-col space-y-2 mb-4 md:mb-0">
-                    <p class="text-gray-600 dark:text-gray-400 text-sm">
-                        © <span id="current-year">2023</span> English Study Resources. All rights reserved.
-                    </p>
-                    <p class="text-gray-500 dark:text-gray-500 text-xs">
-                        Resources stored in <code class="font-mono">[repo]/english/mockpapers/*</code>
-                    </p>
-                </div>
-                <div class="flex space-x-4">
-                    <a href="https://github.com/username/repo" class="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors duration-200" target="_blank" rel="noopener noreferrer">
-                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path>
+    <!-- Dialog Overlay -->
+    <div id="dialog-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-xl animate-fade-in">
+            <div class="p-6">
+                <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-3 mb-4">
+                    <h3 id="dialog-title" class="text-xl font-semibold"></h3>
+                    <button id="dialog-close" class="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
-                    </a>
+                    </button>
+                </div>
+                <div id="dialog-content" class="prose dark:prose-invert max-w-none">
+                    <!-- Dialog content will be inserted here -->
+                </div>
+                <div class="mt-6 flex justify-end">
+                    <button id="dialog-accept" class="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition">I Accept</button>
                 </div>
             </div>
         </div>
-    </footer>
+    </div>
+
+    <!-- Resource Access Dialog -->
+    <div id="resource-access-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg max-w-md w-full shadow-xl animate-fade-in">
+            <div class="p-6">
+                <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-3 mb-4">
+                    <h3 class="text-xl font-semibold">Access Resource</h3>
+                    <button id="resource-dialog-close" class="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <p>By accessing this resource, you agree to our Terms of Service and Privacy Policy. Please read these documents before proceeding.</p>
+                <div class="mt-6 flex justify-between">
+                    <button id="view-terms-privacy" class="text-primary hover:underline">View Terms & Privacy</button>
+                    <button id="resource-access-btn" class="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition">I Agree & Access</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // Set current year in footer
-        document.getElementById('current-year').textContent = new Date().getFullYear();
+        // State management
+        let siteSettings = {};
+        let resources = [];
+        let termsAccepted = localStorage.getItem('termsAccepted') === 'true';
+        let selectedResource = null;
+        let categories = new Set(['all']);
 
-        // Dark mode implementation
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.documentElement.classList.add('dark');
-        }
+        // DOM Elements
+        const loadingElement = document.getElementById('loading');
+        const maintenanceBanner = document.getElementById('maintenance-banner');
+        const maintenanceMessage = document.getElementById('maintenance-message');
+        const siteTitleElement = document.getElementById('site-title');
+        const siteDescriptionElement = document.getElementById('site-description');
+        const greetingElement = document.getElementById('greeting');
+        const resourcesGrid = document.getElementById('resources-grid');
+        const footerCopyrightElement = document.getElementById('footer-copyright');
+        const noResultsElement = document.getElementById('no-results');
+        const clearSearchButton = document.getElementById('clear-search');
+        const searchInput = document.getElementById('search-input');
+        const categoryFilter = document.getElementById('category-filter');
+        const resetFiltersButton = document.getElementById('reset-filters');
         
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-            if (event.matches) {
+        // Dialog Elements
+        const dialogOverlay = document.getElementById('dialog-overlay');
+        const dialogTitle = document.getElementById('dialog-title');
+        const dialogContent = document.getElementById('dialog-content');
+        const dialogCloseButton = document.getElementById('dialog-close');
+        const dialogAcceptButton = document.getElementById('dialog-accept');
+        
+        // Resource Access Dialog Elements
+        const resourceAccessOverlay = document.getElementById('resource-access-overlay');
+        const resourceDialogCloseButton = document.getElementById('resource-dialog-close');
+        const resourceAccessButton = document.getElementById('resource-access-btn');
+        const viewTermsPrivacyButton = document.getElementById('view-terms-privacy');
+        
+        // Button Elements
+        const privacyButton = document.getElementById('privacy-btn');
+        const termsButton = document.getElementById('terms-btn');
+        
+        // Dark Mode Elements
+        const darkModeToggle = document.querySelector('.dark-mode-toggle');
+        const darkIcon = document.getElementById('dark-icon');
+        const lightIcon = document.getElementById('light-icon');
+
+        // Initialize dark mode based on user preference
+        function initDarkMode() {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
                 document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
+                updateDarkModeIcons(true);
             }
-        });
-        
-        // Dark mode toggle
-        document.getElementById('darkModeToggle').addEventListener('click', function() {
+
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+                if (event.matches) {
+                    document.documentElement.classList.add('dark');
+                    updateDarkModeIcons(true);
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    updateDarkModeIcons(false);
+                }
+            });
+        }
+
+        function updateDarkModeIcons(isDark) {
+            if (isDark) {
+                darkIcon.classList.add('hidden');
+                lightIcon.classList.remove('hidden');
+            } else {
+                darkIcon.classList.remove('hidden');
+                lightIcon.classList.add('hidden');
+            }
+        }
+
+        // Toggle dark mode
+        darkModeToggle.addEventListener('click', () => {
             document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            updateDarkModeIcons(isDark);
         });
 
-        // Search toggle functionality
-        document.getElementById('searchToggle').addEventListener('click', function() {
-            const searchPanel = document.getElementById('searchPanel');
-            searchPanel.classList.toggle('hidden');
-            if (!searchPanel.classList.contains('hidden')) {
-                document.getElementById('searchInput').focus();
-            }
-        });
-
-        document.getElementById('closeSearch').addEventListener('click', function() {
-            document.getElementById('searchPanel').classList.add('hidden');
-        });
-
-        // Search functionality
-        document.getElementById('searchInput').addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase().trim();
-            const resourceCards = document.querySelectorAll('.resource-card');
-            
-            resourceCards.forEach(card => {
-                const title = card.querySelector('h3').textContent.toLowerCase();
-                const description = card.querySelector('p').textContent.toLowerCase();
-                const isVisible = title.includes(searchTerm) || description.includes(searchTerm);
-                
-                card.classList.toggle('hidden', !isVisible);
-                
-                // Add slide-up animation when becoming visible again
-                if (isVisible && searchTerm.length > 0) {
-                    card.classList.add('animate-slide-up');
-                    setTimeout(() => {
-                        card.classList.remove('animate-slide-up');
-                    }, 500);
-                }
-            });
-            
-            // Check if any cards are visible in each section
-            document.querySelectorAll('.resource-section').forEach(section => {
-                const visibleCards = section.querySelectorAll('.resource-card:not(.hidden)').length;
-                const sectionHeading = section.querySelector('h2').parentElement;
-                
-                sectionHeading.classList.toggle('hidden', visibleCards === 0);
-            });
-        });
-
-        // Resource type filter functionality
-        function setActiveFilter(element) {
-            // Remove active class from all filter buttons
-            document.querySelectorAll('.category-pill').forEach(btn => {
-                btn.classList.remove('active', 'bg-primary', 'text-white');
-                btn.classList.add('bg-gray-200', 'dark:bg-gray-800', 'text-gray-700', 'dark:text-gray-300');
-            });
-            
-            // Add active class to the clicked button
-            element.classList.add('active', 'bg-primary', 'text-white');
-            element.classList.remove('bg-gray-200', 'dark:bg-gray-800', 'text-gray-700', 'dark:text-gray-300');
-        }
-
-        function filterResources(type) {
-            const resourceSections = document.querySelectorAll('.resource-section');
-            
-            if (type === 'all') {
-                resourceSections.forEach(section => {
-                    section.classList.remove('hidden');
-                    section.classList.add('animate-fade-in');
-                    setTimeout(() => {
-                        section.classList.remove('animate-fade-in');
-                    }, 500);
-                });
-            } else {
-                resourceSections.forEach(section => {
-                    const sectionType = section.getAttribute('data-type');
-                    const shouldShow = sectionType === type;
-                    
-                    if (shouldShow) {
-                        section.classList.remove('hidden');
-                        section.classList.add('animate-fade-in');
-                        setTimeout(() => {
-                            section.classList.remove('animate-fade-in');
-                        }, 500);
-                    } else {
-                        section.classList.add('hidden');
-                    }
-                });
-            }
-        }
-
-        // Function to create resource cards
-        function createResourceCard(resource) {
-            const fileSize = resource.fileSize || '1.5 MB';
-            const cardHtml = `
-                <div class="resource-card bg-white dark:bg-apple-darkgray rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300">
-                    <div class="p-6">
-                        <div class="flex items-center mb-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                            </svg>
-                            <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">PDF • ${fileSize}</span>
-                            <span class="ml-auto type-badge px-2 py-1 rounded-full text-xs font-medium text-primary">
-                                ${resource.subtype || resource.type}
-                            </span>
-                        </div>
-                        <h3 class="text-lg font-semibold mb-2">${resource.title}</h3>
-                        <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">${resource.description}</p>
-                        <a href="${resource.filePath}" class="inline-flex items-center text-primary hover:underline" target="_blank">
-                            View PDF
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-            `;
-            
-            return cardHtml;
-        }
-
-        // Function to create a resource section
-        function createResourceSection(type, resources) {
-            const sectionTitle = type.charAt(0).toUpperCase() + type.slice(1).replace('-', ' ');
-            
-            let sectionHtml = `
-                <section class="resource-section mb-12 animate-fade-in" data-type="${type}">
-                    <div class="flex items-center mb-6">
-                        <h2 class="text-3xl font-bold text-primary">${sectionTitle}</h2>
-                        <span class="ml-3 bg-primary/10 text-primary px-2 py-1 rounded-full text-sm">
-                            ${resources.length} items
-                        </span>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            `;
-            
-            resources.forEach(resource => {
-                sectionHtml += createResourceCard(resource);
-            });
-            
-            sectionHtml += `
-                    </div>
-                </section>
-            `;
-            
-            return sectionHtml;
-        }
-
-        // Function to load resources from settings.json
-        async function loadResources() {
+        // Fetch settings from JSON file
+        async function fetchSettings() {
             try {
-                document.getElementById('loadingIndicator').classList.remove('hidden');
-                document.getElementById('mainContent').classList.add('loading');
-                
-                const response = await fetch('settings.json');
+                const response = await fetch('/settings.json');
                 if (!response.ok) {
-                    throw new Error('Failed to load settings.json');
+                    throw new Error('Failed to fetch settings');
                 }
-                
-                const data = await response.json();
-                const resourcesContainer = document.getElementById('resourcesContainer');
-                const resourceTypeFilter = document.getElementById('resourceTypeFilter');
-                
-                // Clear the containers
-                resourcesContainer.innerHTML = '';
-                
-                // Get unique resource types and create filter buttons
-                const resourceTypes = [...new Set(data.resources.map(resource => resource.type))];
-                
-                resourceTypes.forEach(type => {
-                    const button = document.createElement('button');
-                    button.className = 'category-pill bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200';
-                    button.setAttribute('data-type', type);
-                    button.textContent = type.charAt(0).toUpperCase() + type.slice(1).replace('-', ' ');
-                    
-                    button.addEventListener('click', function() {
-                        setActiveFilter(this);
-                        filterResources(type);
-                    });
-                    
-                    resourceTypeFilter.appendChild(button);
-                });
-                
-                // Group resources by type
-                const groupedResources = {};
-                data.resources.forEach(resource => {
-                    if (!groupedResources[resource.type]) {
-                        groupedResources[resource.type] = [];
-                    }
-                    groupedResources[resource.type].push(resource);
-                });
-                
-                // Create sections for each resource type
-                for (const type in groupedResources) {
-                    resourcesContainer.innerHTML += createResourceSection(type, groupedResources[type]);
-                }
-                
-                // Initialize event listeners for resource filter buttons
-                document.querySelectorAll('.category-pill').forEach(button => {
-                    button.addEventListener('click', function() {
-                        const type = this.getAttribute('data-type');
-                        setActiveFilter(this);
-                        filterResources(type);
-                    });
-                });
-                
-                // Set "All Resources" as the default active filter
-                setActiveFilter(document.querySelector('.category-pill[data-type="all"]'));
-                
+                return await response.json();
             } catch (error) {
-                console.error('Error loading resources:', error);
-                document.getElementById('resourcesContainer').innerHTML = `
-                    <div class="bg-red-50 dark:bg-red-900/30 border-l-4 border-red-500 p-4 my-8 rounded-r-lg">
-                        <div class="flex">
-                            <div class="flex-shrink-0">
-                                <svg class="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                            <div class="ml-3">
-                                <p class="text-sm text-red-800 dark:text-red-200">
-                                    Error loading resources from settings.json. Please make sure the file exists and is properly formatted.
-                                </p>
-                                <div class="mt-4">
-                                    <div class="flex space-x-4">
-                                        <button id="loadExampleData" class="bg-red-100 dark:bg-red-800 text-red-800 dark:text-red-100 px-4 py-2 rounded-md text-sm font-medium">
-                                            Load Example Data
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                
-                // Add event listener to load example data
-                document.getElementById('loadExampleData').addEventListener('click', loadExampleData);
-            } finally {
-                document.getElementById('loadingIndicator').classList.add('hidden');
-                document.getElementById('mainContent').classList.remove('loading');
+                console.error('Error fetching settings:', error);
+                return null;
             }
         }
 
-        // Function to load example data if settings.json is not available
-        function loadExampleData() {
-            const exampleData = {
-                "resources": [
-                    {
-                        "type": "mock-papers",
-                        "subtype": "Reading",
-                        "title": "Reading Comprehension - Paper 1",
-                        "description": "Practice your reading comprehension skills with this mock paper designed for advanced students.",
-                        "filePath": "english/mockpapers/reading-comprehension-1.pdf",
-                        "fileSize": "2.4 MB"
-                    },
-                    {
-                        "type": "mock-papers",
-                        "subtype": "Writing",
-                        "title": "Writing - Essay Types",
-                        "description": "Examples and practice prompts for different essay types including persuasive, narrative, and analytical.",
-                        "filePath": "english/mockpapers/writing-essay-types.pdf",
-                        "fileSize": "1.8 MB"
-                    },
-                    {
-                        "type": "mock-papers",
-                        "subtype": "Grammar",
-                        "title": "Grammar & Vocabulary Test",
-                        "description": "Comprehensive test covering advanced grammar rules and vocabulary with answer key included.",
-                        "filePath": "english/mockpapers/grammar-vocabulary-test.pdf",
-                        "fileSize": "3.1 MB"
-                    },
-                    {
-                        "type": "mock-papers",
-                        "subtype": "Literature",
-                        "title": "Literature Analysis - Mock Exam",
-                        "description": "Practice analyzing literary texts with this comprehensive mock exam paper.",
-                        "filePath": "english/mockpapers/literature-analysis.pdf",
-                        "fileSize": "2.7 MB"
-                    },
-                    {
-                        "type": "practice-materials",
-                        "subtype": "Speaking",
-                        "title": "Speaking & Listening Practice",
-                        "description": "Guidelines and exercises for improved speaking and listening skills with assessment criteria.",
-                        "filePath": "english/mockpapers/speaking-listening.pdf",
-                        "fileSize": "1.5 MB"
-                    },
-                    {
-                        "type": "practice-materials",
-                        "subtype": "Vocabulary",
-                        "title": "Advanced Vocabulary Builder",
-                        "description": "Expand your vocabulary with these thematic word lists and practice exercises.",
-                        "filePath": "english/mockpapers/vocabulary-builder.pdf",
-                        "fileSize": "1.2 MB"
-                    },
-                    {
-                        "type": "full-exams",
-                        "title": "Full Mock Exam - Advanced Level",
-                        "description": "Complete mock exam covering all sections: reading, writing, listening and speaking.",
-                        "filePath": "english/mockpapers/full-mock-exam.pdf",
-                        "fileSize": "2.2 MB"
-                    },
-                    {
-                        "type": "full-exams",
-                        "title": "Full Mock Exam - Intermediate Level",
-                        "description": "Complete mock exam for intermediate students with comprehensive coverage of all skills.",
-                        "filePath": "english/mockpapers/intermediate-full-exam.pdf",
-                        "fileSize": "2.0 MB"
-                    },
-                    {
-                        "type": "study-guides",
-                        "title": "Essay Writing Guide",
-                        "description": "Comprehensive guide to writing effective essays with templates and example essays.",
-                        "filePath": "english/mockpapers/essay-writing-guide.pdf",
-                        "fileSize": "1.7 MB"
-                    },
-                    {
-                        "type": "study-guides",
-                        "title": "Grammar Reference Guide",
-                        "description": "Complete reference for English grammar rules with examples and common mistakes to avoid.",
-                        "filePath": "english/mockpapers/grammar-reference.pdf",
-                        "fileSize": "2.5 MB"
-                    }
-                ]
-            };
+        // Initialize the application
+        async function initApp() {
+            initDarkMode();
             
-            const resourcesContainer = document.getElementById('resourcesContainer');
-            const resourceTypeFilter = document.getElementById('resourceTypeFilter');
-            
-            // Clear the containers
-            resourcesContainer.innerHTML = '';
-            
-            // Remove any existing filter buttons except "All Resources"
-            Array.from(resourceTypeFilter.children).forEach(child => {
-                if (child.getAttribute('data-type') !== 'all') {
-                    child.remove();
-                }
-            });
-            
-            // Get unique resource types and create filter buttons
-            const resourceTypes = [...new Set(exampleData.resources.map(resource => resource.type))];
-            
-            resourceTypes.forEach(type => {
-                const button = document.createElement('button');
-                button.className = 'category-pill bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200';
-                button.setAttribute('data-type', type);
-                button.textContent = type.charAt(0).toUpperCase() + type.slice(1).replace('-', ' ');
-                
-                button.addEventListener('click', function() {
-                    setActiveFilter(this);
-                    filterResources(type);
-                });
-                
-                resourceTypeFilter.appendChild(button);
-            });
-            
-            // Group resources by type
-            const groupedResources = {};
-            exampleData.resources.forEach(resource => {
-                if (!groupedResources[resource.type]) {
-                    groupedResources[resource.type] = [];
-                }
-                groupedResources[resource.type].push(resource);
-            });
-            
-            // Create sections for each resource type
-            for (const type in groupedResources) {
-                resourcesContainer.innerHTML += createResourceSection(type, groupedResources[type]);
+            // Fetch settings
+            const settings = await fetchSettings();
+            if (!settings) {
+                showError('Failed to load settings. Please try again later.');
+                return;
             }
             
-            // Set "All Resources" as the default active filter
-            setActiveFilter(document.querySelector('.category-pill[data-type="all"]'));
+            siteSettings = settings;
+            resources = settings.resources || [];
             
-            // Add notice that example data is loaded
-            const notice = document.createElement('div');
-            notice.className = 'bg-yellow-50 dark:bg-yellow-900/30 border-l-4 border-yellow-500 p-4 mb-8 rounded-r-lg animate-fade-in';
-            notice.innerHTML = `
-                <div class="flex">
-                    <div class="flex-shrink-0">
-                        <svg class="h-5 w-5 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                        </svg>
+            // Update site metadata
+            updateSiteMetadata();
+            
+            // Check maintenance mode
+            checkMaintenanceMode();
+            
+            // Initialize resources
+            initializeResources();
+            
+            // Initialize search and filters
+            initializeFilters();
+            
+            // Initialize greetings
+            showRandomGreeting();
+            
+            // Initialize dialogs
+            initDialogs();
+            
+            // Hide loading screen with a slight delay for smoother transition
+            setTimeout(() => {
+                loadingElement.classList.add('opacity-0');
+                setTimeout(() => {
+                    loadingElement.classList.add('hidden');
+                }, 300);
+            }, 500);
+            
+            // Check if terms need to be shown
+            if (!termsAccepted && siteSettings.showTermsOnLoad) {
+                showTermsAndPrivacy();
+            }
+        }
+
+        // Update site metadata from settings
+        function updateSiteMetadata() {
+            document.title = siteSettings.siteTitle || 'Study Resources';
+            siteTitleElement.textContent = siteSettings.siteTitle || 'Study Resources';
+            siteDescriptionElement.textContent = siteSettings.siteDescription || 'Your collection of English language study materials';
+            footerCopyrightElement.textContent = siteSettings.footerText || '© 2023 Study Resources. All rights reserved.';
+        }
+
+        // Check if site is in maintenance mode
+        function checkMaintenanceMode() {
+            if (siteSettings.maintenanceMode) {
+                maintenanceMessage.textContent = siteSettings.maintenanceMessage || 'This site is currently undergoing maintenance. Some features may be unavailable.';
+                maintenanceBanner.classList.remove('hidden');
+            }
+        }
+
+        // Initialize resources grid
+        function initializeResources() {
+            resourcesGrid.innerHTML = '';
+            
+            if (!resources.length) {
+                noResultsElement.classList.remove('hidden');
+                return;
+            }
+            
+            // Collect all categories
+            resources.forEach(resource => {
+                if (resource.category) {
+                    categories.add(resource.category);
+                }
+            });
+            
+            // Populate category filter
+            populateCategoryFilter();
+            
+            // Create resource cards
+            resources.forEach((resource, index) => {
+                const card = createResourceCard(resource, index);
+                resourcesGrid.appendChild(card);
+            });
+        }
+
+        // Create a resource card element
+        function createResourceCard(resource, index) {
+            const card = document.createElement('div');
+            card.className = 'resource-card bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-200 dark:border-gray-700 animate-fade-in';
+            card.style.animationDelay = `${index * 0.05}s`;
+            
+            const cardContent = `
+                <div class="p-5">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">${resource.title}</h3>
+                        ${resource.category ? `<span class="px-2 py-1 text-xs font-medium bg-primary/10 text-primary rounded">${resource.category}</span>` : ''}
                     </div>
-                    <div class="ml-3">
-                        <p class="text-sm text-yellow-800 dark:text-yellow-200">
-                            Showing example resources. Create a <code class="font-mono bg-yellow-100 dark:bg-yellow-800/50 px-1 rounded">settings.json</code> file in your repository root to customize these resources.
-                        </p>
-                    </div>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">${resource.description || 'No description provided'}</p>
+                    <button class="resource-access-btn w-full px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition" data-index="${index}">
+                        Access Resource
+                    </button>
                 </div>
             `;
             
-            resourcesContainer.prepend(notice);
+            card.innerHTML = cardContent;
+            return card;
         }
 
-        // Call the function to load resources when the document is ready
-        document.addEventListener('DOMContentLoaded', loadResources);
+        // Populate category filter select
+        function populateCategoryFilter() {
+            categoryFilter.innerHTML = '<option value="all">All Categories</option>';
+            
+            Array.from(categories)
+                .filter(cat => cat !== 'all')
+                .sort()
+                .forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category;
+                    option.textContent = category;
+                    categoryFilter.appendChild(option);
+                });
+        }
+
+        // Initialize search and filter functionality
+        function initializeFilters() {
+            // Search functionality
+            searchInput.addEventListener('input', filterResources);
+            
+            // Category filter
+            categoryFilter.addEventListener('change', filterResources);
+            
+            // Reset filters
+            resetFiltersButton.addEventListener('click', () => {
+                searchInput.value = '';
+                categoryFilter.value = 'all';
+                filterResources();
+            });
+            
+            // Clear search button
+            clearSearchButton.addEventListener('click', () => {
+                searchInput.value = '';
+                categoryFilter.value = 'all';
+                filterResources();
+            });
+        }
+
+        // Filter resources based on search and category
+        function filterResources() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const categoryValue = categoryFilter.value;
+            
+            let filteredCount = 0;
+            
+            Array.from(resourcesGrid.children).forEach(card => {
+                const index = card.querySelector('.resource-access-btn').dataset.index;
+                const resource = resources[index];
+                
+                const matchesSearch = 
+                    resource.title.toLowerCase().includes(searchTerm) ||
+                    (resource.description && resource.description.toLowerCase().includes(searchTerm));
+                
+                const matchesCategory = 
+                    categoryValue === 'all' || 
+                    resource.category === categoryValue;
+                
+                if (matchesSearch && matchesCategory) {
+                    card.classList.remove('hidden');
+                    filteredCount++;
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+            
+            // Show/hide no results message
+            if (filteredCount === 0) {
+                noResultsElement.classList.remove('hidden');
+            } else {
+                noResultsElement.classList.add('hidden');
+            }
+        }
+
+        // Show random greeting from settings
+        function showRandomGreeting() {
+            if (siteSettings.greetings && siteSettings.greetings.length > 0) {
+                const randomIndex = Math.floor(Math.random() * siteSettings.greetings.length);
+                greetingElement.textContent = siteSettings.greetings[randomIndex];
+            } else {
+                greetingElement.textContent = "Welcome to our Study Resources!";
+            }
+        }
+
+        // Initialize dialog event listeners
+        function initDialogs() {
+            // Close dialog buttons
+            dialogCloseButton.addEventListener('click', closeDialog);
+            resourceDialogCloseButton.addEventListener('click', closeResourceDialog);
+            
+            // Accept terms button
+            dialogAcceptButton.addEventListener('click', () => {
+                termsAccepted = true;
+                localStorage.setItem('termsAccepted', 'true');
+                closeDialog();
+                
+                // If dialog was shown from resource access, open resource
+                if (selectedResource) {
+                    openResource(selectedResource);
+                }
+            });
+            
+            // Resource access button
+            resourceAccessButton.addEventListener('click', () => {
+                closeResourceDialog();
+                openResource(selectedResource);
+            });
+            
+            // View terms and privacy from resource dialog
+            viewTermsPrivacyButton.addEventListener('click', () => {
+                closeResourceDialog();
+                showTermsAndPrivacy();
+            });
+            
+            // Privacy and terms buttons
+            privacyButton.addEventListener('click', () => showPrivacyPolicy());
+            termsButton.addEventListener('click', () => showTermsOfService());
+            
+            // Global event delegation for resource buttons
+            resourcesGrid.addEventListener('click', (e) => {
+                if (e.target.classList.contains('resource-access-btn')) {
+                    const index = parseInt(e.target.dataset.index);
+                    selectedResource = resources[index];
+                    
+                    if (termsAccepted) {
+                        openResource(selectedResource);
+                    } else {
+                        showResourceAccessDialog();
+                    }
+                }
+            });
+        }
+
+        // Show terms and privacy policy dialog
+        function showTermsAndPrivacy() {
+            dialogTitle.textContent = 'Terms of Service & Privacy Policy';
+            
+            let content = '<div class="mb-6">';
+            content += '<h4 class="text-lg font-semibold mb-2">Terms of Service</h4>';
+            content += `<div>${siteSettings.termsOfService || 'Terms of Service content not available.'}</div>`;
+            content += '</div>';
+            
+            content += '<div>';
+            content += '<h4 class="text-lg font-semibold mb-2">Privacy Policy</h4>';
+            content += `<div>${siteSettings.privacyPolicy || 'Privacy Policy content not available.'}</div>`;
+            content += '</div>';
+            
+            dialogContent.innerHTML = content;
+            dialogOverlay.classList.remove('hidden');
+        }
+
+        // Show privacy policy dialog
+        function showPrivacyPolicy() {
+            dialogTitle.textContent = 'Privacy Policy';
+            dialogContent.innerHTML = siteSettings.privacyPolicy || 'Privacy Policy content not available.';
+            dialogOverlay.classList.remove('hidden');
+        }
+
+        // Show terms of service dialog
+        function showTermsOfService() {
+            dialogTitle.textContent = 'Terms of Service';
+            dialogContent.innerHTML = siteSettings.termsOfService || 'Terms of Service content not available.';
+            dialogOverlay.classList.remove('hidden');
+        }
+
+        // Show resource access dialog
+        function showResourceAccessDialog() {
+            resourceAccessOverlay.classList.remove('hidden');
+        }
+
+        // Close main dialog
+        function closeDialog() {
+            dialogOverlay.classList.add('hidden');
+        }
+
+        // Close resource access dialog
+        function closeResourceDialog() {
+            resourceAccessOverlay.classList.add('hidden');
+        }
+
+        // Open resource URL
+        function openResource(resource) {
+            if (resource && resource.url) {
+                window.open(resource.url, '_blank');
+            } else {
+                showError('Resource URL is not available.');
+            }
+        }
+
+        // Show error message
+        function showError(message) {
+            dialogTitle.textContent = 'Error';
+            dialogContent.innerHTML = `<p class="text-red-500">${message}</p>`;
+            dialogAcceptButton.textContent = 'OK';
+            dialogOverlay.classList.remove('hidden');
+        }
+
+        // Initialize the app on load
+        window.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
 </html>
