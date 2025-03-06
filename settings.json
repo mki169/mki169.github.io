@@ -1,12 +1,33 @@
 {
   "siteTitle": "English Study Resources",
   "siteDescription": "A collection of study materials for English language learners",
-  "footerText": "© 2025 Comensal. All rights reserved.",
-  "maintenanceMode": false,
-  "maintenanceMessage": "We're currently updating our resource library. Please check back soon!",
+  "footerText": "© 2025. All rights reserved.",
+  "maintenanceMode": "partial", 
+  "maintenanceMessage": "We're currently updating our Grammar & Reading resources. Please check back soon!",
+  "maintenanceEndTime": "2023-12-31T23:59:59",
   "showTermsOnLoad": true,
   "showCustomerMessage": true,
-  "customerMessage": "We're currently testing the website performance. This website is operating under degraded performance.",
+  "customerMessage": "This website is operating under degraded performance.",
+  "notifications": [
+    {
+      "type": "info",
+      "title": "Welcome!",
+      "message": "Browse our collection of English resources organized by category.",
+      "duration": 5000
+    },
+    {
+      "type": "success",
+      "title": "New Content Added",
+      "message": "10 new speaking practice resources are now available.",
+      "duration": 4000
+    },
+    {
+      "type": "warning",
+      "title": "Limited Time",
+      "message": "Some resources will be available for a limited time only.",
+      "duration": 6000
+    }
+  ],
   "greetings": [
     "Welcome to your language learning journey!",
     "Ready to improve your English skills?",
@@ -19,38 +40,82 @@
     {
       "title": "English Grammar Basics",
       "description": "A comprehensive guide to English grammar fundamentals",
-      "category": "Grammar",
+      "category": "try",
+      "subcategory": "grammar-reading",
+      "date": "2023-10-15",
       "url": "https://example.com/resources/grammar-basics.pdf"
     },
     {
       "title": "Vocabulary Builder",
       "description": "Expand your English vocabulary with this extensive word list",
-      "category": "Vocabulary",
+      "category": "learn",
+      "subcategory": "notes",
+      "date": "2023-09-28",
       "url": "https://example.com/resources/vocabulary-builder.pdf"
     },
     {
       "title": "Conversation Practice",
       "description": "Common phrases and dialogues for everyday English conversations",
-      "category": "Speaking",
+      "category": "try",
+      "subcategory": "speaking",
+      "date": "2023-11-05",
       "url": "https://example.com/resources/conversation-practice.pdf"
     },
     {
       "title": "Reading Comprehension",
       "description": "Practice exercises to improve your reading skills",
-      "category": "Reading",
+      "category": "try",
+      "subcategory": "grammar-reading",
+      "date": "2023-07-12",
       "url": "https://example.com/resources/reading-comprehension.pdf"
     },
     {
       "title": "Pronunciation Guide",
       "description": "Learn correct pronunciation of difficult English sounds",
-      "category": "Speaking",
+      "category": "try",
+      "subcategory": "speaking",
+      "date": "2023-08-20",
       "url": "https://example.com/resources/pronunciation-guide.pdf"
     },
     {
       "title": "Essay Writing",
       "description": "Templates and examples for academic essay writing",
-      "category": "Writing",
+      "category": "learn",
+      "subcategory": "notes",
+      "date": "2023-10-03",
       "url": "https://example.com/resources/essay-writing.pdf"
+    },
+    {
+      "title": "Business English Course",
+      "description": "Video lectures teaching professional English for the workplace",
+      "category": "learn",
+      "subcategory": "video",
+      "date": "2023-11-15",
+      "url": "https://example.com/resources/business-english-course.pdf"
+    },
+    {
+      "title": "Listening Comprehension: News",
+      "description": "Practice understanding English news broadcasts with exercises",
+      "category": "try",
+      "subcategory": "listening",
+      "date": "2023-10-25",
+      "url": "https://example.com/resources/listening-news.pdf"
+    },
+    {
+      "title": "Phonetics Tutorial Videos",
+      "description": "Learn English phonetics through detailed video explanations",
+      "category": "learn",
+      "subcategory": "video",
+      "date": "2023-09-10",
+      "url": "https://example.com/resources/phonetics-videos.pdf"
+    },
+    {
+      "title": "Advanced Listening: Podcasts",
+      "description": "Practice materials based on popular English podcasts",
+      "category": "try",
+      "subcategory": "listening",
+      "date": "2023-11-18",
+      "url": "https://example.com/resources/podcast-practice.pdf"
     }
   ]
 }
