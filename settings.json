@@ -40,42 +40,6 @@
   
   "resources": [
     {
-      "id": "learn-grammar-1",
-      "title": "English Grammar Fundamentals",
-      "description": "A comprehensive overview of English grammar rules and structures for beginners and intermediate learners.",
-      "category": "learn",
-      "subcategory": "notes",
-      "date": "2023-01-15",
-      "url": "https://example.com/resources/grammar-fundamentals"
-    },
-    {
-      "id": "learn-video-1",
-      "title": "Pronunciation Guide: Vowel Sounds",
-      "description": "Video series on mastering English vowel sounds with practical examples and exercises.",
-      "category": "learn",
-      "subcategory": "video",
-      "date": "2023-02-20",
-      "url": "https://example.com/resources/pronunciation-vowels"
-    },
-    {
-      "id": "try-speaking-1",
-      "title": "Conversation Practice: Daily Situations",
-      "description": "Interactive speaking exercises for common daily situations and scenarios.",
-      "category": "try",
-      "subcategory": "speaking",
-      "date": "2023-03-10",
-      "url": "https://example.com/resources/conversation-practice"
-    },
-    {
-      "id": "try-listening-1",
-      "title": "Listening Comprehension: News Reports",
-      "description": "Practice your listening skills with authentic news reports and comprehension questions.",
-      "category": "try",
-      "subcategory": "listening",
-      "date": "2023-04-05",
-      "url": "https://example.com/resources/listening-news"
-    },
-    {
       "id": "try-grammar-and-reading-1",
       "title": "Gerunds, infinitives",
       "description": "Practice English tenses with these comprehensive exercises and quizzes.",
@@ -92,70 +56,6 @@
       "subcategory": "grammar-reading",
       "date": "2025-03-07",
       "url": "https://drive.google.com/drive/folders/1rnmkEMn3vBUXUlKotxHyYHd5xxBWDjx5?usp=sharing"
-    },
-    
-    {
-      "id": "learn-notes-2",
-      "title": "Business English Vocabulary",
-      "description": "Essential vocabulary for professional environments and business communications.",
-      "category": "learn",
-      "subcategory": "notes",
-      "date": "2023-06-18",
-      "url": "https://example.com/resources/business-vocab"
-    },
-    {
-      "id": "learn-video-2",
-      "title": "Idioms and Expressions in Context",
-      "description": "Video lessons explaining common English idioms and expressions with real-life examples.",
-      "category": "learn",
-      "subcategory": "video",
-      "date": "2023-07-22",
-      "url": "https://example.com/resources/idioms-context"
-    },
-    {
-      "id": "try-speaking-2",
-      "title": "Public Speaking Practice",
-      "description": "Exercises to improve your public speaking skills in English with feedback tools.",
-      "category": "try",
-      "subcategory": "speaking",
-      "date": "2023-08-30",
-      "url": "https://example.com/resources/public-speaking"
-    },
-    {
-      "id": "try-listening-2",
-      "title": "Podcast Comprehension Exercises",
-      "description": "Improve your listening skills with popular podcast excerpts and guided questions.",
-      "category": "try",
-      "subcategory": "listening",
-      "date": "2023-09-14",
-      "url": "https://example.com/resources/podcast-comprehension"
-    },
-    {
-      "id": "learn-notes-3",
-      "title": "Academic Writing Guidelines",
-      "description": "Comprehensive notes on structuring and writing academic papers in English.",
-      "category": "learn",
-      "subcategory": "notes",
-      "date": "2023-10-05",
-      "url": "https://example.com/resources/academic-writing"
-    },
-    {
-      "id": "try-grammar-2",
-      "title": "Reading Comprehension: Literature",
-      "description": "Practice reading comprehension with excerpts from classic and modern literature.",
-      "category": "try",
-      "subcategory": "grammar-reading",
-      "date": "2023-11-20",
-      "url": "https://example.com/resources/reading-literature"
-    },
-    {
-      "id": "learn-video-3",
-      "title": "English for Travel",
-      "description": "Video lessons on essential phrases and vocabulary for international travel.",
-      "category": "learn",
-      "subcategory": "video",
-      "date": "2023-11-28",
-      "url": "https://example.com/resources/english-travel"
     }
   ]
 }
