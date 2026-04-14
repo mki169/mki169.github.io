@@ -3,112 +3,715 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>301 - Site Moved</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>HKTE MDM Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --bg-green: #52a472;
+            --white: #ffffff;
+            --text-dark: #333333;
+            --text-gray: #666666;
+            --text-light-gray: #999999;
+            --border-light: #e0e0e0;
+            --blue-action: #2b78ff;
+            --badge-red: #e74c3c;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            background-color: var(--bg-green);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Main Container mimicking iPad Screen */
+        .ipad-container {
+            width: 1024px;
+            height: 768px;
+            position: relative;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Top Layout (Left sidebar + Right main content) */
+        .top-section {
+            display: flex;
+            height: 580px;
+            gap: 20px;
+        }
+
+        /* Left Column */
+        .left-column {
+            width: 250px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .profile-card {
+            background: var(--white);
+            border-radius: 20px;
+            flex-grow: 1;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .left-grad-cap {
+            font-size: 60px;
+            color: #b0b0b0;
+            margin-bottom: 40px;
+        }
+
+        .profile-card .device-label {
+            color: var(--text-gray);
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .profile-card .device-name {
+            color: var(--text-dark);
+            font-size: 36px;
+            font-weight: 500;
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+
+        .profile-card .student-label {
+            color: var(--text-gray);
+            font-size: 20px;
+        }
+
+        .version-card {
+            background: var(--white);
+            border-radius: 15px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            gap: 12px;
+        }
+
+        /* Custom Image Styling for MDM App */
+        .mdm-custom-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid #f0f0f0;
+            background-color: #f8f9fa; /* Placeholder bg if image missing */
+        }
+
+        .version-info h4 {
+            color: #1e5a22; /* Darker green matching the image */
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .version-info p {
+            color: var(--text-dark);
+            font-size: 14px;
+        }
+
+        /* Right Column */
+        .right-column {
+            flex-grow: 1;
+            position: relative;
+        }
+
+        .school-card {
+            background: var(--white);
+            border-radius: 20px;
+            height: 100%;
+            padding: 40px;
+            position: relative;
+            /* Removed overflow:hidden so the tab can pop out */
+        }
+
+        .school-title {
+            color: var(--text-dark);
+            font-size: 28px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            max-width: 60%;
+            line-height: 1.3;
+        }
+
+        /* Perfectly centered top-right tab */
+        .school-tab-blob {
+            position: absolute;
+            top: -45px;
+            right: 40px;
+            width: 140px;
+            height: 140px;
+            background: var(--white);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+        }
+
+        .school-tab-blob i {
+            font-size: 70px;
+            color: #9f9f9f;
+            margin: 0;
+            padding: 0;
+            /* Optical adjustment for the icon's bounding box to look perfectly centered */
+            transform: translateY(5px); 
+        }
+
+        /* Desk Illustration Placeholder */
+        .desk-illustration {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 250px;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            background-image: url('data:image/svg+xml;utf8,<svg width="100%" height="100%" viewBox="0 0 800 250" xmlns="http://www.w3.org/2000/svg"><g stroke="%23333" stroke-width="2" fill="none"><path d="M50,250 L50,150 L200,150 L250,100 L0,100" /><path d="M100,150 L100,100 M60,100 L60,50 L140,50 L140,100 Z" /><path d="M350,250 L350,150 L600,150 L650,100 L300,100 L250,150" /><path d="M420,150 L420,100 M380,100 L380,50 L460,50 L460,100 Z" /><path d="M400,250 L400,170 M550,250 L550,170 M380,170 L570,170 M380,200 L570,200" /><path d="M700,250 L700,150 L850,150 L900,100 L600,100 L550,150" /><path d="M770,150 L770,100 M730,100 L730,50 L810,50 L810,100 Z" /></g></svg>');
+            background-repeat: repeat-x;
+            background-position: bottom;
+            opacity: 0.8;
+            overflow: hidden;
+        }
+
+        /* Bottom Dock */
+        .bottom-dock {
+            background: var(--white);
+            border-radius: 20px;
+            height: 90px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            justify-content: space-between;
+        }
+
+        .empty-slots {
+            display: flex;
+            gap: 15px;
+        }
+
+        .empty-slot {
+            width: 50px;
+            height: 50px;
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--border-light);
+            font-size: 20px;
+        }
+
+        .dock-apps {
+            display: flex;
+            gap: 25px;
+            padding-right: 15px;
+        }
+
+        .dock-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            position: relative;
+        }
+
+        .dock-icon-btn {
+            width: 50px;
+            height: 50px;
+            border: 1px solid var(--blue-action);
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--blue-action);
+            font-size: 24px;
+            background: var(--white);
+            cursor: default;
+        }
+
+        .dock-item span {
+            color: var(--blue-action);
+            font-size: 12px;
+        }
+
+        .badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--badge-red);
+            color: var(--white);
+            font-size: 12px;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 10px;
+            border: 2px solid var(--white);
+            min-width: 24px;
+            text-align: center;
+        }
+
+        /* Clickable elements */
+        .clickable {
+            cursor: pointer;
+        }
+
+        /* Modals Shared */
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        /* Settings Modal */
+        .settings-modal {
+            background: var(--white);
+            border-radius: 15px;
+            width: 450px;
+            padding: 30px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .settings-title {
+            font-size: 36px;
+            font-weight: 400;
+            margin-bottom: 30px;
+            color: var(--text-dark);
+        }
+
+        .settings-list {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .settings-list li {
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 18px;
+            color: var(--text-dark);
+        }
+        
+        .settings-list li:last-child {
+            border-bottom: none;
+        }
+
+        .settings-list li i {
+            color: var(--text-gray);
+        }
+
+        .settings-footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 12px;
+            color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .settings-footer p {
+            margin: 2px 0;
+        }
+
+        .settings-footer .mdm-custom-icon {
+            margin: 10px 0;
+            width: 40px;
+            height: 40px;
+        }
+
+        .close-btn-text {
+            color: var(--blue-action);
+            font-size: 18px;
+            text-align: right;
+            cursor: pointer;
+            margin-top: 10px;
+            display: block;
+            width: 100%;
+        }
+
+        /* Apps Modal */
+        .apps-modal {
+            background: var(--white);
+            border-radius: 15px;
+            width: 900px;
+            height: 650px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .apps-close-btn {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 40px;
+            height: 40px;
+            background: var(--white);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            color: var(--text-dark);
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .apps-header {
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .apps-title {
+            font-size: 24px;
+            font-weight: 400;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .apps-title i {
+            color: var(--blue-action);
+        }
+
+        .apps-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .apps-search {
+            padding: 8px 15px;
+            border: 1px solid var(--border-light);
+            border-radius: 5px;
+            outline: none;
+            width: 200px;
+        }
+
+        .btn-outline {
+            padding: 8px 20px;
+            border: 1px solid var(--blue-action);
+            background: var(--white);
+            color: var(--blue-action);
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .table-container {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .apps-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .apps-table th {
+            background: #2b78ff;
+            color: var(--white);
+            text-align: left;
+            padding: 15px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .apps-table td {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-light);
+            color: var(--text-dark);
+            font-size: 14px;
+            vertical-align: middle;
+        }
+
+        .app-row-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .pdf-icon { background: #e74c3c; }
+        .express-icon { background: #111; color: #fff; } 
+        .scan-icon { background: #00a8e1; }
+        .spark-icon { background: #8e44ad; }
+        .dict-icon { background: #34495e; }
+        .arduino-icon { background: #00979d; }
+        .aristo-icon { background: #16a085; }
+
+        .app-name-cell {
+            max-width: 200px;
+            line-height: 1.4;
+        }
+
+        .btn-install {
+            padding: 8px 15px;
+            background: #2b78ff;
+            color: var(--white);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 120px;
+            justify-content: center;
+        }
+        
+        .date-text {
+            color: var(--blue-action);
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col items-center justify-center p-4 selection:bg-teal-500 selection:text-white">
+<body>
 
-    <!-- Main Container -->
-    <div class="w-full max-w-[600px] bg-white border border-gray-200 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
-        
-        <!-- Status Bar (Teal for "New Beginnings") -->
-        <div class="h-2 w-full bg-teal-600"></div>
+    <div class="ipad-container">
+        <div class="top-section">
+            <div class="left-column">
+                <div class="profile-card">
+                    <i class="fas fa-graduation-cap left-grad-cap"></i>
+                    <div class="device-label">Device</div>
+                    <div class="device-name">4210 甄鵬<br>凱</div>
+                    <div class="student-label">Student</div>
+                </div>
+                <div class="version-card">
+                    <img src="mdm.png" alt="HKTE St..." class="mdm-custom-icon">
+                    <div class="version-info">
+                        <h4>HKTE St...</h4>
+                        <p>Version 6.0.932</p>
+                    </div>
+                </div>
+            </div>
 
-        <div class="p-8 sm:p-12">
+            <div class="right-column">
+                <div class="school-card">
+                    <div class="school-tab-blob">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="school-title">HENRIETTA SECONDARY<br>SCHOOL</div>
+                    <div class="desk-illustration"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-dock">
+            <div class="empty-slots">
+                <div class="empty-slot">+</div>
+                <div class="empty-slot">+</div>
+                <div class="empty-slot">+</div>
+                <div class="empty-slot">+</div>
+            </div>
             
-            <!-- Header -->
-            <div class="mb-8">
-                <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-teal-50 text-teal-600 mb-6 border border-teal-100">
-                    <!-- Archive/Move Icon -->
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/><polyline points="16 16 12 12 8 16"/></svg>
+            <div class="dock-apps">
+                <div class="dock-item clickable" onclick="toggleSettingsModal(true)">
+                    <div class="dock-icon-btn">
+                        <i class="fas fa-cog"></i>
+                    </div>
+                    <span>Setting</span>
                 </div>
-                <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-black mb-3">
-                    Farewell.
-                </h1>
-                <p class="text-gray-500 text-lg">
-                    This legacy version of the site has been retired.
-                </p>
+                <div class="dock-item">
+                    <div class="dock-icon-btn">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <span>Activities</span>
+                </div>
+                <div class="dock-item clickable" onclick="toggleAppsModal(true)">
+                    <div class="dock-icon-btn">
+                        <i class="fas fa-th"></i>
+                        <div class="badge">147</div>
+                    </div>
+                    <span>Apps</span>
+                </div>
+                <div class="dock-item">
+                    <div class="dock-icon-btn">
+                        <i class="fas fa-book"></i>
+                        <div class="badge">0</div>
+                    </div>
+                    <span>eBooks</span>
+                </div>
             </div>
+        </div>
 
-            <!-- Primary Notification -->
-            <div class="mb-10 p-5 rounded-lg border border-teal-200 bg-teal-50 flex gap-4 items-start">
-                <div class="shrink-0 mt-0.5 text-teal-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-                </div>
-                <div>
-                    <h3 class="font-semibold text-teal-900 text-sm uppercase tracking-wide mb-1">New Destination</h3>
-                    <p class="text-teal-800 text-sm leading-relaxed">
-                        All services, data, and active user accounts have been migrated to our new platform. Please update your bookmarks to <a href="https://comensal.de5.net" class="font-mono font-medium underline underline-offset-2 decoration-teal-400 hover:decoration-teal-600 transition-all">comensal.de5.net</a>.
-                    </p>
-                </div>
-            </div>
-
-            <!-- Context Info -->
-            <div class="space-y-4 mb-10">
-                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">What changed?</p>
-                
-                <ul class="space-y-3">
-                    <li class="flex items-start group">
-                        <span class="mr-3 mt-1 text-gray-300">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                        </span>
-                        <span class="text-gray-600 text-sm">Improved performance and stability.</span>
-                    </li>
-                    <li class="flex items-start group">
-                        <span class="mr-3 mt-1 text-gray-300">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                        </span>
-                        <span class="text-gray-600 text-sm">Enhanced user experience.</span>
-                    </li>
-                    <li class="flex items-start group">
-                        <span class="mr-3 mt-1 text-gray-300">
-                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                        </span>
-                        <span class="text-gray-600 text-sm">Your data might has been reset.</span>
-                    </li>
+        <div class="modal-overlay" id="settingsOverlay">
+            <div class="settings-modal">
+                <h2 class="settings-title">Settings</h2>
+                <ul class="settings-list">
+                    <li>Language <i class="fas fa-chevron-right"></i></li>
+                    <li>Terms of Service <i class="fas fa-chevron-right"></i></li>
                 </ul>
+                <div class="settings-footer">
+                    <p>HKTE Student Version 6.0.932</p>
+                    <p>Copyright &copy; 2025 HKT Education Limited</p>
+                    <img src="your-mdm-image.png" alt="HKTE St..." class="mdm-custom-icon">
+                </div>
+                <div class="close-btn-text" onclick="toggleSettingsModal(false)">Close</div>
             </div>
+        </div>
 
-            <!-- Action Buttons -->
-            <div class="grid sm:grid-cols-2 gap-4 border-t border-gray-100 pt-8">
-                <a href="https://comensal.de5.net" class="group relative flex items-center justify-between p-4 rounded-lg bg-black text-white hover:bg-gray-800 hover:shadow-lg hover:shadow-gray-200 transition-all duration-200">
-                    <div class="flex items-center gap-3">
-                        <div class="p-2 bg-gray-800 rounded text-gray-300 group-hover:text-white transition-colors">
-                           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                        </div>
-                        <span class="font-medium">Go to New Site</span>
+        <div class="modal-overlay" id="appsOverlay">
+            <div class="apps-modal">
+                <div class="apps-close-btn" onclick="toggleAppsModal(false)">
+                    <i class="fas fa-times"></i>
+                </div>
+                <div class="apps-header">
+                    <div class="apps-title">
+                        <i class="fas fa-th"></i> Apps - 1310 伍銘熙
                     </div>
-                </a>
-
-                <a href="#" class="group relative flex items-center justify-between p-4 rounded-lg border border-gray-200 hover:border-black hover:shadow-md transition-all duration-200 bg-white">
-                    <div class="flex items-center gap-3">
-                        <div class="p-2 bg-gray-50 rounded text-gray-500 group-hover:bg-gray-100 group-hover:text-black transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                        </div>
-                        <span class="font-medium text-gray-700 group-hover:text-black">Read Changelog</span>
+                    <div class="apps-actions">
+                        <input type="text" class="apps-search" placeholder="Search">
+                        <button class="btn-outline"><i class="fas fa-download"></i> Install All</button>
+                        <button class="btn-outline"><i class="fas fa-sync-alt"></i> Refresh</button>
                     </div>
-                </a>
+                </div>
+                <div class="table-container">
+                    <table class="apps-table">
+                        <thead>
+                            <tr>
+                                <th>App Icon</th>
+                                <th>App Name</th>
+                                <th>Price</th>
+                                <th>Version</th>
+                                <th>File Size</th>
+                                <th>Release Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><div class="app-row-icon pdf-icon"><i class="fas fa-file-pdf"></i></div></td>
+                                <td class="app-name-cell">Adobe Acrobat Reader : PDF 編輯及簽名</td>
+                                <td>Free</td>
+                                <td>26.03.06</td>
+                                <td>453.0 M</td>
+                                <td class="date-text">2026-04-07</td>
+                                <td><button class="btn-install"><i class="far fa-square"></i> VPP Install</button></td>
+                            </tr>
+                            <tr>
+                                <td><div class="app-row-icon express-icon">A</div></td>
+                                <td class="app-name-cell">Adobe Express : 平面設計</td>
+                                <td>Free</td>
+                                <td>30.0.0</td>
+                                <td>176.9 M</td>
+                                <td class="date-text">2026-03-26</td>
+                                <td><button class="btn-install"><i class="far fa-square"></i> VPP Install</button></td>
+                            </tr>
+                            <tr>
+                                <td><div class="app-row-icon scan-icon"><i class="fas fa-search"></i></div></td>
+                                <td class="app-name-cell">Adobe Scan: PDF 掃描器, OCR</td>
+                                <td>Free</td>
+                                <td>26.03.19</td>
+                                <td>332.5 M</td>
+                                <td class="date-text">2026-03-25</td>
+                                <td><button class="btn-install"><i class="far fa-square"></i> VPP Update</button></td>
+                            </tr>
+                            <tr>
+                                <td><div class="app-row-icon spark-icon"><i class="fas fa-quote-left"></i></div></td>
+                                <td class="app-name-cell">Adobe Spark Video</td>
+                                <td>Free</td>
+                                <td>4.6.4</td>
+                                <td>143.0 M</td>
+                                <td class="date-text">2024-10-23</td>
+                                <td><button class="btn-install"><i class="far fa-square"></i> VPP Install</button></td>
+                            </tr>
+                            <tr>
+                                <td><div class="app-row-icon dict-icon"><i class="fas fa-book-open"></i></div></td>
+                                <td class="app-name-cell">Advanced Dictionary&Thesaurus</td>
+                                <td>Free</td>
+                                <td>10.0.13</td>
+                                <td>192.7 M</td>
+                                <td class="date-text">2019-02-05</td>
+                                <td><button class="btn-install"><i class="far fa-square"></i> VPP Install</button></td>
+                            </tr>
+                            <tr>
+                                <td><div class="app-row-icon arduino-icon"><i class="fas fa-infinity"></i></div></td>
+                                <td class="app-name-cell">Arduino IoT Cloud Remote</td>
+                                <td>Free</td>
+                                <td>4.3.0</td>
+                                <td>54.9 M</td>
+                                <td class="date-text">2026-04-02</td>
+                                <td><button class="btn-install"><i class="far fa-square"></i> VPP Install</button></td>
+                            </tr>
+                            <tr>
+                                <td><div class="app-row-icon aristo-icon"><i class="fas fa-globe"></i></div></td>
+                                <td class="app-name-cell">Aristo e-Companion (Geography)</td>
+                                <td>Free</td>
+                                <td>2.3.4</td>
+                                <td>136.3 M</td>
+                                <td class="date-text">2021-06-11</td>
+                                <td><button class="btn-install"><i class="far fa-square"></i> VPP Install</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-
-            <!-- Footer Code -->
-            <div class="mt-8 pt-6 border-t border-dashed border-gray-200 text-center">
-                <span class="inline-block px-2 py-1 bg-gray-100 text-gray-500 text-[10px] font-mono rounded tracking-widest uppercase">
-                    Status: Moved_Permanently_301
-                </span>
-            </div>
-
         </div>
     </div>
 
+    <script>
+        function toggleSettingsModal(show) {
+            const overlay = document.getElementById('settingsOverlay');
+            if (show) {
+                overlay.classList.add('active');
+            } else {
+                overlay.classList.remove('active');
+            }
+        }
+
+        function toggleAppsModal(show) {
+            const overlay = document.getElementById('appsOverlay');
+            if (show) {
+                overlay.classList.add('active');
+            } else {
+                overlay.classList.remove('active');
+            }
+        }
+    </script>
 </body>
 </html>
