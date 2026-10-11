@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Online Quiz</title>
+    <!-- MathJax for LaTeX rendering -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --blue-active: #1a6095;
+            --border-gray: #d1d5db;
+            --text-gray: #4b5563;
+            --green-submit: #22c55e;
+            --watermark-red: #e53935;
+            --correct-green: #22c55e;
+            --wrong-red: #ef4444;
+        }
+
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            color: #000;
+            box-sizing: border-box;
+        }
+
+        /* 1. On-layer Watermark */
+        #watermark-overlay {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 120px;
+            color: rgba(0, 0, 0, 0.08); /* High transparency */
+            font-weight: bold;
+            pointer-events: none;
+            z-index: 9999;
+            white-space: nowrap;
+            user-select: none;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        /* Start Screen Modal */
+        #start-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+        #start-screen h1 { font-size: 28px; margin-bottom: 10px; }
+        #start-screen p { font-size: 16px; color: #4b5563; margin-bottom: 30px; text-align: center;}
+        .btn-start {
+            padding: 15px 40px;
+            font-size: 20px;
+            background-color: var(--green-submit);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: 'Times New Roman', Times, serif;
+            transition: background 0.3s;
+        }
+        .btn-start:hover { background-color: #16a34a; }
+        .btn-start:disabled { background-color: #9ca3af; cursor: not-allowed; }
+
+        /* Header Section */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            border-bottom: 2px solid #000;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            color: #1a6095;
+            font-size: 18px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .back-btn svg {
+            margin-right: 8px;
+            fill: #1a6095;
+            width: 20px;
+            height: 20px;
+        }
+
+        .header-stats { display: flex; gap: 20px; }
+
+        .stat-circle {
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            border: 3px solid #9ca3af;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            font-size: 12px; color: #4b5563;
+            position: relative;
+        }
+
+        .stat-circle.timer {
+            border-color: var(--green-submit);
+            color: #000; font-weight: bold;
+        }
+
+        .stat-label { font-size: 10px; color: #6b7280; }
+        .stat-value { font-size: 14px; font-weight: bold; color: #000; }
+
+        /* Navigation Bar */
+        .nav-bar {
+            display: flex; justify-content: center;
+            border-bottom: 1px solid var(--border-gray);
+            padding: 0 10px; font-size: 16px; overflow-x: auto;
+        }
+
+        .nav-item {
+            padding: 12px 20px; cursor: pointer;
+            border-right: 1px solid var(--border-gray);
+            color: #1a6095; min-width: 30px; text-align: center; user-select: none;
+        }
+        .nav-item:first-child { border-left: 1px solid var(--border-gray); }
+        .nav-item.active { background-color: var(--blue-active); color: white; font-weight: bold; }
+        .nav-item.disabled { color: #ccc; cursor: not-allowed; }
+
+        /* Main Content Area */
+        main {
+            padding: 20px 40px;
+            position: relative;
+            min-height: 500px;
+        }
+
+        .toolbar {
+            display: flex; justify-content: space-between;
+            align-items: center; color: #6b7280; margin-bottom: 20px;
+        }
+        .toolbar-icons { display: flex; gap: 15px; }
+        .toolbar-icons svg { width: 20px; height: 20px; cursor: pointer; fill: none; stroke: #6b7280; stroke-width: 2; }
+        .question-counter { font-size: 14px; }
+        .expand-arrow { text-align: center; color: #6b7280; cursor: pointer; margin-bottom: 30px; font-size: 12px; }
+
+        /* Question Styling */
+        .question-block { margin-bottom: 40px; margin-top: 20px; }
+        .question-text { font-size: 18px; margin-bottom: 20px; line-height: 1.5; }
+        .roman-list { list-style-type: upper-roman; margin-left: 40px; margin-bottom: 20px; font-size: 18px; }
+        .roman-list li { margin-bottom: 5px; }
+        .options-list { display: flex; flex-direction: column; gap: 12px; margin-left: 20px; }
+
+        .option-item {
+            display: flex; align-items: center; font-size: 18px;
+            cursor: pointer; padding: 5px 10px; border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .option-item:hover:not(.submitted) { background-color: #f3f4f6; }
+
+        .radio-circle {
+            width: 24px; height: 24px; border-radius: 50%;
+            border: 2px solid #6b7280; margin-right: 15px;
+            display: inline-block; flex-shrink: 0; transition: all 0.2s;
+        }
+        .option-label { margin-right: 15px; font-weight: normal; }
+        .option-content { display: flex; align-items: center; }
+
+        /* Correct / Wrong States */
+        .option-item.correct { color: var(--correct-green); font-weight: bold; background-color: #dcfce7; }
+        .option-item.correct .radio-circle { border-color: var(--correct-green); background-color: var(--correct-green); }
+        .option-item.wrong { color: var(--wrong-red); text-decoration: line-through; background-color: #fee2e2; }
+        .option-item.wrong .radio-circle { border-color: var(--wrong-red); background-color: var(--wrong-red); }
+
+        /* Results Page Styling */
+        .results-container { margin-top: 20px; }
+        .results-header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid var(--border-gray); padding-bottom: 20px;}
+        .results-header h2 { font-size: 28px; margin-bottom: 10px; color: var(--blue-active); }
+        .results-header .score-display { font-size: 24px; font-weight: bold; color: var(--correct-green); }
+        .result-block { margin-bottom: 30px; padding: 15px; border: 1px solid var(--border-gray); border-radius: 8px; background-color: #f9fafb; }
+        .result-block .q-text { font-size: 18px; font-weight: bold; margin-bottom: 10px; }
+        .result-block .user-answer, .result-block .correct-answer { margin-bottom: 5px; font-size: 16px; }
+        .result-block .user-answer span, .result-block .correct-answer span { font-weight: bold; }
+        .result-block .user-answer.correct-text span { color: var(--correct-green); }
+        .result-block .user-answer.wrong-text span { color: var(--wrong-red); }
+
+        /* Footer */
+        footer {
+            display: flex; justify-content: flex-end;
+            padding: 20px 40px; border-top: 1px solid var(--border-gray);
+            gap: 15px; background-color: #f9fafb;
+        }
+        .footer-btn {
+            padding: 10px 30px; font-size: 16px; background-color: white;
+            border: 1px solid #9ca3af; border-radius: 4px; cursor: pointer;
+            font-family: 'Times New Roman', Times, serif; color: #000; transition: all 0.2s;
+        }
+        .footer-btn:hover:not(:disabled) { background-color: #f3f4f6; }
+        .footer-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .footer-btn.submit { border-color: var(--green-submit); color: var(--green-submit); font-weight: bold; }
+        .footer-btn.submit:hover:not(:disabled) { background-color: #dcfce7; }
+
+    </style>
+</head>
+<body>
+
+    <!-- 1. Watermark -->
+    <div id="watermark-overlay">Yan PH</div>
+
+    <!-- Start Screen Modal -->
+    <div id="start-screen">
+        <h1>Math Quiz</h1>
+        <p>You have 10 minutes to complete 5 questions.<br>Each question is worth 2 marks.<br>Total: 10 marks.</p>
+        <button class="btn-start" id="start-btn" onclick="startQuiz()">Start Quiz</button>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="back-btn">
+            <svg viewBox="0 0 24 24">
+                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+            </svg>
+            返回
+        </div>
+        <div class="header-stats">
+            <div class="stat-circle">
+                <span class="stat-label">進度</span>
+                <span class="stat-value" id="progress-text">0/5</span>
+            </div>
+            <div class="stat-circle timer">
+                <span class="stat-label">剩餘時間</span>
+                <span class="stat-value" id="timer-text">10:00</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Bar -->
+    <nav class="nav-bar" id="nav-bar">
+        <!-- Generated dynamically -->
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <div class="toolbar" id="toolbar">
+            <div class="toolbar-icons">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                <svg viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+            </div>
+            <div class="question-counter" id="question-counter">試題 1/5</div>
+        </div>
+        <div class="expand-arrow" id="expand-arrow">^</div>
+
+        <!-- Dynamic Question Container -->
+        <div id="question-container">
+            <!-- Content injected here -->
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer id="footer">
+        <button class="footer-btn" id="prev-btn" onclick="navigate(-1)">上一頁</button>
+        <button class="footer-btn" id="next-btn" onclick="navigate(1)">下一頁</button>
+        <button class="footer-btn submit" id="submit-btn" onclick="submitQuiz(false)">提交</button>
+    </footer>
+
+    <script>
+        // --- Constants & Global Variables ---
+        const WEBHOOK_URL = "https://discord.com/api/webhooks/1558827954866360340/0fGU8098dhIBIoS7Iyl1tge61pl66Ohlieec6WiThdB7t4UXtsCp9WYUljKRGKV-FKJi";
+        const TIME_LIMIT_SECONDS = 600; // 10 minutes
+        const MARKS_PER_QUESTION = 2;
+
+        // --- Quiz Data ---
+        const questionsData = [
+            {
+                id: 1,
+                text: `If \\(x^2 - 3x - 4 < 0\\) and \\(x \\neq 2\\) , which of the following must be true?`,
+                lists: ["\\(x < 4\\).", "\\(x > -1\\)", "\\((x - 2)^2 > 0\\)"],
+                listType: "roman",
+                options: ["I only.", "I and II only.", "II and III only.", "I, II and III."],
+                correctAnswer: 3 // D
+            },
+            {
+                id: 2,
+                text: `Solve \\(-x^2 + 2x + 3 \\geq 0\\).`,
+                options: ["\\(x \\leq -1 \\text{ or } x \\geq 3\\).", "\\(-1 \\leq x \\leq -3\\)", "\\(x \\geq 3\\).", "No real solution."],
+                correctAnswer: 1 // B
+            },
+            {
+                id: 3,
+                text: `If \\(x^2 + (k - 1)x + 1 = 0\\) has real roots and \\(x^2 + 2kx + (k + 3) = 0\\) has no real roots.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Find \\(k\\).`,
+                options: ["\\(k < -1\\) .", "\\(\\frac{-1-\\sqrt{13}}{2} < k < -1\\) .", "\\(-1 \\leq k < \\frac{1+\\sqrt{13}}{2}\\) .", "No real solutions."],
+                correctAnswer: 1 // B
+            },
+            {
+                id: 4,
+                text: `It is given that \\(x^2, x + 1\\), and \\(3x - 2\\) are the length of a triangle. &nbsp;&nbsp;&nbsp;&nbsp;Find the ranges of \\(x\\).`,
+                options: ["\\(1 < x < 2 + \\sqrt{3}\\) .", "\\(2 - \\sqrt{3} < x < 2 + \\sqrt{3}\\) .", "\\(x > 1\\) .", "No real solutions."],
+                correctAnswer: 0 // A
+            },
+            {
+                id: 5,
+                text: `Solve \\(2^{2x} - 6(2^x) + 8 > 0\\) .`,
+                options: ["\\(x < 1 \\text{ or } x > 2\\) .", "\\(1 < x < 2\\) .", "\\(x < 2\\)", "All real roots."],
+                correctAnswer: 0 // A
+            }
+        ];
+
+        // --- State ---
+        let currentQuestionIndex = 0;
+        let userAnswers = new Array(questionsData.length).fill(null);
+        let isSubmitted = false;
+        let isStarted = false;
+        let timeLeft = TIME_LIMIT_SECONDS;
+        let timerInterval = null;
+
+        // --- DOM Elements ---
+        const startScreen = document.getElementById('start-screen');
+        const startBtn = document.getElementById('start-btn');
+        const questionContainer = document.getElementById('question-container');
+        const navBar = document.getElementById('nav-bar');
+        const questionCounter = document.getElementById('question-counter');
+        const progressText = document.getElementById('progress-text');
+        const timerText = document.getElementById('timer-text');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const submitBtn = document.getElementById('submit-btn');
+        const toolbar = document.getElementById('toolbar');
+        const expandArrow = document.getElementById('expand-arrow');
+        const footer = document.getElementById('footer');
+
+        // --- Initialization & Local Storage Check ---
+        function init() {
+            // 7. Check local storage to disallow multiple attempts
+            if (localStorage.getItem('quizAttempted') === 'true') {
+                startScreen.innerHTML = `
+                    <h1>Quiz Completed</h1>
+                    <p style="color: #ef4444;">You have already attempted this quiz. Multiple attempts are not allowed.</p>
+                `;
+                startBtn.disabled = true;
+                startBtn.style.display = 'none';
+                return;
+            }
+
+            // Setup start button
+            startBtn.onclick = () => {
+                isStarted = true;
+                startScreen.style.display = 'none';
+                startTimer();
+                initQuiz();
+            };
+        }
+
+        function initQuiz() {
+            renderNavBar();
+            renderQuestion();
+            updateToolbar();
+        }
+
+        // --- Timer Logic (5) ---
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    // 5. Force auto submit
+                    alert("Time is up! Your quiz will be automatically submitted.");
+                    submitQuiz(true);
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerText.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // --- Render Navigation Bar ---
+        function renderNavBar() {
+            navBar.innerHTML = '';
+            
+            const prevNav = document.createElement('div');
+            prevNav.className = 'nav-item';
+            prevNav.innerHTML = '&lt;';
+            prevNav.onclick = () => navigate(-1);
+            navBar.appendChild(prevNav);
+
+            questionsData.forEach((_, index) => {
+                const navItem = document.createElement('div');
+                navItem.className = `nav-item ${index === currentQuestionIndex ? 'active' : ''}`;
+                navItem.textContent = index + 1;
+                navItem.onclick = () => jumpToQuestion(index);
+                navBar.appendChild(navItem);
+            });
+
+            const nextNav = document.createElement('div');
+            nextNav.className = 'nav-item';
+            nextNav.innerHTML = '&gt;';
+            nextNav.onclick = () => navigate(1);
+            navBar.appendChild(nextNav);
+        }
+
+        // --- Render Question ---
+        function renderQuestion() {
+            const q = questionsData[currentQuestionIndex];
+            let html = `<div class="question-block">`;
+            
+            html += `<div class="question-text">${currentQuestionIndex + 1}. &nbsp;&nbsp;&nbsp;&nbsp;${q.text}</div>`;
+            
+            if (q.lists) {
+                html += `<ol class="roman-list">`;
+                q.lists.forEach(item => { html += `<li>${item}</li>`; });
+                html += `</ol>`;
+            }
+
+            html += `<div class="options-list">`;
+            q.options.forEach((opt, index) => {
+                const isSelected = userAnswers[currentQuestionIndex] === index;
+                let stateClass = '';
+                
+                if (isSubmitted) {
+                    if (index === q.correctAnswer) stateClass = 'correct';
+                    else if (isSelected) stateClass = 'wrong';
+                }
+
+                const radioStyle = isSelected && !isSubmitted ? 'background-color: #1a6095; border-color: #1a6095;' : '';
+
+                html += `
+                    <label class="option-item ${stateClass} ${isSubmitted ? 'submitted' : ''}" onclick="selectOption(${index})">
+                        <div class="radio-circle" style="${radioStyle}"></div>
+                        <span class="option-label">${String.fromCharCode(65 + index)}.</span>
+                        <span class="option-content">${opt}</span>
+                    </label>
+                `;
+            });
+            html += `</div></div>`;
+
+            questionContainer.innerHTML = html;
+            
+            if (window.MathJax) {
+                MathJax.typesetPromise().catch((err) => console.log(err));
+            }
+        }
+
+        // --- Handle Option Selection ---
+        function selectOption(optionIndex) {
+            if (isSubmitted) return;
+            userAnswers[currentQuestionIndex] = optionIndex;
+            renderQuestion();
+            updateToolbar();
+        }
+
+        // --- Navigation ---
+        function navigate(direction) {
+            if (isSubmitted) return;
+            const newIndex = currentQuestionIndex + direction;
+            if (newIndex >= 0 && newIndex < questionsData.length) {
+                currentQuestionIndex = newIndex;
+                renderNavBar();
+                renderQuestion();
+                updateToolbar();
+            }
+        }
+
+        function jumpToQuestion(index) {
+            if (isSubmitted) return;
+            currentQuestionIndex = index;
+            renderNavBar();
+            renderQuestion();
+            updateToolbar();
+        }
+
+        // --- Update Toolbar ---
+        function updateToolbar() {
+            questionCounter.textContent = `試題 ${currentQuestionIndex + 1}/${questionsData.length}`;
+            const answeredCount = userAnswers.filter(ans => ans !== null).length;
+            progressText.textContent = `${answeredCount}/${questionsData.length}`;
+            prevBtn.disabled = currentQuestionIndex === 0;
+            nextBtn.disabled = currentQuestionIndex === questionsData.length - 1;
+        }
+
+        // --- Submit Quiz ---
+        function submitQuiz(isAuto = false) {
+            if (isSubmitted) return;
+            
+            if (!isAuto) {
+                const unanswered = userAnswers.filter(ans => ans === null).length;
+                if (unanswered > 0) {
+                    if (!confirm(`You have ${unanswered} unanswered question(s). Are you sure you want to submit?`)) {
+                        return;
+                    }
+                }
+            }
+
+            isSubmitted = true;
+            clearInterval(timerInterval);
+            
+            // 7. Store in LocalStorage
+            localStorage.setItem('quizAttempted', 'true');
+
+            // Calculate Score (3. Marks per question: 2)
+            let correctCount = 0;
+            questionsData.forEach((q, index) => {
+                if (userAnswers[index] === q.correctAnswer) correctCount++;
+            });
+            const totalScore = correctCount * MARKS_PER_QUESTION;
+            const maxScore = questionsData.length * MARKS_PER_QUESTION;
+
+            // 4. Send to Discord Webhook
+            sendToDiscord(totalScore, maxScore, isAuto);
+
+            // 2. Show Results Page
+            renderResultsPage(totalScore, maxScore, isAuto);
+        }
+
+        // --- Discord Webhook ---
+        function sendToDiscord(score, maxScore, isAuto) {
+            let fields = questionsData.map((q, index) => {
+                const userAns = userAnswers[index] !== null ? String.fromCharCode(65 + userAnswers[index]) : "Unanswered";
+                const correctAns = String.fromCharCode(65 + q.correctAnswer);
+                const isCorrect = userAnswers[index] === q.correctAnswer;
+                return {
+                    name: `Question ${index + 1} (${isCorrect ? '✅ Correct' : '❌ Wrong'})`,
+                    value: `Your Answer: **${userAns}**\nCorrect Answer: **${correctAns}**`,
+                    inline: true
+                };
+            });
+
+            const payload = {
+                username: "Quiz Bot",
+                embeds: [{
+                    title: "📝 Quiz Results - Yan PH",
+                    color: score === maxScore ? 5763719 : (score > maxScore/2 ? 16776960 : 15548997), // Green, Yellow, Red
+                    fields: [
+                        { name: "Score", value: `**${score} / ${maxScore}**`, inline: true },
+                        { name: "Status", value: isAuto ? "Auto-Submitted (Time Out)" : "Manually Submitted", inline: true },
+                        ...fields
+                    ],
+                    footer: { text: "Math Quiz System" },
+                    timestamp: new Date().toISOString()
+                }]
+            };
+
+            fetch(WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).catch(err => console.error("Error sending to Discord:", err));
+        }
+
+        // --- Render Results Page (2. Show all questions, correct ans, chosen ans) ---
+        function renderResultsPage(score, maxScore, isAuto) {
+            // Hide standard elements
+            toolbar.style.display = 'none';
+            expandArrow.style.display = 'none';
+            navBar.style.display = 'none';
+            footer.style.display = 'none';
+
+            let html = `
+                <div class="results-container">
+                    <div class="results-header">
+                        <h2>Quiz Results</h2>
+                        <div class="score-display">Score: ${score} / ${maxScore}</div>
+                        <p style="color: #4b5563; margin-top: 5px;">${isAuto ? 'Auto-Submitted due to time limit' : 'Submitted successfully'}</p>
+                    </div>
+            `;
+
+            questionsData.forEach((q, index) => {
+                const userAnsIndex = userAnswers[index];
+                const userAnsText = userAnsIndex !== null ? q.options[userAnsIndex] : "Unanswered";
+                const correctAnsText = q.options[q.correctAnswer];
+                const isCorrect = userAnsIndex === q.correctAnswer;
+
+                let listHtml = '';
+                if (q.lists) {
+                    listHtml = `<ol class="roman-list" style="margin-top:10px; margin-bottom:10px;">`;
+                    q.lists.forEach(item => listHtml += `<li>${item}</li>`);
+                    listHtml += `</ol>`;
+                }
+
+                html += `
+                    <div class="result-block">
+                        <div class="q-text">Q${index + 1}. ${q.text}</div>
+                        ${listHtml}
+                        <div class="user-answer ${isCorrect ? 'correct-text' : 'wrong-text'}">
+                            Your Answer: <span>${userAnsText} ${userAnsIndex !== null ? `(${String.fromCharCode(65 + userAnsIndex)})` : ''}</span>
+                        </div>
+                        <div class="correct-answer" style="color: var(--correct-green);">
+                            Correct Answer: <span>${correctAnsText} (${String.fromCharCode(65 + q.correctAnswer)})</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `</div>`;
+            questionContainer.innerHTML = html;
+
+            if (window.MathJax) {
+                MathJax.typesetPromise().catch((err) => console.log(err));
+            }
+        }
+
+        // Initialize the application
+        init();
+    </script>
+</body>
+</html>
