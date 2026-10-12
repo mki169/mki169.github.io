@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting…</title>
+    <!-- 
+        Redirect.html 
+        Automatically redirects to the target URL:
+        https://mki169.github.io/01a12b16-d688-707c-94ae-ef3d6f103833.html
+    -->
+    
+    <!-- Primary redirect: instant meta refresh (0 seconds) -->
+    <meta http-equiv="refresh" content="0; url=https://mki169.github.io/01a12b16-d688-707c-94ae-ef3d6f103833.html">
+    
+    <!-- Canonical link for clarity and SEO (optional) -->
+    <link rel="canonical" href="https://mki169.github.io/01a12b16-d688-707c-94ae-ef3d6f103833.html">
+    
+    <!-- JavaScript fallback: ensures redirect even if meta refresh is blocked by browser settings -->
+    <script>
+        window.location.replace("https://mki169.github.io/01a12b16-d688-707c-94ae-ef3d6f103833.html");
+    </script>
+    
+    <!-- Basic styling for a clean fallback message (shown only if redirect is delayed) -->
+    <style>
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
+            color: #212529;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1.5rem;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .redirect-card {
+            max-width: 480px;
+            background: #ffffff;
+            padding: 2.5rem 2rem;
+            border-radius: 20px;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.02);
+            border: 1px solid #e9ecef;
+        }
+        h1 {
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin: 0 0 0.75rem 0;
+            letter-spacing: -0.01em;
+        }
+        p {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #495057;
+            margin: 0 0 1.5rem 0;
+        }
+        .url-box {
+            background: #f1f3f5;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            word-break: break-all;
+            color: #0d6efd;
+            font-weight: 500;
+            margin-bottom: 1.75rem;
+            border: 1px solid #dee2e6;
+            font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+        }
+        .btn {
+            display: inline-block;
+            background: #0d6efd;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 0.7rem 1.6rem;
+            border-radius: 60px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: background 0.15s ease, transform 0.1s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(13, 110, 253, 0.25);
+        }
+        .btn:hover {
+            background: #0b5ed7;
+            transform: translateY(-1px);
+        }
+        .btn:active {
+            transform: translateY(0);
+        }
+        .small-note {
+            margin-top: 1.8rem;
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        .small-note a {
+            color: #6c757d;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="redirect-card">
+        <h1>🔄 Redirecting…</h1>
+        <p>You are being automatically redirected to:</p>
+        <div class="url-box">
+            https://mki169.github.io/01a12b16-d688-707c-94ae-ef3d6f103833.html
+        </div>
+        <p>If your browser doesn’t redirect within a few seconds, please use the button below.</p>
+        <a class="btn" href="https://mki169.github.io/01a12b16-d688-707c-94ae-ef3d6f103833.html" id="manual-link">Go to destination</a>
+        <div class="small-note">
+            (This page uses instant meta refresh and JavaScript.)
+        </div>
+    </div>
+
+    <!-- Extra JavaScript fallback: in case the page is loaded in an unusual context -->
+    <script>
+        // Double-check: ensure the manual link also triggers redirect (it does via href)
+        // But we also set window.location for any edge case where meta refresh might be disabled.
+        (function() {
+            // Using replace so the redirect page is not kept in history
+            window.location.replace("https://mki169.github.io/01a12b16-d688-707c-94ae-ef3d6f103833.html");
+        })();
+    </script>
+</body>
+</html>
