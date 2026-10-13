@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Online Quiz</title>
+    <title>Math Quiz</title>
     <!-- MathJax for LaTeX rendering -->
     <script>
         MathJax = {
@@ -11,12 +11,11 @@
                 inlineMath: [['$', '$'], ['\\(', '\\)']],
                 displayMath: [['$$', '$$'], ['\\[', '\\]']]
             },
-            svg: {
-                fontCache: 'global'
-            }
+            svg: { fontCache: 'global' }
         };
     </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
     <style>
         :root {
             --blue-active: #1a6095;
@@ -37,14 +36,13 @@
             box-sizing: border-box;
         }
 
-        /* 1. On-layer Watermark */
+        /* On-layer Watermark (Subtle, for security) */
         #watermark-overlay {
             position: fixed;
-            top: 50%;
-            left: 50%;
+            top: 50%; left: 50%;
             transform: translate(-50%, -50%) rotate(-45deg);
             font-size: 120px;
-            color: rgba(0, 0, 0, 0.08); /* High transparency */
+            color: rgba(0, 0, 0, 0.04);
             font-weight: bold;
             pointer-events: none;
             z-index: 9999;
@@ -57,7 +55,7 @@
         #start-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.98);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -65,7 +63,7 @@
             z-index: 10000;
         }
         #start-screen h1 { font-size: 28px; margin-bottom: 10px; }
-        #start-screen p { font-size: 16px; color: #4b5563; margin-bottom: 30px; text-align: center;}
+        #start-screen p { font-size: 16px; color: #4b5563; margin-bottom: 30px; text-align: center; max-width: 600px; line-height: 1.5;}
         .btn-start {
             padding: 15px 40px;
             font-size: 20px;
@@ -79,7 +77,6 @@
             transition: background 0.3s;
         }
         .btn-start:hover { background-color: #16a34a; }
-        .btn-start:disabled { background-color: #9ca3af; cursor: not-allowed; }
 
         /* Header Section */
         header {
@@ -213,12 +210,11 @@
         .footer-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .footer-btn.submit { border-color: var(--green-submit); color: var(--green-submit); font-weight: bold; }
         .footer-btn.submit:hover:not(:disabled) { background-color: #dcfce7; }
-
     </style>
 </head>
 <body>
 
-    <!-- 1. Watermark -->
+    <!-- Watermark Overlay -->
     <div id="watermark-overlay">Yan PH</div>
 
     <!-- Start Screen Modal -->
@@ -249,9 +245,7 @@
     </header>
 
     <!-- Navigation Bar -->
-    <nav class="nav-bar" id="nav-bar">
-        <!-- Generated dynamically -->
-    </nav>
+    <nav class="nav-bar" id="nav-bar"></nav>
 
     <!-- Main Content -->
     <main>
@@ -266,9 +260,7 @@
         <div class="expand-arrow" id="expand-arrow">^</div>
 
         <!-- Dynamic Question Container -->
-        <div id="question-container">
-            <!-- Content injected here -->
-        </div>
+        <div id="question-container"></div>
     </main>
 
     <!-- Footer -->
@@ -284,7 +276,7 @@
         const TIME_LIMIT_SECONDS = 600; // 10 minutes
         const MARKS_PER_QUESTION = 2;
 
-        // --- Quiz Data ---
+        // --- Quiz Data (Fact-Checked and Corrected) ---
         const questionsData = [
             {
                 id: 1,
@@ -297,13 +289,15 @@
             {
                 id: 2,
                 text: `Solve \\(-x^2 + 2x + 3 \\geq 0\\).`,
-                options: ["\\(x \\leq -1 \\text{ or } x \\geq 3\\).", "\\(-1 \\leq x \\leq -3\\)", "\\(x \\geq 3\\).", "No real solution."],
+                // Corrected typo: Original image had -1 <= x <= -3, which is impossible.
+                options: ["\\(x \\leq -1 \\text{ or } x \\geq 3\\).", "\\(-1 \\leq x \\leq 3\\)", "\\(x \\geq 3\\).", "No real solution."],
                 correctAnswer: 1 // B
             },
             {
                 id: 3,
+                // Corrected typo: Original image had wrong numerator (-1 instead of 1) and strict inequality (< instead of <=).
                 text: `If \\(x^2 + (k - 1)x + 1 = 0\\) has real roots and \\(x^2 + 2kx + (k + 3) = 0\\) has no real roots.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Find \\(k\\).`,
-                options: ["\\(k < -1\\) .", "\\(\\frac{-1-\\sqrt{13}}{2} < k < -1\\) .", "\\(-1 \\leq k < \\frac{1+\\sqrt{13}}{2}\\) .", "No real solutions."],
+                options: ["\\(k < -1\\) .", "\\(\\frac{1-\\sqrt{13}}{2} < k \\leq -1\\) .", "\\(-1 \\leq k < \\frac{1+\\sqrt{13}}{2}\\) .", "No real solutions."],
                 correctAnswer: 1 // B
             },
             {
@@ -324,9 +318,9 @@
         let currentQuestionIndex = 0;
         let userAnswers = new Array(questionsData.length).fill(null);
         let isSubmitted = false;
-        let isStarted = false;
         let timeLeft = TIME_LIMIT_SECONDS;
         let timerInterval = null;
+        let startTime = null;
 
         // --- DOM Elements ---
         const startScreen = document.getElementById('start-screen');
@@ -345,7 +339,7 @@
 
         // --- Initialization & Local Storage Check ---
         function init() {
-            // 7. Check local storage to disallow multiple attempts
+            // Check local storage to disallow multiple attempts
             if (localStorage.getItem('quizAttempted') === 'true') {
                 startScreen.innerHTML = `
                     <h1>Quiz Completed</h1>
@@ -355,38 +349,42 @@
                 startBtn.style.display = 'none';
                 return;
             }
-
-            // Setup start button
-            startBtn.onclick = () => {
-                isStarted = true;
-                startScreen.style.display = 'none';
-                startTimer();
-                initQuiz();
-            };
         }
 
-        function initQuiz() {
+        // --- Start Quiz ---
+        function startQuiz() {
+            startScreen.style.display = 'none';
+            startTimer();
             renderNavBar();
             renderQuestion();
             updateToolbar();
         }
 
-        // --- Timer Logic (5) ---
+        // --- Timer Logic (Accurate against tab switching) ---
         function startTimer() {
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                updateTimerDisplay();
-
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    // 5. Force auto submit
-                    alert("Time is up! Your quiz will be automatically submitted.");
-                    submitQuiz(true);
-                }
-            }, 1000);
+            startTime = Date.now();
+            // Update UI every 250ms for smooth countdown
+            timerInterval = setInterval(updateTimer, 250);
+            
+            // Immediately update if the user returns to the tab
+            window.addEventListener('focus', updateTimer);
+            document.addEventListener('visibilitychange', updateTimer);
         }
 
-        function updateTimerDisplay() {
+        function updateTimer() {
+            if (isSubmitted) return;
+            
+            // Calculate based on real elapsed time, not interval ticks
+            const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+            timeLeft = TIME_LIMIT_SECONDS - elapsedSeconds;
+            
+            if (timeLeft <= 0) {
+                timeLeft = 0;
+                clearInterval(timerInterval);
+                submitQuiz(true);
+                return;
+            }
+            
             const minutes = Math.floor(timeLeft / 60);
             const seconds = timeLeft % 60;
             timerText.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
@@ -512,10 +510,10 @@
             isSubmitted = true;
             clearInterval(timerInterval);
             
-            // 7. Store in LocalStorage
+            // Store in LocalStorage to prevent re-attempts
             localStorage.setItem('quizAttempted', 'true');
 
-            // Calculate Score (3. Marks per question: 2)
+            // Calculate Score
             let correctCount = 0;
             questionsData.forEach((q, index) => {
                 if (userAnswers[index] === q.correctAnswer) correctCount++;
@@ -523,10 +521,10 @@
             const totalScore = correctCount * MARKS_PER_QUESTION;
             const maxScore = questionsData.length * MARKS_PER_QUESTION;
 
-            // 4. Send to Discord Webhook
+            // Send to Discord Webhook
             sendToDiscord(totalScore, maxScore, isAuto);
 
-            // 2. Show Results Page
+            // Show Results Page
             renderResultsPage(totalScore, maxScore, isAuto);
         }
 
@@ -547,7 +545,7 @@
                 username: "Quiz Bot",
                 embeds: [{
                     title: "📝 Quiz Results - Yan PH",
-                    color: score === maxScore ? 5763719 : (score > maxScore/2 ? 16776960 : 15548997), // Green, Yellow, Red
+                    color: score === maxScore ? 5763719 : (score > maxScore/2 ? 16776960 : 15548997),
                     fields: [
                         { name: "Score", value: `**${score} / ${maxScore}**`, inline: true },
                         { name: "Status", value: isAuto ? "Auto-Submitted (Time Out)" : "Manually Submitted", inline: true },
@@ -565,9 +563,8 @@
             }).catch(err => console.error("Error sending to Discord:", err));
         }
 
-        // --- Render Results Page (2. Show all questions, correct ans, chosen ans) ---
+        // --- Render Results Page ---
         function renderResultsPage(score, maxScore, isAuto) {
-            // Hide standard elements
             toolbar.style.display = 'none';
             expandArrow.style.display = 'none';
             navBar.style.display = 'none';
@@ -617,7 +614,7 @@
             }
         }
 
-        // Initialize the application
+        // Initialize the application on load
         init();
     </script>
 </body>
