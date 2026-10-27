@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="在 iPad 上安裝細明體（PMingLiU）的逐步教學">
+    <title>安裝細明體（PMingLiU）– iPad 教學</title>
+    <style>
+        :root {
+            --bg-green: #52a472;
+            --dark-green: #3d7d56;
+            --white: #ffffff;
+            --text-dark: #333333;
+            --text-gray: #666666;
+            --text-light-gray: #999999;
+            --border-light: #e0e0e0;
+            --blue-action: #2b78ff;
+            --warn-bg: #fff7e6;
+            --warn-border: #f0b429;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-green);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 24px 16px 60px;
+        }
+
+        .page {
+            width: 100%;
+            max-width: 680px;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            color: var(--white);
+            margin-bottom: 24px;
+        }
+
+        header .font-icon {
+            font-size: 44px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        header h1 {
+            font-size: 30px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        header h2 {
+            font-size: 17px;
+            font-weight: 400;
+            opacity: 0.9;
+            margin-top: 6px;
+        }
+
+        /* Card */
+        .card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 28px 24px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            margin-bottom: 20px;
+        }
+
+        .card h3 {
+            font-size: 20px;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+        }
+
+        .card p {
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--text-gray);
+        }
+
+        /* Download button */
+        .download-btn {
+            display: block;
+            width: 100%;
+            background: var(--bg-green);
+            color: var(--white);
+            text-align: center;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 600;
+            padding: 16px;
+            border-radius: 14px;
+            transition: background 0.2s;
+        }
+
+        .download-btn:hover {
+            background: var(--dark-green);
+        }
+
+        .download-sub {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-light-gray);
+            margin-top: 10px;
+        }
+
+        /* Warning box */
+        .warning {
+            background: var(--warn-bg);
+            border-left: 4px solid var(--warn-border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #7a5c00;
+            margin-top: 16px;
+        }
+
+        /* Steps */
+        .step {
+            display: flex;
+            gap: 16px;
+            padding: 18px 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .step:last-child {
+            border-bottom: none;
+            padding-bottom: 4px;
+        }
+
+        .step-num {
+            flex-shrink: 0;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--bg-green);
+            color: var(--white);
+            font-size: 17px;
+            font-weight: 600;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .step-body h4 {
+            font-size: 16px;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .step-body p {
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--text-gray);
+        }
+
+        .step-body .ui {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        /* Font preview */
+        .font-preview {
+            background: #f8f9fa;
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            font-family: "PMingLiU", "細明體", serif;
+            font-size: 22px;
+            line-height: 1.8;
+            color: var(--text-dark);
+            margin-top: 12px;
+        }
+
+        .font-preview small {
+            display: block;
+            font-size: 13px;
+            color: var(--text-light-gray);
+            margin-top: 8px;
+        }
+
+        /* FAQ */
+        details {
+            border-bottom: 1px solid var(--border-light);
+            padding: 14px 0;
+        }
+
+        details:last-child {
+            border-bottom: none;
+        }
+
+        summary {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-dark);
+            cursor: pointer;
+            list-style-position: outside;
+        }
+
+        details p {
+            margin-top: 8px;
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--text-gray);
+        }
+
+        footer {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 13px;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+
+        <header>
+            <span class="font-icon">字</span>
+            <h1>安裝細明體（PMingLiU）</h1>
+            <h2>iPad 字體安裝逐步教學</h2>
+        </header>
+
+        <div class="card">
+            <h3>第一步：下載描述檔</h3>
+            <p>點擊下方按鈕，下載細明體字體描述檔（.mobileconfig）。</p>
+            <br>
+            <a class="download-btn" href="Install%20PMingLiU%20Regular.mobileconfig" download>⬇ 下載字體描述檔</a>
+            <div class="download-sub">檔案：Install PMingLiU Regular.mobileconfig（約 35 MB）</div>
+            <div class="warning">
+                ⚠️ <strong>重要：</strong>請務必在 iPad 上使用 <strong>Safari</strong> 開啟本頁面。
+                Chrome 等其他瀏覽器無法安裝描述檔。
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>安裝步驟</h3>
+            <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-body">
+                    <h4>允許下載</h4>
+                    <p>點擊下載按鈕後，系統會詢問「此網站正在嘗試下載描述檔」，請點擊<span class="ui">允許</span>。</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-body">
+                    <h4>開啟「設定」</h4>
+                    <p>下載完成後，開啟「<span class="ui">設定</span>」App，你會在畫面頂部附近看到「<span class="ui">已下載描述檔</span>」，點擊它。<br>
+                    如沒有顯示，可前往「<span class="ui">設定 &gt; 一般 &gt; VPN 與裝置管理</span>」查看。</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-body">
+                    <h4>安裝描述檔</h4>
+                    <p>確認畫面顯示「<span class="ui">PMingLiU Regular</span>」，點擊右上角的「<span class="ui">安裝</span>」，然後輸入你的螢幕解鎖通行碼。</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">4</div>
+                <div class="step-body">
+                    <h4>確認安裝</h4>
+                    <p>當出現「描述檔未經簽署」的警告時，點擊「<span class="ui">安裝</span>」，再點一次「<span class="ui">安裝</span>」確認，最後點「<span class="ui">完成</span>」。</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">5</div>
+                <div class="step-body">
+                    <h4>開始使用</h4>
+                    <p>開啟支援自訂字體的 App（例如 Pages、Keynote、Word、PowerPoint），在字體清單中選擇「<span class="ui">PMingLiU 細明體</span>」即可使用。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>字體預覽</h3>
+            <p>安裝完成後，以下文字會以細明體顯示：</p>
+            <div class="font-preview">
+                細明體測試：永字八法，繁體中文示範。<br>
+                0123456789 ABCabc
+                <small>安裝前此段文字會以其他字體顯示；安裝後將變為細明體。</small>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>常見問題</h3>
+            <details>
+                <summary>安裝後整部 iPad 的系統字體會改變嗎？</summary>
+                <p>不會。字體只會出現在支援「使用者安裝字體」的 App 內（如 Pages、Keynote、Word、PowerPoint 等），系統介面字體維持不變。</p>
+            </details>
+            <details>
+                <summary>找不到「已下載描述檔」怎麼辦？</summary>
+                <p>請確認你是用 Safari 下載；亦可到「設定 &gt; 一般 &gt; VPN 與裝置管理」查看。如仍然找不到，請重新啟動 iPad 後再下載一次。</p>
+            </details>
+            <details>
+                <summary>哪些 App 可以使用這款字體？</summary>
+                <p>所有支援自訂字體的 App 均可使用，包括 Apple Pages、Keynote、Numbers、Microsoft Word、PowerPoint、Excel 等。</p>
+            </details>
+            <details>
+                <summary>如何移除這款字體？</summary>
+                <p>前往「設定 &gt; 一般 &gt; VPN 與裝置管理」，點擊「PMingLiU Regular」，再點「移除描述檔」即可。</p>
+            </details>
+        </div>
+
+        <footer>mki169.github.io</footer>
+
+    </div>
+</body>
+</html>
