@@ -274,6 +274,9 @@
         const WEBHOOK_URL = "https://discord.com/api/webhooks/1558827954866360340/0fGU8098dhIBIoS7Iyl1tge61pl66Ohlieec6WiThdB7t4UXtsCp9WYUljKRGKV-FKJi";
         const TIME_LIMIT_SECONDS = 600; // 10 minutes
         const MARKS_PER_QUESTION = 2;
+        
+        // FIX: Changed the storage key to a unique identifier for this specific quiz version
+        const QUIZ_STORAGE_KEY = 'quizAttempted_Chapter2_Variations';
 
         // --- Quiz Data (Fact-Checked and Correctly Formatted) ---
         const questionsData = [
@@ -342,7 +345,8 @@
 
         // --- Initialization & Local Storage Check ---
         function init() {
-            if (localStorage.getItem('quizAttempted') === 'true') {
+            // Using the new QUIZ_STORAGE_KEY
+            if (localStorage.getItem(QUIZ_STORAGE_KEY) === 'true') {
                 startScreen.innerHTML = `
                     <h1>Quiz Completed</h1>
                     <p style="color: #ef4444;">You have already attempted this quiz. Multiple attempts are not allowed.</p>
@@ -520,7 +524,8 @@
             isSubmitted = true;
             clearInterval(timerInterval);
             
-            localStorage.setItem('quizAttempted', 'true');
+            // Using the new QUIZ_STORAGE_KEY
+            localStorage.setItem(QUIZ_STORAGE_KEY, 'true');
 
             let correctCount = 0;
             questionsData.forEach((q, index) => {
