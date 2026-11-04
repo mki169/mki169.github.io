@@ -282,18 +282,18 @@
         const MARKS_PER_QUESTION = 2;
         
         // Unique identifier for this specific quiz instance
-        const QUIZ_STORAGE_KEY = 'quizAttempted_QuadraticInequalities_Updated';
+        const QUIZ_STORAGE_KEY = 'quizAttempted_QuadraticInequalities_Final';
 
-        // --- Generate Exact Parabola SVG for Q8 ---
+        // --- Generate Exact Parabola SVG for Q1 ---
         function generateParabolaPath() {
             // Coordinate system: origin at (150, 150)
-            // Parabola equation: y = -0.012(x - 150)^2 + 180
-            // Roots at x = 100 and x = 200 (where y = 150)
+            // Parabola equation: y = -0.02(x - 150)^2 + 200
+            // Vertex at (150, 200), Roots perfectly at x=100 and x=200 (y=150)
             let path = "";
-            for (let x = 50; x <= 250; x += 5) {
-                let y = -0.012 * Math.pow(x - 150, 2) + 180;
-                if (x === 50) path += `M ${x},${y} `;
-                else path += `L ${x},${y} `;
+            for (let x = 40; x <= 260; x += 2) {
+                let svgY = -0.02 * Math.pow(x - 150, 2) + 200;
+                if (x === 40) path += `M ${x},${svgY} `;
+                else path += `L ${x},${svgY} `;
             }
             return path.trim();
         }
