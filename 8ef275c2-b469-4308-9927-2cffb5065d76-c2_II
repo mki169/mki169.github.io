@@ -282,7 +282,7 @@
         const MARKS_PER_QUESTION = 2;
         
         // Unique identifier for this specific quiz instance
-        const QUIZ_STORAGE_KEY = 'quizAttempted_QuadraticInequalities_Final';
+        const QUIZ_STORAGE_KEY = 'quizAttempted_QuadraticInequalities_Final2';
 
         // --- Generate Exact Parabola SVG for Q1 ---
         function generateParabolaPath() {
@@ -342,7 +342,7 @@
             },
             {
                 id: 3,
-                text: `Let \(x\) be the length of \(BC\). If the lengths of the hypotenuse \(AC\) is less than $\\sqrt{106}$ cm, find the range of values of \(x\).`,
+                text: `Let \(x\) be the length of \(BC\). Given that the leg of the triangle is \(x + 4\). If the lengths of the hypotenuse \(AC\) is less than $\\sqrt{106}$ cm, find the range of values of \(x\).`,
                 options: ["$0 < x < 5$.", "$1 < x < 3$.", "$1 < x < 4$.", "$1 < x < 5$."],
                 correctAnswer: 0 // A
             },
