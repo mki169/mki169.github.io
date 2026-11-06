@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PDF Watermark Studio — Client-Side</title>
+
+  <!-- Beer CSS (Material Design 3) -->
+  <link href="https://cdn.jsdelivr.net/npm/beercss@4.0.21/dist/cdn/beer.min.css" rel="stylesheet" />
+  <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@4.0.21/dist/cdn/beer.min.js"></script>
+
+  <!-- Material Symbols (icons) -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+
+  <!-- Arial via CDN (UI + canvas fallback) -->
+  <link href="https://fonts.cdnfonts.com/css/arial-2" rel="stylesheet" />
+
+  <!-- PDF.js (preview rendering) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+  <!-- pdf-lib (PDF modification) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+
+  <!-- JSZip (batch download) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+  <style>
+    :root {
+      --font: Arial, Helvetica, sans-serif;
+      --font-icon: "Material Symbols Outlined";
+    }
+
+    body {
+      background: var(--background);
+      min-height: 100vh;
+    }
+
+    main {
+      padding-top: 5.5rem;
+      padding-bottom: 3rem;
+    }
+
+    .app-title {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      font-weight: 600;
+      letter-spacing: -.01em;
+    }
+
+    .app-title i {
+      color: var(--primary);
+    }
+
+    .privacy-chip {
+      color: var(--primary);
+      background: var(--primary-container);
+      border: 1px solid var(--primary-border);
+      white-space: nowrap;
+    }
+
+    article {
+      padding: 1.25rem;
+    }
+
+    article h6 {
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      margin-bottom: 1rem;
+      color: var(--on-surface);
+      font-weight: 600;
+    }
+
+    article h6 i {
+      font-size: 1.25rem;
+      color: var(--primary);
+    }
+
+    /* Dropzone */
+    .dropzone {
+      border: 2px dashed var(--outline);
+      border-radius: 1rem;
+      padding: 1.75rem 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color .18s ease, background .18s ease;
+      background: var(--surface);
+    }
+
+    .dropzone:hover,
+    .dropzone.dragover {
+      border-color: var(--primary);
+      background: var(--primary-container);
+    }
+
+    .dropzone i {
+      font-size: 2.5rem;
+      color: var(--primary);
+      margin-bottom: .35rem;
+    }
+
+    .dropzone p {
+      margin: .15rem 0;
+      color: var(--on-surface-variant);
+    }
+
+    .dropzone .small-text {
+      color: var(--on-surface-variant);
+      opacity: .75;
+    }
+
+    /* Toggle buttons */
+    .segmented {
+      display: flex;
+      gap: .35rem;
+      flex-wrap: wrap;
+    }
+
+    .segmented button {
+      flex: 1 1 auto;
+      min-width: 0;
+      font-size: .8rem;
+      padding: 0 .75rem;
+      height: 2.5rem;
+    }
+
+    /* Sliders */
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      width: 100%;
+    }
+
+    .slider-row input[type="range"] {
+      flex: 1;
+      accent-color: var(--primary);
+      height: 2rem;
+      background: transparent;
+    }
+
+    .slider-value {
+      min-width: 3.5rem;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      color: var(--on-surface-variant);
+      font-size: .85rem;
+    }
+
+    /* Color input */
+    .color-row {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+    }
+
+    input[type="color"] {
+      width: 3rem;
+      height: 2.5rem;
+      padding: 0;
+      border: 1px solid var(--outline);
+      border-radius: .5rem;
+      background: none;
+      cursor: pointer;
+    }
+
+    .color-hex {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: .8rem;
+      color: var(--on-surface-variant);
+    }
+
+    /* Preview */
+    .preview-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 280px;
+      max-height: 560px;
+      overflow: auto;
+      border-radius: .75rem;
+      background: var(--surface-variant);
+      border: 1px solid var(--outline-variant);
+      padding: .75rem;
+    }
+
+    #previewCanvas {
+      display: none;
+      max-width: 100%;
+      height: auto;
+      border-radius: .25rem;
+      box-shadow: var(--elevate2);
+      background: #fff;
+    }
+
+    .preview-empty {
+      text-align: center;
+      color: var(--on-surface-variant);
+      padding: 2rem 1rem;
+    }
+
+    .preview-empty i {
+      font-size: 2.5rem;
+      opacity: .5;
+      margin-bottom: .5rem;
+    }
+
+    /* File list */
+    .file-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .file-row {
+      display: flex;
+      align-items: center;
+      gap: .65rem;
+      padding: .65rem .25rem;
+      border-bottom: 1px solid var(--outline-variant);
+      cursor: pointer;
+      border-radius: .5rem;
+      transition: background .15s ease;
+    }
+
+    .file-row:last-child {
+      border-bottom: none;
+    }
+
+    .file-row:hover {
+      background: var(--surface-variant);
+    }
+
+    .file-row.selected {
+      background: var(--primary-container);
+    }
+
+    .file-icon {
+      color: var(--primary);
+      flex: none;
+    }
+
+    .file-info {
+      min-width: 0;
+    }
+
+    .file-name {
+      font-size: .85rem;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .file-meta {
+      font-size: .7rem;
+      color: var(--on-surface-variant);
+    }
+
+    .status-chip {
+      flex: none;
+      font-size: .65rem;
+      height: 1.6rem;
+      padding: 0 .55rem;
+      pointer-events: none;
+    }
+
+    .status-ready {
+      background: var(--surface-variant);
+      color: var(--on-surface-variant);
+    }
+
+    .status-processing {
+      background: var(--secondary-container);
+      color: var(--on-secondary-container);
+    }
+
+    .status-done {
+      background: var(--primary-container);
+      color: var(--primary);
+    }
+
+    .status-error {
+      background: var(--error-container);
+      color: var(--error);
+    }
+
+    .empty-list {
+      padding: 1.25rem .25rem;
+      color: var(--on-surface-variant);
+      text-align: center;
+      font-size: .85rem;
+    }
+
+    .batch-actions {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+
+    progress {
+      margin-top: .75rem;
+    }
+
+    /* Image watermark preview */
+    .image-preview-row {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      margin-top: .75rem;
+    }
+
+    .image-thumb {
+      width: 3.5rem;
+      height: 3.5rem;
+      object-fit: contain;
+      border-radius: .5rem;
+      border: 1px solid var(--outline-variant);
+      background: var(--surface-variant);
+    }
+
+    /* Dialog */
+    dialog {
+      max-width: 420px;
+    }
+
+    /* Responsive tweaks */
+    @media (max-width: 600px) {
+      article {
+        padding: 1rem;
+      }
+
+      .preview-wrap {
+        min-height: 220px;
+      }
+
+      .segmented button {
+        font-size: .72rem;
+        padding: 0 .5rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Top app bar -->
+  <header class="fixed">
+    <nav>
+      <button class="transparent circle" id="themeToggle" title="Toggle dark mode">
+        <i>dark_mode</i>
+      </button>
+      <div class="app-title max">
+        <i>water_drop</i>
+        <span>PDF Watermark Studio</span>
+      </div>
+      <span class="chip small privacy-chip" title="Files never leave your browser">
+        <i>shield</i>
+        <span>Client-side only</span>
+      </span>
+    </nav>
+  </header>
+
+  <main class="responsive">
+
+    <div class="grid">
+
+      <!-- LEFT: Inputs and settings -->
+      <div class="s12 m5 l4">
+
+        <!-- Upload PDFs -->
+        <article class="border no-elevate" style="margin-bottom: 1rem;">
+          <h6><i>upload_file</i> PDF files</h6>
+
+          <div class="dropzone" id="dropzone" role="button" tabindex="0" aria-label="Upload PDF files">
+            <i>cloud_upload</i>
+            <p><strong>Drop PDFs here</strong></p>
+            <p class="small-text">or click to browse — multiple files supported</p>
+          </div>
+
+          <input type="file" id="pdfInput" accept="application/pdf" multiple hidden />
+
+          <p class="small-text" style="margin-top: .75rem; color: var(--on-surface-variant);">
+            Files are processed in your browser and never uploaded.
+          </p>
+        </article>
+
+        <!-- Watermark settings -->
+        <article class="border no-elevate">
+          <h6><i>tune</i> Watermark settings</h6>
+
+          <!-- Type -->
+          <label class="small-text" style="display:block; margin-bottom:.4rem; color:var(--on-surface-variant);">Type</label>
+          <nav class="group segmented" id="typeToggle" style="margin-bottom: 1rem;">
+            <button class="left-round fill primary" data-type="text">Text</button>
+            <button class="no-round" data-type="image">Image</button>
+            <button class="right-round" data-type="both">Both</button>
+          </nav>
+
+          <!-- TEXT SETTINGS -->
+          <div id="textSettings">
+            <div class="field label border" style="margin-bottom: .75rem;">
+              <input id="textInput" type="text" placeholder=" " value="CONFIDENTIAL" maxlength="80" />
+              <label>Watermark text</label>
+            </div>
+
+            <div class="slider-row" style="margin-bottom: .5rem;">
+              <label for="fontSize" class="small-text" style="min-width: 4.5rem; color:var(--on-surface-variant);">Font size</label>
+              <input id="fontSize" type="range" min="8" max="200" value="48" step="1" />
+              <output id="fontSizeValue" class="slider-value">48 pt</output>
+            </div>
+
+            <div class="color-row" style="margin-bottom: .75rem;">
+              <label for="textColor" class="small-text" style="flex:1; color:var(--on-surface-variant);">Text color</label>
+              <input id="textColor" type="color" value="#e53935" />
+              <span id="colorHex" class="color-hex">#e53935</span>
+            </div>
+          </div>
+
+          <!-- IMAGE SETTINGS -->
+          <div id="imageSettings" hidden>
+            <button class="border responsive" id="imageUploadBtn" style="margin-bottom: .5rem;">
+              <i>add_photo_alternate</i>
+              <span>Choose watermark image</span>
+            </button>
+            <input type="file" id="imageInput" accept="image/png,image/jpeg" hidden />
+
+            <div id="imagePreviewRow" class="image-preview-row" hidden>
+              <img id="imagePreview" class="image-thumb" alt="Watermark image" />
+              <div class="max">
+                <div id="imageName" class="file-name" style="font-size:.8rem;"></div>
+                <div class="file-meta">PNG or JPEG</div>
+              </div>
+              <button id="removeImageBtn" class="circle transparent" title="Remove image">
+                <i>close</i>
+              </button>
+            </div>
+          </div>
+
+          <div class="divider" style="margin: 1rem 0;"></div>
+
+          <!-- Coverage -->
+          <label class="small-text" style="display:block; margin-bottom:.4rem; color:var(--on-surface-variant);">Page coverage</label>
+          <nav class="group segmented" id="coverageToggle" style="margin-bottom: 1rem;">
+            <button class="left-round" data-coverage="50">50%</button>
+            <button class="no-round" data-coverage="75">75%</button>
+            <button class="right-round" data-coverage="100">100%</button>
+          </nav>
+
+          <!-- Opacity -->
+          <div class="slider-row" style="margin-bottom: .5rem;">
+            <label for="opacity" class="small-text" style="min-width: 4.5rem; color:var(--on-surface-variant);">Opacity</label>
+            <input id="opacity" type="range" min="5" max="95" value="35" step="1" />
+            <output id="opacityValue" class="slider-value">35%</output>
+          </div>
+
+          <!-- Angle -->
+          <div class="slider-row">
+            <label for="angle" class="small-text" style="min-width: 4.5rem; color:var(--on-surface-variant);">Angle</label>
+            <input id="angle" type="range" min="-90" max="90" value="-30" step="1" />
+            <output id="angleValue" class="slider-value">-30°</output>
+          </div>
+        </article>
+      </div>
+
+      <!-- RIGHT: Preview and batch -->
+      <div class="s12 m7 l8">
+
+        <!-- Preview -->
+        <article class="border no-elevate" style="margin-bottom: 1rem;">
+          <h6><i>visibility</i> Preview</h6>
+
+          <div class="preview-wrap">
+            <div class="preview-empty" id="previewEmpty">
+              <i>picture_as_pdf</i>
+              <p>Upload a PDF and select it to preview the watermark.</p>
+            </div>
+            <canvas id="previewCanvas"></canvas>
+          </div>
+
+          <div class="row" style="margin-top: .75rem; align-items: center;">
+            <button id="previewBtn" class="border">
+              <i>refresh</i>
+              <span>Refresh preview</span>
+            </button>
+            <div class="max"></div>
+            <span id="previewMeta" class="small-text" style="color: var(--on-surface-variant);"></span>
+          </div>
+        </article>
+
+        <!-- Batch -->
+        <article class="border no-elevate">
+          <h6><i>folder</i> Batch queue</h6>
+
+          <div id="fileList" class="file-list">
+            <div class="empty-list">No PDFs added yet.</div>
+          </div>
+
+          <div class="batch-actions">
+            <button id="processBtn" class="fill primary">
+              <i>play_arrow</i>
+              <span>Process all</span>
+            </button>
+            <button id="downloadAllBtn" class="border" disabled>
+              <i>download</i>
+              <span>Download all (.zip)</span>
+            </button>
+            <div class="max"></div>
+            <span id="batchStatus" class="small-text" style="color: var(--on-surface-variant);"></span>
+          </div>
+
+          <progress id="batchProgress" value="0" max="100" hidden></progress>
+        </article>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Error dialog -->
+  <dialog id="errorDialog">
+    <h5>Something went wrong</h5>
+    <p id="errorMessage"></p>
+    <nav class="right-align">
+      <button class="border" onclick="document.getElementById('errorDialog').close()">Close</button>
+    </nav>
+  </dialog>
+
+  <script>
+    /* ============================================================
+       State
+    ============================================================ */
+    const state = {
+      files: [],
+      selectedId: null,
+      settings: {
+        type: 'text',
+        text: 'CONFIDENTIAL',
+        fontSize: 48,
+        color: '#e53935',
+        opacity: 0.35,
+        coverage: 75,
+        angle: -30,
+        image: null
+      }
+    };
+
+    let pdfjsReady = false;
+    let previewTimer = null;
+    let processing = false;
+
+    /* ============================================================
+       DOM refs
+    ============================================================ */
+    const $ = (sel) => document.querySelector(sel);
+
+    const dropzone = $('#dropzone');
+    const pdfInput = $('#pdfInput');
+    const fileListEl = $('#fileList');
+    const previewCanvas = $('#previewCanvas');
+    const previewEmpty = $('#previewEmpty');
+    const previewMeta = $('#previewMeta');
+    const previewBtn = $('#previewBtn');
+    const processBtn = $('#processBtn');
+    const downloadAllBtn = $('#downloadAllBtn');
+    const batchStatus = $('#batchStatus');
+    const batchProgress = $('#batchProgress');
+
+    const textSettings = $('#textSettings');
+    const imageSettings = $('#imageSettings');
+    const textInput = $('#textInput');
+    const fontSize = $('#fontSize');
+    const fontSizeValue = $('#fontSizeValue');
+    const textColor = $('#textColor');
+    const colorHex = $('#colorHex');
+    const opacity = $('#opacity');
+    const opacityValue = $('#opacityValue');
+    const angle = $('#angle');
+    const angleValue = $('#angleValue');
+    const imageInput = $('#imageInput');
+    const imageUploadBtn = $('#imageUploadBtn');
+    const imagePreviewRow = $('#imagePreviewRow');
+    const imagePreview = $('#imagePreview');
+    const imageName = $('#imageName');
+    const removeImageBtn = $('#removeImageBtn');
+    const typeToggle = $('#typeToggle');
+    const coverageToggle = $('#coverageToggle');
+
+    const errorDialog = $('#errorDialog');
+    const errorMessage = $('#errorMessage');
+
+    /* ============================================================
+       Utilities
+    ============================================================ */
+    function uid() {
+      return Math.random().toString(36).slice(2, 10);
+    }
+
+    function formatBytes(bytes) {
+      if (!bytes) return '0 B';
+      const units = ['B', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(1024));
+      return (bytes / Math.pow(1024, i)).toFixed(i === 0 ? 0 : 1) + ' ' + units[i];
+    }
+
+    function showError(message) {
+      errorMessage.textContent = message;
+      errorDialog.showModal();
+    }
+
+    function debouncePreview(delay = 260) {
+      clearTimeout(previewTimer);
+      previewTimer = setTimeout(() => renderPreview(), delay);
+    }
+
+    /* ============================================================
+       Arial font loading (CDN)
+    ============================================================ */
+    const fontReady = (async () => {
+      try {
+        const font = new FontFace(
+          'ArialCDN',
+          'url(https://cdn.jsdelivr.net/npm/@canvas-fonts/arial@1.0.4/Arial.ttf)'
+        );
+        await font.load();
+        document.fonts.add(font);
+        await document.fonts.load('48px ArialCDN');
+      } catch (err) {
+        console.warn('Arial CDN font could not be loaded; falling back to system Arial.', err);
+      }
+    })();
+
+    /* ============================================================
+       PDF.js worker
+    ============================================================ */
+    if (window.pdfjsLib) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc =
+        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      pdfjsReady = true;
+    }
+
+    /* ============================================================
+       File handling
+    ============================================================ */
+    function addFiles(fileList) {
+      const pdfs = Array.from(fileList).filter(
+        (f) => f.type === 'application/pdf' || /\.pdf$/i.test(f.name)
+      );
+
+      if (!pdfs.length) {
+        showError('Please select PDF files.');
+        return;
+      }
+
+      for (const file of pdfs) {
+        state.files.push({
+          id: uid(),
+          file,
+          name: file.name,
+          size: file.size,
+          status: 'ready',
+          resultBlob: null,
+          resultUrl: null,
+          pdfjsDoc: null,
+          error: null
+        });
+      }
+
+      if (!state.selectedId) {
+        state.selectedId = state.files[0].id;
+      }
+
+      renderFileList();
+      updateBatchSummary();
+      renderPreview();
+    }
+
+    function getSelectedFile() {
+      return state.files.find((f) => f.id === state.selectedId) || null;
+    }
+
+    function removeFile(id) {
+      const idx = state.files.findIndex((f) => f.id === id);
+      if (idx === -1) return;
+
+      const [removed] = state.files.splice(idx, 1);
+      if (removed.resultUrl) URL.revokeObjectURL(removed.resultUrl);
+
+      if (state.selectedId === id) {
+        state.selectedId = state.files[0]?.id || null;
+      }
+
+      renderFileList();
+      updateBatchSummary();
+      renderPreview();
+    }
+
+    function selectFile(id) {
+      state.selectedId = id;
+      renderFileList();
+      renderPreview();
+    }
+
+    /* ============================================================
+       File list rendering
+    ============================================================ */
+    function statusLabel(status) {
+      const map = {
+        ready: 'Ready',
+        processing: 'Processing',
+        done: 'Done',
+        error: 'Error'
+      };
+      return map[status] || status;
+    }
+
+    function statusClass(status) {
+      return 'status-' + status;
+    }
+
+    function renderFileList() {
+      if (!state.files.length) {
+        fileListEl.innerHTML = '<div class="empty-list">No PDFs added yet.</div>';
+        return;
+      }
+
+      fileListEl.innerHTML = state.files
+        .map((f) => {
+          const selected = f.id === state.selectedId ? ' selected' : '';
+          const downloadBtn =
+            f.status === 'done' && f.resultUrl
+              ? `<button class="circle transparent" data-action="download" data-id="${f.id}" title="Download">
+                   <i>download</i>
+                 </button>`
+              : '';
+
+          return `
+            <div class="file-row${selected}" data-id="${f.id}">
+              <i class="file-icon">picture_as_pdf</i>
+              <div class="file-info max">
+                <div class="file-name" title="${f.name}">${f.name}</div>
+                <div class="file-meta">${formatBytes(f.size)}</div>
+              </div>
+              <span class="chip small status-chip ${statusClass(f.status)}">${statusLabel(f.status)}</span>
+              ${downloadBtn}
+              <button class="circle transparent" data-action="remove" data-id="${f.id}" title="Remove">
+                <i>close</i>
+              </button>
+            </div>
+          `;
+        })
+        .join('');
+
+      // Row click = select
+      fileListEl.querySelectorAll('.file-row').forEach((row) => {
+        row.addEventListener('click', (e) => {
+          if (e.target.closest('button')) return;
+          selectFile(row.dataset.id);
+        });
+      });
+
+      // Action buttons
+      fileListEl.querySelectorAll('button[data-action]').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const { action, id } = btn.dataset;
+          if (action === 'remove') removeFile(id);
+          if (action === 'download') {
+            const f = state.files.find((x) => x.id === id);
+            if (f?.resultUrl) {
+              triggerDownload(f.resultUrl, f.name.replace(/\.pdf$/i, '') + '-watermarked.pdf');
+            }
+          }
+        });
+      });
+    }
+
+    function updateBatchSummary() {
+      const total = state.files.length;
+      const done = state.files.filter((f) => f.status === 'done').length;
+      const errors = state.files.filter((f) => f.status === 'error').length;
+
+      batchStatus.textContent = total
+        ? `${done} of ${total} processed${errors ? ` · ${errors} error${errors > 1 ? 's' : ''}` : ''}`
+        : '';
+
+      downloadAllBtn.disabled = done === 0 || processing;
+      processBtn.disabled = total === 0 || processing;
+
+      if (total && done === total) {
+        batchStatus.textContent = `All ${total} file${total > 1 ? 's' : ''} processed`;
+      }
+    }
+
+    /* ============================================================
+       Watermark canvas generation
+    ============================================================ */
+    function drawTextPattern(ctx, w, h, settings, scale) {
+      const fontSizePx = Math.max(6, settings.fontSize * scale);
+      ctx.font = `${fontSizePx}px ArialCDN, Arial, Helvetica, sans-serif`;
+      ctx.fillStyle = settings.color;
+      ctx.globalAlpha = settings.opacity;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      const text = settings.text.trim() || 'CONFIDENTIAL';
+      const textWidth = ctx.measureText(text).width;
+
+      const gapFactor =
+        settings.coverage === 50 ? 2.6 :
+        settings.coverage === 75 ? 1.2 : 0.35;
+
+      const gapX = textWidth + fontSizePx * gapFactor;
+      const gapY = fontSizePx * (1 + gapFactor);
+
+      ctx.save();
+      ctx.translate(w / 2, h / 2);
+      ctx.rotate((settings.angle * Math.PI) / 180);
+
+      const diagonal = Math.hypot(w, h) * 1.4;
+
+      for (let y = -diagonal; y <= diagonal; y += gapY) {
+        for (let x = -diagonal; x <= diagonal; x += gapX) {
+          ctx.fillText(text, x, y);
+        }
+      }
+      ctx.restore();
+    }
+
+    function drawImagePattern(ctx, w, h, settings, scale) {
+      const img = settings.image;
+      if (!img) return;
+
+      const coverage = settings.coverage / 100;
+      const imgW = w * coverage;
+      const imgH = imgW * (img.naturalHeight / img.naturalWidth);
+
+      const gapFactor =
+        settings.coverage === 50 ? 0.8 :
+        settings.coverage === 75 ? 0.4 : 0.12;
+
+      const gapX = imgW * gapFactor;
+      const gapY = imgH * gapFactor;
+
+      ctx.save();
+      ctx.globalAlpha = settings.opacity;
+      ctx.translate(w / 2, h / 2);
+      ctx.rotate((settings.angle * Math.PI) / 180);
+
+      const diagonal = Math.hypot(w, h) * 1.4;
+
+      for (let y = -diagonal; y <= diagonal; y += imgH + gapY) {
+        for (let x = -diagonal; x <= diagonal; x += imgW + gapX) {
+          ctx.drawImage(img, x - imgW / 2, y - imgH / 2, imgW, imgH);
+        }
+      }
+      ctx.restore();
+    }
+
+    async function generateWatermarkCanvas(width, height, scale) {
+      await fontReady;
+
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.max(1, Math.round(width));
+      canvas.height = Math.max(1, Math.round(height));
+
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const s = state.settings;
+
+      // Image first (so text can overlay)
+      if ((s.type === 'image' || s.type === 'both') && s.image) {
+        drawImagePattern(ctx, canvas.width, canvas.height, s, scale);
+      }
+
+      // Text
+      if (s.type === 'text' || s.type === 'both') {
+        drawTextPattern(ctx, canvas.width, canvas.height, s, scale);
+      }
+
+      return canvas;
+    }
+
+    /* ============================================================
+       Preview
+    ============================================================ */
+    async function renderPreview() {
+      const entry = getSelectedFile();
+
+      if (!entry) {
+        previewCanvas.style.display = 'none';
+        previewEmpty.hidden = false;
+        previewMeta.textContent = '';
+        return;
+      }
+
+      if (!pdfjsReady) {
+        previewEmpty.innerHTML =
+          '<i>error</i><p>PDF.js failed to load. Please refresh the page.</p>';
+        previewEmpty.hidden = false;
+        previewCanvas.style.display = 'none';
+        return;
+      }
+
+      previewEmpty.innerHTML =
+        '<i>hourglass_top</i><p>Rendering preview…</p>';
+      previewEmpty.hidden = false;
+      previewCanvas.style.display = 'none';
+
+      try {
+        // Load PDF.js document once per file
+        if (!entry.pdfjsDoc) {
+          const bytes = await entry.file.arrayBuffer();
+          entry.pdfjsDoc = await pdfjsLib.getDocument({ data: bytes }).promise;
+        }
+
+        const page = await entry.pdfjsDoc.getPage(1);
+        const baseViewport = page.getViewport({ scale: 1 });
+
+        // Fit preview to about 680 CSS px wide
+        const targetWidth = 680;
+        const scale = Math.min(2, targetWidth / baseViewport.width);
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const renderViewport = page.getViewport({ scale: scale * dpr });
+
+        const canvas = previewCanvas;
+        canvas.width = Math.floor(renderViewport.width);
+        canvas.height = Math.floor(renderViewport.height);
+        canvas.style.width = Math.floor(renderViewport.width / dpr) + 'px';
+        canvas.style.height = Math.floor(renderViewport.height / dpr) + 'px';
+
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        await page.render({
+          canvasContext: ctx,
+          viewport: renderViewport
+        }).promise;
+
+        // Generate watermark at the same pixel density
+        const wmScale = canvas.width / baseViewport.width;
+        const wmCanvas = await generateWatermarkCanvas(canvas.width, canvas.height, wmScale);
+
+        ctx.drawImage(wmCanvas, 0, 0);
+
+        previewCanvas.style.display = 'block';
+        previewEmpty.hidden = true;
+
+        previewMeta.textContent =
+          `${Math.round(baseViewport.width)} × ${Math.round(baseViewport.height)} pt · ${page.numPages || entry.pdfjsDoc.numPages} page${(entry.pdfjsDoc.numPages || 1) > 1 ? 's' : ''}`;
+      } catch (err) {
+        console.error(err);
+        previewEmpty.innerHTML =
+          '<i>error</i><p>Could not render this PDF. It may be encrypted or malformed.</p>';
+        previewEmpty.hidden = false;
+        previewCanvas.style.display = 'none';
+      }
+    }
+
+    /* ============================================================
+       Processing
+    ============================================================ */
+    function canvasToPngBytes(canvas) {
+      return new Promise((resolve, reject) => {
+        canvas.toBlob(async (blob) => {
+          if (!blob) {
+            reject(new Error('Could not export watermark canvas.'));
+            return;
+          }
+          resolve(new Uint8Array(await blob.arrayBuffer()));
+        }, 'image/png');
+      });
+    }
+
+    async function processAll() {
+      if (processing) return;
+
+      const pending = state.files.filter((f) => f.status !== 'done');
+      if (!pending.length) {
+        showError('All files have already been processed.');
+        return;
+      }
+
+      processing = true;
+      processBtn.disabled = true;
+      downloadAllBtn.disabled = true;
+      batchProgress.hidden = false;
+      batchProgress.value = 0;
+
+      const total = pending.length;
+
+      for (let i = 0; i < pending.length; i++) {
+        const entry = pending[i];
+        entry.status = 'processing';
+        entry.error = null;
+        renderFileList();
+        updateBatchSummary();
+
+        batchStatus.textContent = `Processing ${i + 1} of ${total} — ${entry.name}`;
+
+        try {
+          const bytes = await entry.file.arrayBuffer();
+          const pdfDoc = await PDFLib.PDFDocument.load(bytes, {
+            ignoreEncryption: true,
+            updateMetadata: false
+          });
+
+          const pages = pdfDoc.getPages();
+
+          for (const page of pages) {
+            const { width, height } = page.getSize();
+
+            // Render watermark at up to 2× PDF points, capped to 3000px
+            const outputScale = Math.min(2, 3000 / Math.max(width, height));
+            const wmCanvas = await generateWatermarkCanvas(
+              width * outputScale,
+              height * outputScale,
+              outputScale
+            );
+
+            const pngBytes = await canvasToPngBytes(wmCanvas);
+            const pngImage = await pdfDoc.embedPng(pngBytes);
+
+            page.drawImage(pngImage, {
+              x: 0,
+              y: 0,
+              width,
+              height
+            });
+          }
+
+          const outBytes = await pdfDoc.save();
+          const blob = new Blob([outBytes], { type: 'application/pdf' });
+
+          if (entry.resultUrl) URL.revokeObjectURL(entry.resultUrl);
+          entry.resultBlob = blob;
+          entry.resultUrl = URL.createObjectURL(blob);
+          entry.status = 'done';
+        } catch (err) {
+          console.error('Processing failed for', entry.name, err);
+          entry.status = 'error';
+          entry.error = err.message || 'Unknown error';
+        }
+
+        renderFileList();
+        updateBatchSummary();
+        batchProgress.value = Math.round(((i + 1) / total) * 100);
+      }
+
+      processing = false;
+      processBtn.disabled = false;
+      updateBatchSummary();
+
+      const errors = state.files.filter((f) => f.status === 'error').length;
+      const done = state.files.filter((f) => f.status === 'done').length;
+
+      batchStatus.textContent =
+        `Done — ${done} processed${errors ? `, ${errors} failed` : ''}`;
+
+      setTimeout(() => {
+        batchProgress.hidden = true;
+      }, 1200);
+
+      renderPreview();
+    }
+
+    function triggerDownload(url, filename) {
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    async function downloadAll() {
+      const done = state.files.filter((f) => f.status === 'done' && f.resultBlob);
+      if (!done.length) return;
+
+      if (done.length === 1) {
+        triggerDownload(
+          done[0].resultUrl,
+          done[0].name.replace(/\.pdf$/i, '') + '-watermarked.pdf'
+        );
+        return;
+      }
+
+      const zip = new JSZip();
+
+      done.forEach((f) => {
+        const name = f.name.replace(/\.pdf$/i, '') + '-watermarked.pdf';
+        zip.file(name, f.resultBlob);
+      });
+
+      try {
+        const blob = await zip.generateAsync({ type: 'blob' });
+        const url = URL.createObjectURL(blob);
+        triggerDownload(url, 'watermarked-pdfs.zip');
+        setTimeout(() => URL.revokeObjectURL(url), 10000);
+      } catch (err) {
+        console.error(err);
+        showError('Could not create the ZIP file.');
+      }
+    }
+
+    /* ============================================================
+       Settings UI
+    ============================================================ */
+    function updateTypeUI() {
+      const type = state.settings.type;
+
+      textSettings.hidden = type === 'image';
+      imageSettings.hidden = type === 'text';
+
+      typeToggle.querySelectorAll('button').forEach((btn) => {
+        const active = btn.dataset.type === type;
+        btn.classList.toggle('fill', active);
+        btn.classList.toggle('primary', active);
+      });
+    }
+
+    function updateCoverageUI() {
+      coverageToggle.querySelectorAll('button').forEach((btn) => {
+        const active = Number(btn.dataset.coverage) === state.settings.coverage;
+        btn.classList.toggle('fill', active);
+        btn.classList.toggle('primary', active);
+      });
+    }
+
+    function updateTextSettingsUI() {
+      textInput.value = state.settings.text;
+      fontSize.value = state.settings.fontSize;
+      fontSizeValue.textContent = state.settings.fontSize + ' pt';
+      textColor.value = state.settings.color;
+      colorHex.textContent = state.settings.color;
+      opacity.value = Math.round(state.settings.opacity * 100);
+      opacityValue.textContent = Math.round(state.settings.opacity * 100) + '%';
+      angle.value = state.settings.angle;
+      angleValue.textContent = state.settings.angle + '°';
+    }
+
+    /* ============================================================
+       Event listeners
+    ============================================================ */
+
+    // Upload / dropzone
+    dropzone.addEventListener('click', () => pdfInput.click());
+    dropzone.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        pdfInput.click();
+      }
+    });
+
+    pdfInput.addEventListener('change', (e) => {
+      if (e.target.files?.length) addFiles(e.target.files);
+      pdfInput.value = '';
+    });
+
+    ['dragenter', 'dragover'].forEach((evt) => {
+      dropzone.addEventListener(evt, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.add('dragover');
+      });
+    });
+
+    ['dragleave', 'drop'].forEach((evt) => {
+      dropzone.addEventListener(evt, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.remove('dragover');
+      });
+    });
+
+    dropzone.addEventListener('drop', (e) => {
+      if (e.dataTransfer?.files?.length) addFiles(e.dataTransfer.files);
+    });
+
+    // Type toggle
+    typeToggle.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-type]');
+      if (!btn) return;
+      state.settings.type = btn.dataset.type;
+      updateTypeUI();
+      debouncePreview();
+    });
+
+    // Coverage toggle
+    coverageToggle.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-coverage]');
+      if (!btn) return;
+      state.settings.coverage = Number(btn.dataset.coverage);
+      updateCoverageUI();
+      debouncePreview();
+    });
+
+    // Text input
+    textInput.addEventListener('input', () => {
+      state.settings.text = textInput.value;
+      debouncePreview();
+    });
+
+    // Font size
+    fontSize.addEventListener('input', () => {
+      state.settings.fontSize = Number(fontSize.value);
+      fontSizeValue.textContent = fontSize.value + ' pt';
+      debouncePreview();
+    });
+
+    // Color
+    textColor.addEventListener('input', () => {
+      state.settings.color = textColor.value;
+      colorHex.textContent = textColor.value;
+      debouncePreview();
+    });
+
+    // Opacity
+    opacity.addEventListener('input', () => {
+      state.settings.opacity = Number(opacity.value) / 100;
+      opacityValue.textContent = opacity.value + '%';
+      debouncePreview();
+    });
+
+    // Angle
+    angle.addEventListener('input', () => {
+      state.settings.angle = Number(angle.value);
+      angleValue.textContent = angle.value + '°';
+      debouncePreview();
+    });
+
+    // Image upload
+    imageUploadBtn.addEventListener('click', () => imageInput.click());
+
+    imageInput.addEventListener('change', (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        state.settings.image = img;
+        imagePreview.src = img.src;
+        imagePreviewRow.hidden = false;
+        imageName.textContent = file.name;
+
+        // Auto-switch to image mode if currently text
+        if (state.settings.type === 'text') {
+          state.settings.type = 'image';
+          updateTypeUI();
+        }
+        debouncePreview();
+      };
+
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        showError('Could not load that image. Please choose a PNG or JPEG.');
+      };
+
+      img.src = url;
+      imageInput.value = '';
+    });
+
+    removeImageBtn.addEventListener('click', () => {
+      state.settings.image = null;
+      imagePreviewRow.hidden = true;
+      imagePreview.removeAttribute('src');
+      imageName.textContent = '';
+      if (state.settings.type === 'image') {
+        state.settings.type = 'text';
+        updateTypeUI();
+      }
+      debouncePreview();
+    });
+
+    // Preview / process
+    previewBtn.addEventListener('click', () => renderPreview());
+    processBtn.addEventListener('click', processAll);
+    downloadAllBtn.addEventListener('click', downloadAll);
+
+    // Theme toggle
+    $('#themeToggle').addEventListener('click', () => {
+      const isDark = document.body.classList.toggle('dark');
+      document.body.classList.toggle('light', !isDark);
+      $('#themeToggle i').textContent = isDark ? 'light_mode' : 'dark_mode';
+    });
+
+    // Init
+    (function init() {
+      document.body.classList.add('light');
+      updateTypeUI();
+      updateCoverageUI();
+      updateTextSettingsUI();
+      // Set initial active coverage (75%)
+      state.settings.coverage = 75;
+      updateCoverageUI();
+    })();
+
+  </script>
+</body>
+</html>
