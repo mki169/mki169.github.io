@@ -33,6 +33,7 @@
     body {
       background: var(--background);
       min-height: 100vh;
+      transition: background .2s ease, color .2s ease;
     }
 
     main {
@@ -77,7 +78,6 @@
       color: var(--primary);
     }
 
-    /* Dropzone */
     .dropzone {
       border: 2px dashed var(--outline);
       border-radius: 1rem;
@@ -105,12 +105,11 @@
       color: var(--on-surface-variant);
     }
 
-    .dropzone .small-text {
+    .small-text {
       color: var(--on-surface-variant);
-      opacity: .75;
+      font-size: .8rem;
     }
 
-    /* Toggle buttons */
     .segmented {
       display: flex;
       gap: .35rem;
@@ -125,12 +124,12 @@
       height: 2.5rem;
     }
 
-    /* Sliders */
     .slider-row {
       display: flex;
       align-items: center;
       gap: .75rem;
       width: 100%;
+      margin-bottom: .5rem;
     }
 
     .slider-row input[type="range"] {
@@ -148,11 +147,11 @@
       font-size: .85rem;
     }
 
-    /* Color input */
     .color-row {
       display: flex;
       align-items: center;
       gap: .75rem;
+      margin-bottom: .75rem;
     }
 
     input[type="color"] {
@@ -171,7 +170,6 @@
       color: var(--on-surface-variant);
     }
 
-    /* Preview */
     .preview-wrap {
       position: relative;
       display: flex;
@@ -207,7 +205,6 @@
       margin-bottom: .5rem;
     }
 
-    /* File list */
     .file-list {
       display: flex;
       flex-direction: column;
@@ -305,12 +302,11 @@
       margin-top: .75rem;
     }
 
-    /* Image watermark preview */
     .image-preview-row {
       display: flex;
       align-items: center;
       gap: .75rem;
-      margin-top: .75rem;
+      margin: .75rem 0;
     }
 
     .image-thumb {
@@ -322,12 +318,70 @@
       background: var(--surface-variant);
     }
 
-    /* Dialog */
-    dialog {
-      max-width: 420px;
+    /* Collapsible sections */
+    details > summary {
+      cursor: pointer;
+      padding: .35rem 0;
+      font-size: .85rem;
+      color: var(--on-surface-variant);
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: .35rem;
+      user-select: none;
+      font-weight: 500;
     }
 
-    /* Responsive tweaks */
+    details > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details > summary::before {
+      content: 'chevron_right';
+      font-family: 'Material Symbols Outlined';
+      font-size: 1.1rem;
+      transition: transform .15s ease;
+    }
+
+    details[open] > summary::before {
+      transform: rotate(90deg);
+    }
+
+    details > summary i {
+      font-size: 1.1rem;
+      color: var(--primary);
+    }
+
+    kbd {
+      display: inline-block;
+      padding: .15rem .4rem;
+      border: 1px solid var(--outline);
+      border-radius: .25rem;
+      background: var(--surface-variant);
+      font-size: .75rem;
+      font-family: ui-monospace, monospace;
+    }
+
+    dialog {
+      max-width: 440px;
+    }
+
+    .preset-select {
+      width: 100%;
+      padding: .6rem .75rem;
+      border: 1px solid var(--outline);
+      border-radius: .5rem;
+      background: var(--surface);
+      color: var(--on-surface);
+      font-size: .85rem;
+      cursor: pointer;
+    }
+
+    .preset-select:focus {
+      outline: 2px solid var(--primary);
+      outline-offset: -1px;
+    }
+
     @media (max-width: 600px) {
       article {
         padding: 1rem;
@@ -345,7 +399,7 @@
   </style>
 </head>
 
-<body>
+<body class="light">
 
   <!-- Top app bar -->
   <header class="fixed">
@@ -357,6 +411,9 @@
         <i>water_drop</i>
         <span>PDF Watermark Studio</span>
       </div>
+      <button class="transparent circle" id="helpBtn" title="Keyboard shortcuts">
+        <i>keyboard</i>
+      </button>
       <span class="chip small privacy-chip" title="Files never leave your browser">
         <i>shield</i>
         <span>Client-side only</span>
@@ -383,7 +440,7 @@
 
           <input type="file" id="pdfInput" accept="application/pdf" multiple hidden />
 
-          <p class="small-text" style="margin-top: .75rem; color: var(--on-surface-variant);">
+          <p class="small-text" style="margin-top: .75rem;">
             Files are processed in your browser and never uploaded.
           </p>
         </article>
@@ -393,7 +450,7 @@
           <h6><i>tune</i> Watermark settings</h6>
 
           <!-- Type -->
-          <label class="small-text" style="display:block; margin-bottom:.4rem; color:var(--on-surface-variant);">Type</label>
+          <label class="small-text" style="display:block; margin-bottom:.4rem;">Type</label>
           <nav class="group segmented" id="typeToggle" style="margin-bottom: 1rem;">
             <button class="left-round fill primary" data-type="text">Text</button>
             <button class="no-round" data-type="image">Image</button>
@@ -407,17 +464,73 @@
               <label>Watermark text</label>
             </div>
 
-            <div class="slider-row" style="margin-bottom: .5rem;">
-              <label for="fontSize" class="small-text" style="min-width: 4.5rem; color:var(--on-surface-variant);">Font size</label>
+            <div class="slider-row">
+              <label for="fontSize" class="small-text" style="min-width: 3.5rem;">Size</label>
               <input id="fontSize" type="range" min="8" max="200" value="48" step="1" />
               <output id="fontSizeValue" class="slider-value">48 pt</output>
             </div>
 
-            <div class="color-row" style="margin-bottom: .75rem;">
-              <label for="textColor" class="small-text" style="flex:1; color:var(--on-surface-variant);">Text color</label>
+            <label class="small-text" style="display:block; margin-bottom:.4rem;">Font style</label>
+            <nav class="group segmented" id="fontStyleToggle" style="margin-bottom: 1rem;">
+              <button class="left-round fill primary" data-style="normal">N</button>
+              <button class="no-round" data-style="bold"><b>B</b></button>
+              <button class="no-round" data-style="italic"><i>I</i></button>
+              <button class="right-round" data-style="bold-italic"><b><i>BI</i></b></button>
+            </nav>
+
+            <div class="slider-row">
+              <label for="letterSpacing" class="small-text" style="min-width: 4.5rem;">Spacing</label>
+              <input id="letterSpacing" type="range" min="0" max="50" value="0" step="1" />
+              <output id="letterSpacingValue" class="slider-value">0px</output>
+            </div>
+
+            <div class="color-row">
+              <label class="small-text max">Text color</label>
               <input id="textColor" type="color" value="#e53935" />
               <span id="colorHex" class="color-hex">#e53935</span>
             </div>
+
+            <!-- Text effects (collapsible) -->
+            <details id="textEffects" style="margin-top: .5rem;">
+              <summary><i>auto_awesome</i> Text effects</summary>
+
+              <label class="checkbox" style="margin-top:.5rem;">
+                <input type="checkbox" id="outlineToggle" />
+                <span>Outline</span>
+              </label>
+              <div id="outlineOptions" hidden style="padding-left: .25rem;">
+                <div class="slider-row">
+                  <label class="small-text" style="min-width: 3.5rem;">Width</label>
+                  <input id="outlineWidth" type="range" min="1" max="10" value="2" step="1" />
+                  <output id="outlineWidthValue" class="slider-value">2</output>
+                </div>
+                <div class="color-row">
+                  <label class="small-text max">Outline color</label>
+                  <input id="outlineColor" type="color" value="#ffffff" />
+                </div>
+              </div>
+
+              <label class="checkbox">
+                <input type="checkbox" id="bgBoxToggle" />
+                <span>Background box</span>
+              </label>
+              <div id="bgBoxOptions" hidden style="padding-left: .25rem;">
+                <div class="slider-row">
+                  <label class="small-text" style="min-width: 3.5rem;">Padding</label>
+                  <input id="bgBoxPadding" type="range" min="2" max="30" value="8" step="1" />
+                  <output id="bgBoxPaddingValue" class="slider-value">8</output>
+                </div>
+                <div class="slider-row">
+                  <label class="small-text" style="min-width: 3.5rem;">Opacity</label>
+                  <input id="bgBoxOpacity" type="range" min="5" max="100" value="20" step="1" />
+                  <output id="bgBoxOpacityValue" class="slider-value">20%</output>
+                </div>
+                <div class="color-row">
+                  <label class="small-text max">Box color</label>
+                  <input id="bgBoxColor" type="color" value="#ffffff" />
+                </div>
+              </div>
+            </details>
           </div>
 
           <!-- IMAGE SETTINGS -->
@@ -438,12 +551,41 @@
                 <i>close</i>
               </button>
             </div>
+
+            <details style="margin-top: .5rem;">
+              <summary><i>flip</i> Image options</summary>
+              <label class="checkbox" style="margin-top:.5rem;">
+                <input type="checkbox" id="flipHToggle" />
+                <span>Flip horizontal</span>
+              </label>
+              <label class="checkbox">
+                <input type="checkbox" id="flipVToggle" />
+                <span>Flip vertical</span>
+              </label>
+            </details>
+          </div>
+
+          <div class="divider" style="margin: 1rem 0;"></div>
+
+          <!-- Mosaic toggle -->
+          <label class="checkbox">
+            <input type="checkbox" id="mosaicToggle" checked />
+            <span>Mosaic (tiled) pattern</span>
+          </label>
+          <div id="mosaicNote" class="small-text" style="margin: .25rem 0 .5rem;" hidden>
+            Single centered watermark. Coverage controls image size only.
+          </div>
+
+          <!-- Page range -->
+          <div class="field label border" style="margin-top: .5rem;">
+            <input id="pageRange" type="text" placeholder=" " value="all" />
+            <label>Pages: all, odd, even, 1-3,5</label>
           </div>
 
           <div class="divider" style="margin: 1rem 0;"></div>
 
           <!-- Coverage -->
-          <label class="small-text" style="display:block; margin-bottom:.4rem; color:var(--on-surface-variant);">Page coverage</label>
+          <label class="small-text" style="display:block; margin-bottom:.4rem;">Page coverage</label>
           <nav class="group segmented" id="coverageToggle" style="margin-bottom: 1rem;">
             <button class="left-round" data-coverage="50">50%</button>
             <button class="no-round" data-coverage="75">75%</button>
@@ -451,17 +593,33 @@
           </nav>
 
           <!-- Opacity -->
-          <div class="slider-row" style="margin-bottom: .5rem;">
-            <label for="opacity" class="small-text" style="min-width: 4.5rem; color:var(--on-surface-variant);">Opacity</label>
+          <div class="slider-row">
+            <label for="opacity" class="small-text" style="min-width: 4.5rem;">Opacity</label>
             <input id="opacity" type="range" min="5" max="95" value="35" step="1" />
             <output id="opacityValue" class="slider-value">35%</output>
           </div>
 
           <!-- Angle -->
           <div class="slider-row">
-            <label for="angle" class="small-text" style="min-width: 4.5rem; color:var(--on-surface-variant);">Angle</label>
+            <label for="angle" class="small-text" style="min-width: 4.5rem;">Angle</label>
             <input id="angle" type="range" min="-90" max="90" value="-30" step="1" />
             <output id="angleValue" class="slider-value">-30°</output>
+          </div>
+        </article>
+
+        <!-- Presets -->
+        <article class="border no-elevate" style="margin-top: 1rem;">
+          <h6><i>bookmark</i> Presets</h6>
+          <select id="presetSelect" class="preset-select" aria-label="Load preset">
+            <option value="">— Load preset —</option>
+          </select>
+          <div class="row" style="margin-top: .75rem; gap: .35rem;">
+            <button id="savePresetBtn" class="border small">
+              <i>save</i> Save
+            </button>
+            <button id="resetPresetBtn" class="border small">
+              <i>restart_alt</i> Reset
+            </button>
           </div>
         </article>
       </div>
@@ -481,19 +639,31 @@
             <canvas id="previewCanvas"></canvas>
           </div>
 
-          <div class="row" style="margin-top: .75rem; align-items: center;">
-            <button id="previewBtn" class="border">
-              <i>refresh</i>
-              <span>Refresh preview</span>
+          <div class="row" style="margin-top: .75rem; align-items: center; gap: .35rem;">
+            <button id="prevPageBtn" class="border circle small" disabled title="Previous page">
+              <i>chevron_left</i>
+            </button>
+            <span id="pageIndicator" class="small-text" style="color: var(--on-surface-variant); min-width: 5rem; text-align: center;">— / —</span>
+            <button id="nextPageBtn" class="border circle small" disabled title="Next page">
+              <i>chevron_right</i>
             </button>
             <div class="max"></div>
             <span id="previewMeta" class="small-text" style="color: var(--on-surface-variant);"></span>
+            <button id="previewBtn" class="border small" title="Refresh preview">
+              <i>refresh</i>
+            </button>
           </div>
         </article>
 
         <!-- Batch -->
         <article class="border no-elevate">
-          <h6><i>folder</i> Batch queue</h6>
+          <div class="row" style="margin-bottom: 1rem; align-items: center;">
+            <h6 style="margin: 0;"><i>folder</i> Batch queue</h6>
+            <div class="max"></div>
+            <button id="clearAllBtn" class="transparent circle small" title="Clear all files">
+              <i>delete_sweep</i>
+            </button>
+          </div>
 
           <div id="fileList" class="file-list">
             <div class="empty-list">No PDFs added yet.</div>
@@ -509,7 +679,7 @@
               <span>Download all (.zip)</span>
             </button>
             <div class="max"></div>
-            <span id="batchStatus" class="small-text" style="color: var(--on-surface-variant);"></span>
+            <span id="batchStatus" class="small-text"></span>
           </div>
 
           <progress id="batchProgress" value="0" max="100" hidden></progress>
@@ -528,23 +698,69 @@
     </nav>
   </dialog>
 
+  <!-- Help dialog -->
+  <dialog id="helpDialog">
+    <h5>Keyboard shortcuts</h5>
+    <div class="row" style="margin: .5rem 0;">
+      <span class="max">Open files</span>
+      <kbd>Ctrl</kbd><span style="margin:0 .15rem;">+</span><kbd>O</kbd>
+    </div>
+    <div class="row" style="margin: .5rem 0;">
+      <span class="max">Process all</span>
+      <kbd>Ctrl</kbd><span style="margin:0 .15rem;">+</span><kbd>Enter</kbd>
+    </div>
+    <div class="row" style="margin: .5rem 0;">
+      <span class="max">Save preset</span>
+      <kbd>Ctrl</kbd><span style="margin:0 .15rem;">+</span><kbd>S</kbd>
+    </div>
+    <div class="row" style="margin: .5rem 0;">
+      <span class="max">Show this help</span>
+      <kbd>?</kbd>
+    </div>
+    <div class="row" style="margin: .5rem 0;">
+      <span class="max">Close dialog</span>
+      <kbd>Esc</kbd>
+    </div>
+    <nav class="right-align" style="margin-top: 1rem;">
+      <button class="border" onclick="document.getElementById('helpDialog').close()">Close</button>
+    </nav>
+  </dialog>
+
   <script>
     /* ============================================================
-       State
+       Constants & state
     ============================================================ */
+    const PRESET_KEY = 'pdfWatermarkPresets_v2';
+
+    const DEFAULT_SETTINGS = {
+      type: 'text',
+      text: 'CONFIDENTIAL',
+      fontSize: 48,
+      color: '#e53935',
+      opacity: 0.35,
+      coverage: 75,
+      angle: -30,
+      image: null,
+      mosaic: true,
+      pageRange: 'all',
+      fontStyle: 'normal',
+      letterSpacing: 0,
+      outline: false,
+      outlineWidth: 2,
+      outlineColor: '#ffffff',
+      bgBox: false,
+      bgBoxPadding: 8,
+      bgBoxOpacity: 20,
+      bgBoxColor: '#ffffff',
+      flipH: false,
+      flipV: false
+    };
+
     const state = {
       files: [],
       selectedId: null,
-      settings: {
-        type: 'text',
-        text: 'CONFIDENTIAL',
-        fontSize: 48,
-        color: '#e53935',
-        opacity: 0.35,
-        coverage: 75,
-        angle: -30,
-        image: null
-      }
+      previewPage: 0,
+      settings: { ...DEFAULT_SETTINGS }
     };
 
     let pdfjsReady = false;
@@ -567,6 +783,7 @@
     const downloadAllBtn = $('#downloadAllBtn');
     const batchStatus = $('#batchStatus');
     const batchProgress = $('#batchProgress');
+    const clearAllBtn = $('#clearAllBtn');
 
     const textSettings = $('#textSettings');
     const imageSettings = $('#imageSettings');
@@ -587,9 +804,40 @@
     const removeImageBtn = $('#removeImageBtn');
     const typeToggle = $('#typeToggle');
     const coverageToggle = $('#coverageToggle');
+    const fontStyleToggle = $('#fontStyleToggle');
+
+    const letterSpacing = $('#letterSpacing');
+    const letterSpacingValue = $('#letterSpacingValue');
+    const outlineToggle = $('#outlineToggle');
+    const outlineOptions = $('#outlineOptions');
+    const outlineWidth = $('#outlineWidth');
+    const outlineWidthValue = $('#outlineWidthValue');
+    const outlineColor = $('#outlineColor');
+    const bgBoxToggle = $('#bgBoxToggle');
+    const bgBoxOptions = $('#bgBoxOptions');
+    const bgBoxPadding = $('#bgBoxPadding');
+    const bgBoxPaddingValue = $('#bgBoxPaddingValue');
+    const bgBoxOpacity = $('#bgBoxOpacity');
+    const bgBoxOpacityValue = $('#bgBoxOpacityValue');
+    const bgBoxColor = $('#bgBoxColor');
+
+    const flipHToggle = $('#flipHToggle');
+    const flipVToggle = $('#flipVToggle');
+    const mosaicToggle = $('#mosaicToggle');
+    const mosaicNote = $('#mosaicNote');
+    const pageRange = $('#pageRange');
+
+    const prevPageBtn = $('#prevPageBtn');
+    const nextPageBtn = $('#nextPageBtn');
+    const pageIndicator = $('#pageIndicator');
+
+    const presetSelect = $('#presetSelect');
+    const savePresetBtn = $('#savePresetBtn');
+    const resetPresetBtn = $('#resetPresetBtn');
 
     const errorDialog = $('#errorDialog');
     const errorMessage = $('#errorMessage');
+    const helpDialog = $('#helpDialog');
 
     /* ============================================================
        Utilities
@@ -615,6 +863,15 @@
       previewTimer = setTimeout(() => renderPreview(), delay);
     }
 
+    function triggerDownload(url, filename) {
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
     /* ============================================================
        Arial font loading (CDN)
     ============================================================ */
@@ -622,13 +879,14 @@
       try {
         const font = new FontFace(
           'ArialCDN',
-          'url(https://cdn.jsdelivr.net/npm/@canvas-fonts/arial@1.0.4/Arial.ttf)'
+          'url(https://cdn.jsdelivr.net/npm/@canvas-fonts/arial@1.0.4/Arial.ttf)',
+          { weight: '400', style: 'normal' }
         );
         await font.load();
         document.fonts.add(font);
-        await document.fonts.load('48px ArialCDN');
+        await document.fonts.ready;
       } catch (err) {
-        console.warn('Arial CDN font could not be loaded; falling back to system Arial.', err);
+        console.warn('Arial CDN font not available; using system Arial.', err);
       }
     })();
 
@@ -639,6 +897,44 @@
       pdfjsLib.GlobalWorkerOptions.workerSrc =
         'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
       pdfjsReady = true;
+    }
+
+    /* ============================================================
+       Page range parsing
+    ============================================================ */
+    function parsePageRange(str, total) {
+      const s = (str || '').trim().toLowerCase();
+      if (!s || s === 'all') return Array.from({ length: total }, (_, i) => i);
+
+      const pages = new Set();
+
+      if (s === 'odd') {
+        for (let i = 0; i < total; i += 2) pages.add(i);
+        return Array.from(pages).sort((a, b) => a - b);
+      }
+      if (s === 'even') {
+        for (let i = 1; i < total; i += 2) pages.add(i);
+        return Array.from(pages).sort((a, b) => a - b);
+      }
+
+      for (const part of s.split(',')) {
+        const trimmed = part.trim();
+        if (!trimmed) continue;
+
+        const rangeMatch = trimmed.match(/^(\d+)\s*-\s*(\d+)$/);
+        if (rangeMatch) {
+          const a = Math.max(1, parseInt(rangeMatch[1], 10));
+          const b = Math.min(total, parseInt(rangeMatch[2], 10));
+          for (let i = a; i <= b; i++) pages.add(i - 1);
+        } else {
+          const n = parseInt(trimmed, 10);
+          if (n >= 1 && n <= total) pages.add(n - 1);
+        }
+      }
+
+      // Fall back to all pages if nothing valid was parsed
+      if (!pages.size) return Array.from({ length: total }, (_, i) => i);
+      return Array.from(pages).sort((a, b) => a - b);
     }
 
     /* ============================================================
@@ -670,6 +966,7 @@
 
       if (!state.selectedId) {
         state.selectedId = state.files[0].id;
+        state.previewPage = 0;
       }
 
       renderFileList();
@@ -690,6 +987,7 @@
 
       if (state.selectedId === id) {
         state.selectedId = state.files[0]?.id || null;
+        state.previewPage = 0;
       }
 
       renderFileList();
@@ -699,6 +997,7 @@
 
     function selectFile(id) {
       state.selectedId = id;
+      state.previewPage = 0;
       renderFileList();
       renderPreview();
     }
@@ -797,36 +1096,87 @@
     /* ============================================================
        Watermark canvas generation
     ============================================================ */
+    function getFontString(settings, fontSizePx) {
+      const weight = (settings.fontStyle === 'bold' || settings.fontStyle === 'bold-italic') ? 'bold' : 'normal';
+      const style = (settings.fontStyle === 'italic' || settings.fontStyle === 'bold-italic') ? 'italic' : 'normal';
+      return `${style} ${weight} ${fontSizePx}px ArialCDN, Arial, Helvetica, sans-serif`;
+    }
+
+    function drawOneText(ctx, text, x, y, settings, fontSizePx, scale) {
+      const metrics = ctx.measureText(text);
+      const textW = metrics.width;
+      const textH = fontSizePx * 1.2;
+
+      // Background box
+      if (settings.bgBox) {
+        const pad = settings.bgBoxPadding * scale;
+        ctx.save();
+        ctx.globalAlpha = settings.opacity * (settings.bgBoxOpacity / 100);
+        ctx.fillStyle = settings.bgBoxColor;
+        ctx.fillRect(x - textW / 2 - pad, y - textH / 2 - pad, textW + pad * 2, textH + pad * 2);
+        ctx.restore();
+      }
+
+      // Outline
+      if (settings.outline) {
+        ctx.save();
+        ctx.globalAlpha = settings.opacity;
+        ctx.lineWidth = settings.outlineWidth * scale;
+        ctx.strokeStyle = settings.outlineColor;
+        ctx.lineJoin = 'round';
+        ctx.strokeText(text, x, y);
+        ctx.restore();
+      }
+
+      // Fill
+      ctx.save();
+      ctx.globalAlpha = settings.opacity;
+      ctx.fillStyle = settings.color;
+      ctx.fillText(text, x, y);
+      ctx.restore();
+    }
+
     function drawTextPattern(ctx, w, h, settings, scale) {
       const fontSizePx = Math.max(6, settings.fontSize * scale);
-      ctx.font = `${fontSizePx}px ArialCDN, Arial, Helvetica, sans-serif`;
-      ctx.fillStyle = settings.color;
-      ctx.globalAlpha = settings.opacity;
+      ctx.font = getFontString(settings, fontSizePx);
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
 
+      // Letter spacing (modern browsers)
+      if (settings.letterSpacing && 'letterSpacing' in ctx) {
+        ctx.letterSpacing = settings.letterSpacing + 'px';
+      }
+
       const text = settings.text.trim() || 'CONFIDENTIAL';
-      const textWidth = ctx.measureText(text).width;
-
-      const gapFactor =
-        settings.coverage === 50 ? 2.6 :
-        settings.coverage === 75 ? 1.2 : 0.35;
-
-      const gapX = textWidth + fontSizePx * gapFactor;
-      const gapY = fontSizePx * (1 + gapFactor);
 
       ctx.save();
       ctx.translate(w / 2, h / 2);
       ctx.rotate((settings.angle * Math.PI) / 180);
 
-      const diagonal = Math.hypot(w, h) * 1.4;
+      if (!settings.mosaic) {
+        drawOneText(ctx, text, 0, 0, settings, fontSizePx, scale);
+      } else {
+        const textWidth = ctx.measureText(text).width;
+        const gapFactor =
+          settings.coverage === 50 ? 2.6 :
+          settings.coverage === 75 ? 1.2 : 0.35;
 
-      for (let y = -diagonal; y <= diagonal; y += gapY) {
-        for (let x = -diagonal; x <= diagonal; x += gapX) {
-          ctx.fillText(text, x, y);
+        const outlineExtra = settings.outline ? settings.outlineWidth * scale * 2 : 0;
+        const gapX = textWidth + outlineExtra + fontSizePx * gapFactor;
+        const gapY = fontSizePx * (1 + gapFactor) + outlineExtra;
+
+        const diagonal = Math.hypot(w, h) * 1.4;
+
+        for (let y = -diagonal; y <= diagonal; y += gapY) {
+          for (let x = -diagonal; x <= diagonal; x += gapX) {
+            drawOneText(ctx, text, x, y, settings, fontSizePx, scale);
+          }
         }
       }
+
       ctx.restore();
+
+      if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
     }
 
     function drawImagePattern(ctx, w, h, settings, scale) {
@@ -849,17 +1199,23 @@
       ctx.translate(w / 2, h / 2);
       ctx.rotate((settings.angle * Math.PI) / 180);
 
-      const diagonal = Math.hypot(w, h) * 1.4;
+      if (settings.flipH) ctx.scale(-1, 1);
+      if (settings.flipV) ctx.scale(1, -1);
 
-      for (let y = -diagonal; y <= diagonal; y += imgH + gapY) {
-        for (let x = -diagonal; x <= diagonal; x += imgW + gapX) {
-          ctx.drawImage(img, x - imgW / 2, y - imgH / 2, imgW, imgH);
+      if (!settings.mosaic) {
+        ctx.drawImage(img, -imgW / 2, -imgH / 2, imgW, imgH);
+      } else {
+        const diagonal = Math.hypot(w, h) * 1.4;
+        for (let y = -diagonal; y <= diagonal; y += imgH + gapY) {
+          for (let x = -diagonal; x <= diagonal; x += imgW + gapX) {
+            ctx.drawImage(img, x - imgW / 2, y - imgH / 2, imgW, imgH);
+          }
         }
       }
       ctx.restore();
     }
 
-    async function generateWatermarkCanvas(width, height, scale) {
+    async function generateWatermarkCanvas(width, height, scale, options = {}) {
       await fontReady;
 
       const canvas = document.createElement('canvas');
@@ -869,9 +1225,11 @@
       const ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+      if (options.skip) return canvas;
+
       const s = state.settings;
 
-      // Image first (so text can overlay)
+      // Image first (text overlays on top)
       if ((s.type === 'image' || s.type === 'both') && s.image) {
         drawImagePattern(ctx, canvas.width, canvas.height, s, scale);
       }
@@ -887,13 +1245,39 @@
     /* ============================================================
        Preview
     ============================================================ */
+    function updatePreviewNav() {
+      const entry = getSelectedFile();
+      const total = entry?.pdfjsDoc?.numPages || 0;
+
+      if (total === 0) {
+        pageIndicator.textContent = '— / —';
+        prevPageBtn.disabled = true;
+        nextPageBtn.disabled = true;
+        return;
+      }
+
+      const current = state.previewPage + 1;
+      const pageIndices = parsePageRange(state.settings.pageRange, total);
+      const skipped = !pageIndices.includes(state.previewPage);
+
+      pageIndicator.textContent = `${current} / ${total}`;
+      pageIndicator.style.color = skipped ? 'var(--error)' : 'var(--on-surface-variant)';
+      pageIndicator.title = skipped ? 'This page will be skipped' : 'This page will be watermarked';
+
+      prevPageBtn.disabled = state.previewPage <= 0;
+      nextPageBtn.disabled = state.previewPage >= total - 1;
+    }
+
     async function renderPreview() {
       const entry = getSelectedFile();
 
       if (!entry) {
         previewCanvas.style.display = 'none';
         previewEmpty.hidden = false;
+        previewEmpty.innerHTML =
+          '<i>picture_as_pdf</i><p>Upload a PDF and select it to preview the watermark.</p>';
         previewMeta.textContent = '';
+        updatePreviewNav();
         return;
       }
 
@@ -911,16 +1295,18 @@
       previewCanvas.style.display = 'none';
 
       try {
-        // Load PDF.js document once per file
         if (!entry.pdfjsDoc) {
           const bytes = await entry.file.arrayBuffer();
           entry.pdfjsDoc = await pdfjsLib.getDocument({ data: bytes }).promise;
         }
 
-        const page = await entry.pdfjsDoc.getPage(1);
+        const totalPages = entry.pdfjsDoc.numPages;
+        if (state.previewPage >= totalPages) state.previewPage = totalPages - 1;
+        if (state.previewPage < 0) state.previewPage = 0;
+
+        const page = await entry.pdfjsDoc.getPage(state.previewPage + 1);
         const baseViewport = page.getViewport({ scale: 1 });
 
-        // Fit preview to about 680 CSS px wide
         const targetWidth = 680;
         const scale = Math.min(2, targetWidth / baseViewport.width);
         const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -940,9 +1326,17 @@
           viewport: renderViewport
         }).promise;
 
-        // Generate watermark at the same pixel density
+        // Check if this page should be watermarked
+        const pageIndices = parsePageRange(state.settings.pageRange, totalPages);
+        const skip = !pageIndices.includes(state.previewPage);
+
         const wmScale = canvas.width / baseViewport.width;
-        const wmCanvas = await generateWatermarkCanvas(canvas.width, canvas.height, wmScale);
+        const wmCanvas = await generateWatermarkCanvas(
+          canvas.width,
+          canvas.height,
+          wmScale,
+          { skip }
+        );
 
         ctx.drawImage(wmCanvas, 0, 0);
 
@@ -950,13 +1344,16 @@
         previewEmpty.hidden = true;
 
         previewMeta.textContent =
-          `${Math.round(baseViewport.width)} × ${Math.round(baseViewport.height)} pt · ${page.numPages || entry.pdfjsDoc.numPages} page${(entry.pdfjsDoc.numPages || 1) > 1 ? 's' : ''}`;
+          `${Math.round(baseViewport.width)} × ${Math.round(baseViewport.height)} pt`;
+
+        updatePreviewNav();
       } catch (err) {
         console.error(err);
         previewEmpty.innerHTML =
           '<i>error</i><p>Could not render this PDF. It may be encrypted or malformed.</p>';
         previewEmpty.hidden = false;
         previewCanvas.style.display = 'none';
+        updatePreviewNav();
       }
     }
 
@@ -1009,11 +1406,15 @@
           });
 
           const pages = pdfDoc.getPages();
+          const totalPages = pages.length;
+          const pageIndices = new Set(parsePageRange(state.settings.pageRange, totalPages));
 
-          for (const page of pages) {
+          for (let pIdx = 0; pIdx < totalPages; pIdx++) {
+            if (!pageIndices.has(pIdx)) continue;
+
+            const page = pages[pIdx];
             const { width, height } = page.getSize();
 
-            // Render watermark at up to 2× PDF points, capped to 3000px
             const outputScale = Math.min(2, 3000 / Math.max(width, height));
             const wmCanvas = await generateWatermarkCanvas(
               width * outputScale,
@@ -1067,15 +1468,6 @@
       renderPreview();
     }
 
-    function triggerDownload(url, filename) {
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-    }
-
     async function downloadAll() {
       const done = state.files.filter((f) => f.status === 'done' && f.resultBlob);
       if (!done.length) return;
@@ -1107,7 +1499,7 @@
     }
 
     /* ============================================================
-       Settings UI
+       Settings UI sync
     ============================================================ */
     function updateTypeUI() {
       const type = state.settings.type;
@@ -1130,6 +1522,19 @@
       });
     }
 
+    function updateFontStyleUI() {
+      fontStyleToggle.querySelectorAll('button').forEach((btn) => {
+        const active = btn.dataset.style === state.settings.fontStyle;
+        btn.classList.toggle('fill', active);
+        btn.classList.toggle('primary', active);
+      });
+    }
+
+    function updateMosaicUI() {
+      mosaicToggle.checked = state.settings.mosaic;
+      mosaicNote.hidden = state.settings.mosaic;
+    }
+
     function updateTextSettingsUI() {
       textInput.value = state.settings.text;
       fontSize.value = state.settings.fontSize;
@@ -1140,6 +1545,108 @@
       opacityValue.textContent = Math.round(state.settings.opacity * 100) + '%';
       angle.value = state.settings.angle;
       angleValue.textContent = state.settings.angle + '°';
+      letterSpacing.value = state.settings.letterSpacing;
+      letterSpacingValue.textContent = state.settings.letterSpacing + 'px';
+
+      outlineToggle.checked = state.settings.outline;
+      outlineOptions.hidden = !state.settings.outline;
+      outlineWidth.value = state.settings.outlineWidth;
+      outlineWidthValue.textContent = state.settings.outlineWidth;
+      outlineColor.value = state.settings.outlineColor;
+
+      bgBoxToggle.checked = state.settings.bgBox;
+      bgBoxOptions.hidden = !state.settings.bgBox;
+      bgBoxPadding.value = state.settings.bgBoxPadding;
+      bgBoxPaddingValue.textContent = state.settings.bgBoxPadding;
+      bgBoxOpacity.value = state.settings.bgBoxOpacity;
+      bgBoxOpacityValue.textContent = state.settings.bgBoxOpacity + '%';
+      bgBoxColor.value = state.settings.bgBoxColor;
+
+      pageRange.value = state.settings.pageRange;
+      flipHToggle.checked = state.settings.flipH;
+      flipVToggle.checked = state.settings.flipV;
+    }
+
+    function updateAllUI() {
+      updateTypeUI();
+      updateCoverageUI();
+      updateFontStyleUI();
+      updateMosaicUI();
+      updateTextSettingsUI();
+    }
+
+    /* ============================================================
+       Presets (localStorage)
+    ============================================================ */
+    function getPresets() {
+      try {
+        return JSON.parse(localStorage.getItem(PRESET_KEY)) || {};
+      } catch {
+        return {};
+      }
+    }
+
+    function savePresets(presets) {
+      try {
+        localStorage.setItem(PRESET_KEY, JSON.stringify(presets));
+        return true;
+      } catch (err) {
+        console.warn('Could not save presets:', err);
+        return false;
+      }
+    }
+
+    function refreshPresetSelect() {
+      const presets = getPresets();
+      const current = presetSelect.value;
+      presetSelect.innerHTML = '<option value="">— Load preset —</option>';
+
+      for (const name of Object.keys(presets)) {
+        const opt = document.createElement('option');
+        opt.value = name;
+        opt.textContent = name;
+        presetSelect.appendChild(opt);
+      }
+
+      if (presets[current]) presetSelect.value = current;
+    }
+
+    function saveCurrentPreset() {
+      const name = prompt('Preset name:');
+      if (!name || !name.trim()) return;
+
+      const presets = getPresets();
+      const settings = { ...state.settings };
+      delete settings.image; // image objects cannot be serialized
+
+      presets[name.trim()] = settings;
+
+      if (savePresets(presets)) {
+        refreshPresetSelect();
+        presetSelect.value = name.trim();
+      } else {
+        showError('Could not save preset. Storage may be full.');
+      }
+    }
+
+    function applyPreset(name) {
+      const presets = getPresets();
+      const p = presets[name];
+      if (!p) return;
+
+      // Keep current image (presets don't store image data)
+      const currentImage = state.settings.image;
+      state.settings = { ...DEFAULT_SETTINGS, ...p, image: currentImage };
+
+      updateAllUI();
+      debouncePreview();
+    }
+
+    function resetSettings() {
+      const currentImage = state.settings.image;
+      state.settings = { ...DEFAULT_SETTINGS, image: currentImage };
+      updateAllUI();
+      debouncePreview();
     }
 
     /* ============================================================
@@ -1198,6 +1705,15 @@
       debouncePreview();
     });
 
+    // Font style toggle
+    fontStyleToggle.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-style]');
+      if (!btn) return;
+      state.settings.fontStyle = btn.dataset.style;
+      updateFontStyleUI();
+      debouncePreview();
+    });
+
     // Text input
     textInput.addEventListener('input', () => {
       state.settings.text = textInput.value;
@@ -1208,6 +1724,13 @@
     fontSize.addEventListener('input', () => {
       state.settings.fontSize = Number(fontSize.value);
       fontSizeValue.textContent = fontSize.value + ' pt';
+      debouncePreview();
+    });
+
+    // Letter spacing
+    letterSpacing.addEventListener('input', () => {
+      state.settings.letterSpacing = Number(letterSpacing.value);
+      letterSpacingValue.textContent = letterSpacing.value + 'px';
       debouncePreview();
     });
 
@@ -1232,6 +1755,72 @@
       debouncePreview();
     });
 
+    // Outline
+    outlineToggle.addEventListener('change', () => {
+      state.settings.outline = outlineToggle.checked;
+      outlineOptions.hidden = !outlineToggle.checked;
+      debouncePreview();
+    });
+
+    outlineWidth.addEventListener('input', () => {
+      state.settings.outlineWidth = Number(outlineWidth.value);
+      outlineWidthValue.textContent = outlineWidth.value;
+      debouncePreview();
+    });
+
+    outlineColor.addEventListener('input', () => {
+      state.settings.outlineColor = outlineColor.value;
+      debouncePreview();
+    });
+
+    // Background box
+    bgBoxToggle.addEventListener('change', () => {
+      state.settings.bgBox = bgBoxToggle.checked;
+      bgBoxOptions.hidden = !bgBoxToggle.checked;
+      debouncePreview();
+    });
+
+    bgBoxPadding.addEventListener('input', () => {
+      state.settings.bgBoxPadding = Number(bgBoxPadding.value);
+      bgBoxPaddingValue.textContent = bgBoxPadding.value;
+      debouncePreview();
+    });
+
+    bgBoxOpacity.addEventListener('input', () => {
+      state.settings.bgBoxOpacity = Number(bgBoxOpacity.value);
+      bgBoxOpacityValue.textContent = bgBoxOpacity.value + '%';
+      debouncePreview();
+    });
+
+    bgBoxColor.addEventListener('input', () => {
+      state.settings.bgBoxColor = bgBoxColor.value;
+      debouncePreview();
+    });
+
+    // Mosaic toggle
+    mosaicToggle.addEventListener('change', () => {
+      state.settings.mosaic = mosaicToggle.checked;
+      updateMosaicUI();
+      debouncePreview();
+    });
+
+    // Page range
+    pageRange.addEventListener('input', () => {
+      state.settings.pageRange = pageRange.value || 'all';
+      debouncePreview();
+    });
+
+    // Flip toggles
+    flipHToggle.addEventListener('change', () => {
+      state.settings.flipH = flipHToggle.checked;
+      debouncePreview();
+    });
+
+    flipVToggle.addEventListener('change', () => {
+      state.settings.flipV = flipVToggle.checked;
+      debouncePreview();
+    });
+
     // Image upload
     imageUploadBtn.addEventListener('click', () => imageInput.click());
 
@@ -1249,7 +1838,6 @@
         imagePreviewRow.hidden = false;
         imageName.textContent = file.name;
 
-        // Auto-switch to image mode if currently text
         if (state.settings.type === 'text') {
           state.settings.type = 'image';
           updateTypeUI();
@@ -1278,10 +1866,51 @@
       debouncePreview();
     });
 
+    // Preview page navigation
+    prevPageBtn.addEventListener('click', () => {
+      if (state.previewPage > 0) {
+        state.previewPage--;
+        renderPreview();
+      }
+    });
+
+    nextPageBtn.addEventListener('click', () => {
+      const entry = getSelectedFile();
+      const total = entry?.pdfjsDoc?.numPages || 0;
+      if (state.previewPage < total - 1) {
+        state.previewPage++;
+        renderPreview();
+      }
+    });
+
     // Preview / process
     previewBtn.addEventListener('click', () => renderPreview());
     processBtn.addEventListener('click', processAll);
     downloadAllBtn.addEventListener('click', downloadAll);
+
+    // Clear all
+    clearAllBtn.addEventListener('click', () => {
+      if (!state.files.length) return;
+      if (!confirm('Remove all files from the queue?')) return;
+      state.files.forEach((f) => { if (f.resultUrl) URL.revokeObjectURL(f.resultUrl); });
+      state.files = [];
+      state.selectedId = null;
+      state.previewPage = 0;
+      renderFileList();
+      updateBatchSummary();
+      renderPreview();
+    });
+
+    // Presets
+    savePresetBtn.addEventListener('click', saveCurrentPreset);
+
+    presetSelect.addEventListener('change', () => {
+      if (presetSelect.value) applyPreset(presetSelect.value);
+    });
+
+    resetPresetBtn.addEventListener('click', () => {
+      if (confirm('Reset all watermark settings to defaults?')) resetSettings();
+    });
 
     // Theme toggle
     $('#themeToggle').addEventListener('click', () => {
@@ -1290,15 +1919,57 @@
       $('#themeToggle i').textContent = isDark ? 'light_mode' : 'dark_mode';
     });
 
-    // Init
+    // Help
+    $('#helpBtn').addEventListener('click', () => helpDialog.showModal());
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      const modifier = e.ctrlKey || e.metaKey;
+
+      // Ctrl/Cmd + O — open files
+      if (modifier && e.key.toLowerCase() === 'o') {
+        e.preventDefault();
+        pdfInput.click();
+      }
+
+      // Ctrl/Cmd + Enter — process all
+      if (modifier && e.key === 'Enter') {
+        e.preventDefault();
+        processAll();
+      }
+
+      // Ctrl/Cmd + S — save preset
+      if (modifier && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        saveCurrentPreset();
+      }
+
+      // ? — show help
+      if (e.key === '?' && !modifier) {
+        const tag = document.activeElement?.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+        helpDialog.showModal();
+      }
+    });
+
+    /* ============================================================
+       Init
+    ============================================================ */
     (function init() {
-      document.body.classList.add('light');
-      updateTypeUI();
-      updateCoverageUI();
-      updateTextSettingsUI();
-      // Set initial active coverage (75%)
-      state.settings.coverage = 75;
-      updateCoverageUI();
+      // Respect system dark mode preference
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (prefersDark) {
+        document.body.classList.remove('light');
+        document.body.classList.add('dark');
+        $('#themeToggle i').textContent = 'light_mode';
+      } else {
+        document.body.classList.add('light');
+      }
+
+      updateAllUI();
+      refreshPresetSelect();
+      renderFileList();
+      updateBatchSummary();
     })();
 
   </script>
