@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>認識 mBot</title>
+<style>
+  :root{
+    --c:#0284C7;
+    --ink:#0f172a;
+    --muted:#64748b;
+    --line:#e2e8f0;
+    --bg:#ffffff;
+    --en:#94a3b8;
+  }
+
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+  html,body{
+    width:100vw;height:100vh;overflow:hidden;
+    background:var(--bg);color:var(--ink);
+    font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",-apple-system,"Helvetica Neue",Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+
+  .deck{position:relative;width:100vw;height:100vh;overflow:hidden;}
+
+  .slide{
+    position:absolute;inset:0;
+    padding:4.6vh 6.5vw 4vh;
+    display:flex;flex-direction:column;
+    opacity:0;transition:opacity .55s ease;
+    pointer-events:none;z-index:1;
+  }
+  .slide.active{opacity:1;pointer-events:auto;}
+
+  /* top bar */
+  .topbar{
+    display:flex;justify-content:space-between;align-items:center;
+    padding-bottom:2vh;border-bottom:1px solid var(--line);flex-shrink:0;
+  }
+  .brand{font-size:.82rem;letter-spacing:.18em;text-transform:uppercase;font-weight:600;}
+  .brand span{color:var(--c);}
+  .counter{font-size:.82rem;letter-spacing:.14em;color:var(--muted);font-variant-numeric:tabular-nums;}
+
+  /* main */
+  .main{flex:1;min-height:0;padding:4vh 0 3vh;display:flex;flex-direction:column;justify-content:center;}
+  .main-split{
+    display:grid;
+    grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);
+    gap:clamp(1.5rem,4vw,4.5rem);
+    align-items:center;
+  }
+
+  .section-tag{
+    font-size:.82rem;letter-spacing:.26em;text-transform:uppercase;
+    color:var(--c);font-weight:700;margin-bottom:2vh;
+    display:flex;align-items:baseline;gap:.7rem;flex-wrap:wrap;
+  }
+  .section-tag .en{
+    color:var(--en);letter-spacing:.18em;
+    font-size:.72rem;font-weight:500;
+  }
+
+  h1{
+    font-size:clamp(2.3rem,4.6vw,4.6rem);
+    font-weight:800;line-height:1.06;letter-spacing:-.022em;
+    margin-bottom:.9rem;max-width:22ch;
+  }
+  .h1-en{
+    font-size:clamp(.85rem,1.1vw,1.1rem);
+    letter-spacing:.08em;text-transform:uppercase;
+    color:var(--en);font-weight:500;
+    margin-bottom:2.2vh;
+  }
+
+  .lede{
+    font-size:clamp(1rem,1.3vw,1.28rem);
+    line-height:1.7;color:#475569;max-width:54ch;font-weight:400;
+  }
+  .lede-en{
+    font-size:clamp(.8rem,.95vw,.95rem);
+    line-height:1.55;color:var(--en);
+    max-width:60ch;margin-top:.5rem;
+    font-style:italic;
+  }
+
+  /* numbered list */
+  .list{margin-top:3.4vh;border-top:1px solid var(--line);}
+  .list-item{
+    display:grid;grid-template-columns:3rem 1fr;
+    align-items:baseline;gap:1.3rem;
+    padding:1.6vh 0;border-bottom:1px solid var(--line);
+  }
+  .list-num{
+    font-size:.82rem;letter-spacing:.1em;color:var(--c);
+    font-weight:700;font-variant-numeric:tabular-nums;
+  }
+  .list-body{display:flex;flex-direction:column;gap:.2rem;}
+  .list-title{
+    font-size:clamp(1.08rem,1.4vw,1.32rem);
+    font-weight:700;letter-spacing:-.005em;line-height:1.35;
+  }
+  .list-desc{
+    font-size:clamp(.9rem,1.02vw,1rem);
+    color:#475569;line-height:1.55;
+  }
+  .list-en{
+    font-size:clamp(.74rem,.85vw,.85rem);
+    color:var(--en);line-height:1.4;
+    font-style:italic;margin-top:.15rem;
+    letter-spacing:.005em;
+  }
+
+  /* title slide */
+  .title-slide h1{
+    font-size:clamp(3.1rem,6.6vw,6.4rem);
+    max-width:none;margin-bottom:.8rem;
+  }
+  .title-slide .h1-en{
+    font-size:clamp(1rem,1.3vw,1.3rem);
+    margin-bottom:2.4vh;
+  }
+  .title-slide .lede{
+    font-size:clamp(1.05rem,1.35vw,1.35rem);
+  }
+  .title-slide .meta{
+    display:flex;gap:3rem;margin-top:3.6vh;padding-top:2.6vh;
+    border-top:1px solid var(--line);
+  }
+  .title-slide .meta div{display:flex;flex-direction:column;gap:.4rem;font-size:.95rem;color:var(--ink);}
+  .title-slide .meta strong{
+    color:var(--muted);font-weight:600;font-size:.7rem;
+    letter-spacing:.18em;text-transform:uppercase;
+  }
+  .title-slide .meta em{
+    font-style:normal;
+    font-size:.72rem;color:var(--en);
+    letter-spacing:.05em;
+  }
+
+  /* figure / photo */
+  .fig-col{display:flex;align-items:center;justify-content:center;min-width:0;}
+  .figure{
+    width:100%;max-width:520px;display:flex;flex-direction:column;
+    align-items:stretch;gap:1rem;
+  }
+  .figure .img-wrap{
+    width:100%;
+    height:clamp(240px,52vh,520px);
+    background:#f8fafc;
+    border:1px solid var(--line);
+    border-radius:6px;
+    overflow:hidden;
+    position:relative;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .figure img{
+    width:100%;height:100%;
+    object-fit:cover;
+    display:block;
+    transition:transform .8s ease;
+  }
+  .slide.active .figure img{transform:scale(1.015);}
+  .img-error::after{
+    content:'圖片無法載入';
+    font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:#94a3b8;
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  }
+  .figure figcaption{
+    font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:#94a3b8;
+    display:flex;justify-content:space-between;gap:1rem;
+  }
+  .figure figcaption .credit{
+    color:#cbd5e1;letter-spacing:.1em;
+    text-transform:none;
+    font-size:.64rem;
+  }
+
+  /* countdown (sole footer) */
+  .countdown{
+    position:absolute;left:50%;bottom:2.4vh;
+    transform:translateX(-50%);
+    display:flex;flex-direction:column;align-items:center;gap:.4rem;
+    pointer-events:none;z-index:20;
+  }
+  .countdown .ring{
+    position:relative;
+    width:44px;height:44px;
+  }
+  .countdown .ring svg{
+    width:100%;height:100%;
+    transform:rotate(-90deg);
+    display:block;
+  }
+  .countdown .ring .bg{stroke:#e2e8f0;}
+  .countdown .ring .fg{stroke:var(--c);transition:stroke-dashoffset .08s linear;stroke-linecap:round;}
+  .countdown .num{
+    position:absolute;inset:0;
+    display:flex;align-items:center;justify-content:center;
+    font-size:.92rem;font-weight:700;color:var(--ink);
+    font-variant-numeric:tabular-nums;
+  }
+  .countdown .lbl{
+    font-size:.58rem;letter-spacing:.24em;text-transform:uppercase;color:#94a3b8;
+  }
+
+  .hint{
+    position:fixed;top:1rem;left:50%;transform:translateX(-50%);
+    font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:#cbd5e1;z-index:40;
+  }
+  .paused{
+    position:fixed;top:.9rem;right:1.4rem;font-size:.62rem;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--c);opacity:0;transition:opacity .3s;z-index:50;font-weight:600;
+  }
+  .paused.on{opacity:1;}
+
+  @media (max-width:900px){
+    .slide{padding:3.6vh 5vw 3.2vh;}
+    .main-split{grid-template-columns:1fr;gap:2rem;}
+    .fig-col{order:-1;}
+    .figure .img-wrap{height:34vh;}
+    .title-slide .meta{flex-wrap:wrap;gap:1.4rem;}
+    .hint{display:none;}
+    .countdown .lbl{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck"></div>
+<div class="paused" id="paused">已暫停</div>
+<div class="hint">← → 切換 · Space 暫停</div>
+
+<script>
+/* ---------- config ---------- */
+const DURATION_MS = 5000;
+const RING_RADIUS = 16;
+const RING_CIRC = 2 * Math.PI * RING_RADIUS;
+
+/* ---------- slide data ---------- */
+const slides = [
+  {
+    type:'title',
+    tag:'STEM 教育 · 機器人入門',
+    tagEn:'STEM Education · Intro to Robotics',
+    title:'認識 mBot',
+    titleEn:'Meet mBot',
+    lede:'從組裝、感測到寫程式，一步步理解機器人如何思考與行動。',
+    ledeEn:'From assembly and sensing to coding — understand step by step how a robot thinks and acts.',
+    meta:[
+      {label:'主題', en:'Topic', value:'入門機器人'},
+      {label:'領域', en:'Field', value:'STEM 教育'},
+      {label:'平台', en:'Platform', value:'Arduino'}
+    ],
+    img:{
+      src:'https://cdn.shopify.com/s/files/1/0070/5901/3716/files/Makeblock_mBot-1.jpg?v=1728894299&width=1600',
+      alt:'mBot 產品照'
+    },
+    caption:'圖 01 — mBot 產品照',
+    credit:'Makeblock'
+  },
+  {
+    type:'list',
+    tag:'01 · 概述',
+    tagEn:'Overview',
+    title:'什麼是 mBot？',
+    titleEn:'What is mBot?',
+    lede:'專為初學者設計的 STEM 教育機器人。結合機械、電子與程式邏輯，從動手實作中理解運作原理。',
+    ledeEn:'A STEM education robot designed for beginners — combining mechanics, electronics, and programming logic through hands-on practice.',
+    items:[
+      {title:'機械結構', desc:'金屬車體、輪胎與馬達驅動', en:'Mechanical structure — chassis, wheels, and motor drive'},
+      {title:'電子感應', desc:'超音波、循線等多種感測器', en:'Electronic sensors — ultrasonic, line-following, and more'},
+      {title:'程式邏輯', desc:'以 mBlock 或 Arduino 撰寫指令', en:'Programming logic — commands via mBlock or Arduino'}
+    ],
+    img:{
+      src:'https://cdn.shopify.com/s/files/1/0070/5901/3716/files/Easy_to_Build_for_Beginners_53531856-595f-466f-9c0b-f6e6fccb2c4b.jpg?v=1726211215&width=2048',
+      alt:'組裝 mBot'
+    },
+    caption:'圖 02 — 動手組裝',
+    credit:'Makeblock'
+  },
+  {
+    type:'list',
+    tag:'02 · 核心',
+    tagEn:'Core',
+    title:'機器人的三大特徵',
+    titleEn:'Three Core Traits of a Robot',
+    lede:'任何機器人都必須具備感知、運算與執行的能力，三者缺一不可。',
+    ledeEn:'Every robot must be able to sense, process, and act — none can be missing.',
+    items:[
+      {title:'感知環境', desc:'透過感測器接收外界資訊', en:'Sense — receive environmental data through sensors'},
+      {title:'大腦運算', desc:'微控制器處理資料並下達指令', en:'Process — microcontroller interprets data and issues commands'},
+      {title:'執行動作', desc:'馬達驅動輪子或發出聲光反應', en:'Actuate — motors, lights, and sound respond to the world'}
+    ],
+    img:{
+      src:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Mbot2Front.jpg/1280px-Mbot2Front.jpg',
+      alt:'mBot2 正面'
+    },
+    caption:'圖 03 — mBot2 正面',
+    credit:'Mattruffoni · CC BY-SA 4.0'
+  },
+  {
+    type:'list',
+    tag:'03 · 硬體',
+    tagEn:'Hardware',
+    title:'身體與感官',
+    titleEn:'Body & Senses',
+    lede:'機器人能與環境互動，全靠這些硬體配備協同運作。',
+    ledeEn:'A robot interacts with its environment through this coordinated hardware.',
+    items:[
+      {title:'鋁合金車體', desc:'堅固耐用，預留擴充孔位', en:'Aluminum chassis — durable with expansion slots'},
+      {title:'直流馬達', desc:'控制左右輪胎前進與轉彎', en:'DC motors — drive left/right wheels forward and turning'},
+      {title:'超音波感應器', desc:'偵測前方障礙物距離', en:'Ultrasonic sensor — detects distance to obstacles ahead'},
+      {title:'循線感應器', desc:'讓機器人沿著黑線行走', en:'Line-following sensor — keeps the robot on the black line'}
+    ],
+    img:{
+      src:'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Mbot2_sposta_cubi_colorati_sensore_colore_gi%C3%B9.jpg/1280px-Mbot2_sposta_cubi_colorati_sensore_colore_gi%C3%B9.jpg',
+      alt:'循線／顏色感測器特寫'
+    },
+    caption:'圖 04 — 底部感測器',
+    credit:'Mattruffoni · CC BY-SA 4.0'
+  },
+  {
+    type:'list',
+    tag:'04 · 大腦',
+    tagEn:'Brain',
+    title:'Arduino 微控制器',
+    titleEn:'Arduino Microcontroller',
+    lede:'mBot 以 Arduino 為核心，透過程式碼賦予機器人生命。',
+    ledeEn:'With Arduino at its core, code brings the robot to life.',
+    items:[
+      {title:'mBlock 圖像化程式', desc:'拖曳積木拼出邏輯，適合初學者', en:'Visual programming — drag-and-drop blocks for beginners'},
+      {title:'Arduino IDE', desc:'撰寫 C/C++ 程式碼，適合進階控制', en:'Arduino IDE — C/C++ code for advanced control'}
+    ],
+    img:{
+      src:'https://upload.wikimedia.org/wikipedia/commons/d/de/Arduino_Uno_board.jpg',
+      alt:'Arduino Uno 開發板'
+    },
+    caption:'圖 05 — Arduino Uno',
+    credit:'JrawX · CC0'
+  },
+  {
+    type:'list',
+    tag:'05 · 總結',
+    tagEn:'Summary',
+    title:'重點回顧',
+    titleEn:'Key Takeaways',
+    lede:'四個關鍵概念，帶走 mBot 的核心知識。',
+    ledeEn:'Four key concepts to take away from mBot.',
+    items:[
+      {title:'入門級 STEM 教育機器人', desc:'人人可上手的學習平台', en:'Entry-level STEM robot — an accessible learning platform'},
+      {title:'車體、感應器、馬達與大腦', desc:'構成機器人的基本要素', en:'Chassis, sensors, motors, and brain — the essential building blocks'},
+      {title:'mBlock 或 Arduino IDE', desc:'兩種撰寫程式的方式', en:'mBlock or Arduino IDE — two ways to program'},
+      {title:'從實作中學會程式邏輯', desc:'理解機器人運作原理', en:'Learn programming logic through practice — and understand how robots work'}
+    ],
+    img:{
+      src:'https://cdn.shopify.com/s/files/1/0070/5901/3716/files/Coding_is_as_Easy_as_Blocks_Building_4e4f42e1-19d8-4282-a52d-b711cf3fa881.jpg?v=1726211215&width=2048',
+      alt:'教室寫程式'
+    },
+    caption:'圖 06 — 圖像化程式學習',
+    credit:'Makeblock'
+  }
+];
+
+/* ---------- build ---------- */
+const deck = document.getElementById('deck');
+const pausedEl = document.getElementById('paused');
+
+function escapeAttr(s){
+  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+slides.forEach((s, i) => {
+  const slide = document.createElement('div');
+  slide.className = 'slide' + (s.type === 'title' ? ' title-slide' : '');
+  const num = String(i + 1).padStart(2, '0');
+  const total = String(slides.length).padStart(2, '0');
+
+  let left = '';
+  if (s.type === 'title') {
+    const meta = s.meta.map(m => `
+      <div>
+        <strong>${m.label} · ${m.en}</strong>
+        ${m.value}
+      </div>`).join('');
+    left = `<div class="section-tag">${s.tag}<span class="en">${s.tagEn}</span></div>
+            <h1>${s.title}</h1>
+            <div class="h1-en">${s.titleEn}</div>
+            <p class="lede">${s.lede}</p>
+            <p class="lede-en">${s.ledeEn}</p>
+            <div class="meta">${meta}</div>`;
+  } else {
+    const rows = s.items.map((it, k) => `
+      <div class="list-item">
+        <div class="list-num">${String(k+1).padStart(2,'0')}</div>
+        <div class="list-body">
+          <div class="list-title">${it.title}</div>
+          <div class="list-desc">${it.desc}</div>
+          <div class="list-en">${it.en}</div>
+        </div>
+      </div>`).join('');
+    left = `<div class="section-tag">${s.tag}<span class="en">${s.tagEn}</span></div>
+            <h1>${s.title}</h1>
+            <div class="h1-en">${s.titleEn}</div>
+            <p class="lede">${s.lede}</p>
+            <p class="lede-en">${s.ledeEn}</p>
+            <div class="list">${rows}</div>`;
+  }
+
+  slide.innerHTML = `
+    <div class="topbar">
+      <div class="brand">mBot<span>.</span></div>
+      <div class="counter">${num} — ${total}</div>
+    </div>
+    <div class="main main-split">
+      <div>${left}</div>
+      <div class="fig-col">
+        <figure class="figure">
+          <div class="img-wrap">
+            <img src="${escapeAttr(s.img.src)}"
+                 alt="${escapeAttr(s.img.alt)}"
+                 referrerpolicy="no-referrer"
+                 loading="eager"
+                 onerror="this.style.display='none';this.parentElement.classList.add('img-error');">
+          </div>
+          <figcaption>
+            <span>${s.caption}</span>
+            <span class="credit">${s.credit}</span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+    <div class="countdown" aria-hidden="true">
+      <div class="ring">
+        <svg viewBox="0 0 40 40">
+          <circle class="bg" cx="20" cy="20" r="${RING_RADIUS}" fill="none" stroke-width="2.5"/>
+          <circle class="fg" cx="20" cy="20" r="${RING_RADIUS}" fill="none" stroke-width="2.5"
+                  stroke-dasharray="${RING_CIRC}" stroke-dashoffset="0"/>
+        </svg>
+        <div class="num">5</div>
+      </div>
+      <div class="lbl">Next</div>
+    </div>`;
+  deck.appendChild(slide);
+});
+
+/* ---------- navigation ---------- */
+const slideEls = deck.querySelectorAll('.slide');
+let current = 0, paused = false, startTime = Date.now();
+
+function goTo(i) {
+  slideEls[current].classList.remove('active');
+  current = (i + slideEls.length) % slideEls.length;
+  slideEls[current].classList.add('active');
+  startTime = Date.now();
+  slideEls.forEach(el => {
+    const fg = el.querySelector('.countdown .fg');
+    if (fg) fg.style.strokeDashoffset = 0;
+    const numEl = el.querySelector('.countdown .num');
+    if (numEl) numEl.textContent = '5';
+  });
+}
+
+function tick() {
+  if (!paused) {
+    const elapsed = Date.now() - startTime;
+    const pct = Math.min(elapsed / DURATION_MS, 1);
+    const active = slideEls[current];
+
+    const fg = active.querySelector('.countdown .fg');
+    if (fg) fg.style.strokeDashoffset = (pct * RING_CIRC).toFixed(2);
+
+    const numEl = active.querySelector('.countdown .num');
+    if (numEl) {
+      const remain = Math.max(1, Math.ceil((DURATION_MS - elapsed) / 1000));
+      if (numEl.textContent !== String(remain)) numEl.textContent = remain;
+    }
+
+    if (pct >= 1) goTo(current + 1);
+  }
+  requestAnimationFrame(tick);
+}
+
+function togglePause() {
+  paused = !paused;
+  pausedEl.classList.toggle('on', paused);
+  if (!paused) startTime = Date.now();
+}
+
+goTo(0);
+requestAnimationFrame(tick);
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') goTo(current + 1);
+  else if (e.key === 'ArrowLeft') goTo(current - 1);
+  else if (e.key === ' ') { togglePause(); e.preventDefault(); }
+  else if (e.key === 'Home') goTo(0);
+  else if (e.key === 'End') goTo(slideEls.length - 1);
+});
+</script>
+</body>
+</html>
